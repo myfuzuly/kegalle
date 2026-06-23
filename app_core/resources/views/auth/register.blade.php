@@ -65,29 +65,29 @@
 
                     <div class="k-form-grid">
                         <div class="k-form-group">
-                            <label class="k-form-label">Full Name</label>
+                            <label class="k-form-label" for="register-name">Full Name</label>
                             <div class="k-form-icon-wrap">
                                 <span class="k-form-icon">👤</span>
-                                <input type="text" name="name" value="{{ old('name') }}" class="k-form-control with-icon" placeholder="Enter your full name" required>
+                                <input id="register-name" type="text" name="name" value="{{ old('name') }}" class="k-form-control with-icon" placeholder="Enter your full name" required>
                             </div>
                         </div>
                         <div class="k-form-group">
-                            <label class="k-form-label">Email Address</label>
+                            <label class="k-form-label" for="register-email">Email Address</label>
                             <div class="k-form-icon-wrap">
                                 <span class="k-form-icon">✉</span>
-                                <input type="email" name="email" value="{{ old('email') }}" class="k-form-control with-icon" placeholder="Enter your email" required>
+                                <input id="register-email" type="email" name="email" value="{{ old('email') }}" class="k-form-control with-icon" placeholder="Enter your email" required>
                             </div>
                         </div>
                         <div class="k-form-group">
-                            <label class="k-form-label">Phone Number</label>
+                            <label class="k-form-label" for="register-phone">Phone Number</label>
                             <div class="k-form-icon-wrap">
                                 <span class="k-form-icon">📞</span>
-                                <input type="text" name="phone" value="{{ old('phone') }}" class="k-form-control with-icon" placeholder="Enter your phone number" required>
+                                <input id="register-phone" type="text" name="phone" value="{{ old('phone') }}" class="k-form-control with-icon" placeholder="Enter your phone number" required>
                             </div>
                         </div>
                         <div class="k-form-group">
-                            <label class="k-form-label">Location</label>
-                            <select name="location_id" class="k-form-control" required>
+                            <label class="k-form-label" for="register-location">Location</label>
+                            <select id="register-location" name="location_id" class="k-form-control" required>
                                 <option value="">Select location</option>
                                 @foreach(($locations ?? []) as $location)
                                     <option value="{{ $location->id }}" @selected(old('location_id') == $location->id)>{{ $location->name }}</option>
@@ -95,24 +95,24 @@
                             </select>
                         </div>
                         <div class="k-form-group">
-                            <label class="k-form-label">Password</label>
+                            <label class="k-form-label" for="register-password">Password</label>
                             <div class="k-form-icon-wrap">
                                 <span class="k-form-icon">🔒</span>
-                                <input type="password" name="password" class="k-form-control with-icon" placeholder="Create a password" required>
+                                <input id="register-password" type="password" name="password" class="k-form-control with-icon" placeholder="Create a password" required>
                             </div>
                         </div>
                         <div class="k-form-group">
-                            <label class="k-form-label">Confirm Password</label>
+                            <label class="k-form-label" for="register-password-confirmation">Confirm Password</label>
                             <div class="k-form-icon-wrap">
                                 <span class="k-form-icon">🔒</span>
-                                <input type="password" name="password_confirmation" class="k-form-control with-icon" placeholder="Confirm your password" required>
+                                <input id="register-password-confirmation" type="password" name="password_confirmation" class="k-form-control with-icon" placeholder="Confirm your password" required>
                             </div>
                         </div>
                     </div>
 
                     <div style="display:flex;align-items:flex-start;gap:8px;margin:16px 0">
-                        <input type="checkbox" required style="accent-color:var(--k-primary);margin-top:2px">
-                        <span style="font-size:13px;color:var(--k-text-secondary)">I agree to the <a href="#" style="color:var(--k-primary);font-weight:600;text-decoration:none">Terms & Conditions</a> and <a href="#" style="color:var(--k-primary);font-weight:600;text-decoration:none">Privacy Policy</a></span>
+                        <input id="register-terms" type="checkbox" required style="accent-color:var(--k-primary);margin-top:2px">
+                        <label for="register-terms" style="font-size:13px;color:var(--k-text-secondary);cursor:pointer">I agree to the <a href="/terms-and-conditions" style="color:var(--k-primary);font-weight:600;text-decoration:none">Terms & Conditions</a> and <a href="/privacy-policy" style="color:var(--k-primary);font-weight:600;text-decoration:none">Privacy Policy</a></label>
                     </div>
                     <button type="submit" class="k-btn k-btn-primary k-btn-lg w-full" style="justify-content:center;margin-bottom:12px;border:none;cursor:pointer">Create Account</button>
                 </form>

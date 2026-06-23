@@ -40,17 +40,17 @@
                 <form method="POST" action="{{ route('login.submit') }}">
                     @csrf
                     <div class="k-form-group">
-                        <label class="k-form-label">Email Address</label>
+                        <label class="k-form-label" for="login-email">Email Address</label>
                         <div class="k-form-icon-wrap">
                             <span class="k-form-icon">✉</span>
-                            <input type="email" name="email" value="{{ old('email') }}" class="k-form-control with-icon" placeholder="Enter your email" required>
+                            <input id="login-email" type="email" name="email" value="{{ old('email') }}" class="k-form-control with-icon" placeholder="Enter your email" required>
                         </div>
                     </div>
                     <div class="k-form-group">
-                        <label class="k-form-label">Password</label>
+                        <label class="k-form-label" for="login-password">Password</label>
                         <div class="k-form-icon-wrap">
                             <span class="k-form-icon">🔒</span>
-                            <input type="password" name="password" class="k-form-control with-icon" placeholder="Enter your password" required>
+                            <input id="login-password" type="password" name="password" class="k-form-control with-icon" placeholder="Enter your password" required>
                         </div>
                     </div>
                     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">

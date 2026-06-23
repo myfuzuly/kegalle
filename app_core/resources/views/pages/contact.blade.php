@@ -11,16 +11,16 @@
         <form method="POST" action="/contact-us" style="display:grid;gap:14px">
             @csrf
             <div class="k-form-group">
-                <label class="k-form-label">Your Name</label>
-                <input type="text" name="name" value="{{ old('name') }}" class="k-form-control" required>
+                <label class="k-form-label" for="contact-name">Your Name</label>
+                <input id="contact-name" type="text" name="name" value="{{ old('name') }}" class="k-form-control" required>
             </div>
             <div class="k-form-group">
-                <label class="k-form-label">Email Address</label>
-                <input type="email" name="email" value="{{ old('email') }}" class="k-form-control" required>
+                <label class="k-form-label" for="contact-email">Email Address</label>
+                <input id="contact-email" type="email" name="email" value="{{ old('email') }}" class="k-form-control" required>
             </div>
             <div class="k-form-group">
-                <label class="k-form-label">Message</label>
-                <textarea name="message" required class="k-form-control" style="min-height:140px">{{ old('message') }}</textarea>
+                <label class="k-form-label" for="contact-message">Message</label>
+                <textarea id="contact-message" name="message" required class="k-form-control" style="min-height:140px">{{ old('message') }}</textarea>
             </div>
             <button type="submit" class="k-btn k-btn-primary k-btn-lg" style="justify-content:center;border:none;cursor:pointer">Send Message</button>
         </form>
