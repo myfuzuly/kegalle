@@ -1,0 +1,1 @@
+@extends('layouts.app') @section('content')<section class="section"><h1>Payments</h1><p>Payments module is enabled in this production release structure and ready for business rules/payment integration.</p></section>@endsection

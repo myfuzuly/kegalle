@@ -1,0 +1,491 @@
+/* =========================================================
+   Kegalle Admin Select2 + Premium Components
+   Load this LAST after all admin CSS.
+   ========================================================= */
+
+/* Page overflow discipline */
+html,
+body,
+.ka-admin-body{
+    max-width:100%!important;
+    overflow-x:hidden!important;
+}
+
+.ka-workspace,
+.ka-content,
+.sa-main{
+    min-width:0!important;
+    overflow-x:hidden!important;
+}
+
+/* Premium form controls */
+.ka-content input,
+.ka-content select,
+.ka-content textarea,
+.sa-main input,
+.sa-main select,
+.sa-main textarea,
+.ka-admin-body input,
+.ka-admin-body select,
+.ka-admin-body textarea{
+    width:auto;
+    max-width:100%;
+    min-height:44px!important;
+    border:1px solid #e7ecf3!important;
+    border-radius:13px!important;
+    background:#fff!important;
+    color:#101828!important;
+    padding:0 14px!important;
+    font-size:14px!important;
+    font-weight:600!important;
+    outline:0!important;
+    box-shadow:0 8px 22px rgba(15,23,42,.035)!important;
+    transition:border-color .16s ease, box-shadow .16s ease, background .16s ease!important;
+}
+
+.ka-content textarea,
+.sa-main textarea{
+    min-height:120px!important;
+    padding:14px!important;
+    line-height:1.55!important;
+    resize:vertical!important;
+}
+
+.ka-content input:focus,
+.ka-content select:focus,
+.ka-content textarea:focus,
+.sa-main input:focus,
+.sa-main select:focus,
+.sa-main textarea:focus{
+    border-color:rgba(29,158,117,.5)!important;
+    box-shadow:0 0 0 4px rgba(29,158,117,.09),0 8px 22px rgba(15,23,42,.035)!important;
+}
+
+/* Search/filter row */
+.sa-search,
+.ka-filterbar,
+.ka-searchbar{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:flex-end!important;
+    flex-wrap:wrap!important;
+    gap:10px!important;
+}
+
+.sa-search input,
+.sa-search select,
+.ka-filterbar input,
+.ka-filterbar select{
+    height:44px!important;
+    min-width:190px!important;
+}
+
+.sa-search button,
+.ka-filterbar button,
+.ka-searchbar button{
+    height:44px!important;
+    border:0!important;
+    border-radius:13px!important;
+    padding:0 18px!important;
+    background:#1B5E20!important;
+    color:#fff!important;
+    font-size:14px!important;
+    font-weight:900!important;
+    cursor:pointer!important;
+    box-shadow:0 10px 22px rgba(29,158,117,.18)!important;
+}
+
+/* Select2 premium style */
+.select2-container{
+    min-width:190px!important;
+    max-width:100%!important;
+}
+
+.select2-container--default .select2-selection--single{
+    height:44px!important;
+    min-height:44px!important;
+    border:1px solid #e7ecf3!important;
+    border-radius:13px!important;
+    background:#fff!important;
+    box-shadow:0 8px 22px rgba(15,23,42,.035)!important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered{
+    line-height:44px!important;
+    color:#101828!important;
+    padding-left:14px!important;
+    padding-right:36px!important;
+    font-size:14px!important;
+    font-weight:700!important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow{
+    height:44px!important;
+    right:8px!important;
+}
+
+.select2-container--default.select2-container--focus .select2-selection--single,
+.select2-container--default.select2-container--open .select2-selection--single{
+    border-color:rgba(29,158,117,.5)!important;
+    box-shadow:0 0 0 4px rgba(29,158,117,.09),0 8px 22px rgba(15,23,42,.035)!important;
+}
+
+.select2-dropdown{
+    border:1px solid #e7ecf3!important;
+    border-radius:14px!important;
+    overflow:hidden!important;
+    box-shadow:0 18px 50px rgba(15,23,42,.14)!important;
+}
+
+.select2-search--dropdown{
+    padding:10px!important;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field{
+    height:40px!important;
+    border:1px solid #e7ecf3!important;
+    border-radius:11px!important;
+    padding:0 12px!important;
+}
+
+.select2-results__option{
+    padding:10px 14px!important;
+    font-size:14px!important;
+    font-weight:650!important;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected]{
+    background:#1B5E20!important;
+    color:#fff!important;
+}
+
+/* Tables: prevent page-level horizontal scroll */
+.ka-table-wrap,
+.sa-table-wrap{
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    border-radius:18px!important;
+    border:1px solid #e7ecf3!important;
+    background:#fff!important;
+    -webkit-overflow-scrolling:touch!important;
+}
+
+.ka-table,
+.sa-table{
+    width:100%!important;
+    min-width:920px!important;
+    border-collapse:separate!important;
+    border-spacing:0!important;
+}
+
+.ka-table th,
+.sa-table th{
+    background:#f9fbfd!important;
+    color:#667085!important;
+    font-size:12px!important;
+    font-weight:900!important;
+    text-transform:uppercase!important;
+    letter-spacing:.045em!important;
+    padding:13px 16px!important;
+    white-space:nowrap!important;
+}
+
+.ka-table td,
+.sa-table td{
+    padding:16px!important;
+    vertical-align:middle!important;
+    color:#1d2939!important;
+}
+
+.ka-table tr:hover td,
+.sa-table tr:hover td{
+    background:#fbfcfe!important;
+}
+
+/* Compact icon action buttons */
+.sa-actions-inline,
+.ka-actions-inline,
+td .sa-actions-inline{
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    align-items:center!important;
+    gap:7px!important;
+    min-width:auto!important;
+}
+
+.sa-actions-inline form,
+.ka-actions-inline form{
+    display:inline-flex!important;
+    margin:0!important;
+}
+
+.sa-actions-inline a,
+.sa-actions-inline button,
+.ka-actions-inline a,
+.ka-actions-inline button,
+.ka-icon-btn{
+    width:38px!important;
+    height:38px!important;
+    min-width:38px!important;
+    padding:0!important;
+    display:inline-grid!important;
+    place-items:center!important;
+    border-radius:12px!important;
+    border:1px solid #e7ecf3!important;
+    background:#fff!important;
+    color:#344054!important;
+    font-size:0!important;
+    line-height:1!important;
+    text-decoration:none!important;
+    cursor:pointer!important;
+    box-shadow:0 6px 16px rgba(15,23,42,.045)!important;
+    transition:.16s ease!important;
+    position:relative!important;
+    overflow:hidden!important;
+}
+
+.sa-actions-inline a:hover,
+.sa-actions-inline button:hover,
+.ka-actions-inline a:hover,
+.ka-actions-inline button:hover{
+    transform:translateY(-1px)!important;
+    box-shadow:0 10px 24px rgba(15,23,42,.08)!important;
+}
+
+/* Icons via pseudo-elements */
+.sa-actions-inline a::before,
+.ka-actions-inline a::before{
+    content:"👁"!important;
+    font-size:16px!important;
+}
+
+.sa-actions-inline form:nth-of-type(1) button::before,
+.ka-actions-inline form:nth-of-type(1) button::before{
+    content:"✓"!important;
+    font-size:18px!important;
+    font-weight:900!important;
+}
+
+.sa-actions-inline form:nth-of-type(2) button::before,
+.ka-actions-inline form:nth-of-type(2) button::before{
+    content:"⚡"!important;
+    font-size:15px!important;
+}
+
+.sa-actions-inline form:nth-of-type(3) button::before,
+.ka-actions-inline form:nth-of-type(3) button::before{
+    content:"★"!important;
+    font-size:15px!important;
+}
+
+.sa-actions-inline form:nth-of-type(4) button::before,
+.ka-actions-inline form:nth-of-type(4) button::before{
+    content:"⬆"!important;
+    font-size:16px!important;
+}
+
+/* Edit links with edit URL */
+.sa-actions-inline a[href*="/edit"]::before,
+.ka-actions-inline a[href*="/edit"]::before{
+    content:"✎"!important;
+    font-size:17px!important;
+}
+
+.sa-actions-inline form[action*="toggle"] button::before,
+.ka-actions-inline form[action*="toggle"] button::before{
+    content:"⏻"!important;
+    font-size:16px!important;
+}
+
+.sa-actions-inline form[action*="reject"] button::before,
+.ka-actions-inline form[action*="reject"] button::before,
+.sa-actions-inline button.danger::before,
+.ka-actions-inline button.danger::before,
+.sa-actions-inline form[onsubmit] button::before{
+    content:"×"!important;
+    font-size:22px!important;
+    font-weight:900!important;
+}
+
+/* Button color meanings */
+.sa-actions-inline a,
+.ka-actions-inline a{
+    background:#eef6ff!important;
+    border-color:#d6e8ff!important;
+    color:#175cd3!important;
+}
+
+.sa-actions-inline form:nth-of-type(1) button,
+.ka-actions-inline form:nth-of-type(1) button{
+    background:#1B5E20!important;
+    border-color:#1B5E20!important;
+    color:#fff!important;
+}
+
+.sa-actions-inline form:nth-of-type(2) button,
+.ka-actions-inline form:nth-of-type(2) button{
+    background:#155016!important;
+    border-color:#155016!important;
+    color:#fff!important;
+}
+
+.sa-actions-inline form:nth-of-type(3) button,
+.ka-actions-inline form:nth-of-type(3) button{
+    background:#fff7ed!important;
+    border-color:#fed7aa!important;
+    color:#c2410c!important;
+}
+
+.sa-actions-inline form:nth-of-type(4) button,
+.ka-actions-inline form:nth-of-type(4) button{
+    background:#fef3c7!important;
+    border-color:#fde68a!important;
+    color:#92400e!important;
+}
+
+.sa-actions-inline form[action*="reject"] button,
+.ka-actions-inline form[action*="reject"] button,
+.sa-actions-inline button.danger,
+.ka-actions-inline button.danger,
+.sa-actions-inline form[onsubmit] button{
+    background:#dc2626!important;
+    border-color:#dc2626!important;
+    color:#fff!important;
+}
+
+/* Tooltip with existing button text */
+.sa-actions-inline a::after,
+.sa-actions-inline button::after,
+.ka-actions-inline a::after,
+.ka-actions-inline button::after{
+    content:attr(title);
+    position:absolute;
+    bottom:calc(100% + 8px);
+    left:50%;
+    transform:translateX(-50%);
+    background:#101828;
+    color:#fff;
+    font-size:11px;
+    font-weight:800;
+    white-space:nowrap;
+    padding:6px 8px;
+    border-radius:8px;
+    opacity:0;
+    pointer-events:none;
+    transition:.12s ease;
+    z-index:50;
+}
+
+.sa-actions-inline a:hover::after,
+.sa-actions-inline button:hover::after,
+.ka-actions-inline a:hover::after,
+.ka-actions-inline button:hover::after{
+    opacity:1;
+}
+
+/* Use aria-label fallback when title not present via JS */
+[data-ka-tip]::after{
+    content:attr(data-ka-tip)!important;
+}
+
+/* Status badges */
+.sa-status,
+.ka-status{
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    min-height:29px!important;
+    padding:0 11px!important;
+    border-radius:999px!important;
+    font-size:12px!important;
+    font-weight:900!important;
+    text-transform:capitalize!important;
+    background:#f2f4f7!important;
+    color:#475467!important;
+}
+
+.sa-status.approved,
+.sa-status.active,
+.sa-status.published,
+.ka-status.approved,
+.ka-status.active,
+.ka-status.published{
+    background:#E8F5E9!important;
+    color:#155016!important;
+}
+
+.sa-status.pending,
+.ka-status.pending{
+    background:#fff7ed!important;
+    color:#c2410c!important;
+}
+
+.sa-status.suspended,
+.sa-status.rejected,
+.ka-status.suspended,
+.ka-status.rejected{
+    background:#fee4e2!important;
+    color:#b42318!important;
+}
+
+/* Better form blocks */
+.sa-form,
+.sa-form-wide,
+.sa-location-form,
+.sa-edit-form{
+    gap:12px!important;
+}
+
+.sa-edit-form label{
+    font-size:13px!important;
+    color:#344054!important;
+    font-weight:900!important;
+    margin-bottom:2px!important;
+}
+
+/* Select2 should fill grid cells */
+.sa-form .select2-container,
+.sa-form-wide .select2-container,
+.sa-location-form .select2-container,
+.sa-edit-form .select2-container{
+    width:100%!important;
+}
+
+/* Responsive */
+@media(max-width:1100px){
+    .sa-search,
+    .ka-filterbar,
+    .ka-searchbar{
+        justify-content:flex-start!important;
+    }
+
+    .sa-search input,
+    .sa-search select,
+    .sa-search button,
+    .select2-container{
+        flex:1 1 190px!important;
+    }
+}
+
+@media(max-width:720px){
+    .ka-table,
+    .sa-table{
+        min-width:820px!important;
+    }
+
+    .sa-actions-inline,
+    .ka-actions-inline{
+        gap:6px!important;
+    }
+
+    .sa-actions-inline a,
+    .sa-actions-inline button,
+    .ka-actions-inline a,
+    .ka-actions-inline button{
+        width:36px!important;
+        height:36px!important;
+        min-width:36px!important;
+    }
+}

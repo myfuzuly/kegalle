@@ -1,0 +1,587 @@
+/* =========================================================
+   Kegalle Admin Dashboard Premium V2
+   Inspired by uploaded compact professional admin mockup.
+   Load this LAST.
+   ========================================================= */
+:root{
+    --ka-bg:#f5f7fb;
+    --ka-card:#fff;
+    --ka-text:#172033;
+    --ka-muted:#6b7280;
+    --ka-border:#e7ecf3;
+    --ka-green:#1d9e75;
+    --ka-green-dark:#0f6e56;
+    --ka-green-soft:#e1f5ee;
+    --ka-blue-soft:#e6f1fb;
+    --ka-amber-soft:#faeeda;
+    --ka-red:#dc2626;
+    --ka-radius:18px;
+    --ka-shadow:0 14px 40px rgba(15,23,42,.055);
+}
+
+html,body{overflow-x:hidden!important}
+body:has(.ka-dash), body:has(.sa-wrap){background:var(--ka-bg)!important}
+body:has(.ka-dash) .kg-greenbar,
+body:has(.ka-dash) .kg-footer{display:none!important}
+
+.ka-dash{
+    width:min(1480px,calc(100% - 32px));
+    min-height:calc(100vh - 120px);
+    margin:24px auto 48px;
+    display:flex;
+    background:var(--ka-bg);
+    border:1px solid var(--ka-border);
+    border-radius:26px;
+    overflow:hidden;
+    box-shadow:0 24px 70px rgba(15,23,42,.06);
+}
+
+.ka-sidebar{
+    width:244px;
+    flex:0 0 244px;
+    background:#fff;
+    border-right:1px solid var(--ka-border);
+    display:flex;
+    flex-direction:column;
+    min-height:760px;
+}
+
+.ka-brand{
+    padding:20px 18px 16px;
+    border-bottom:1px solid var(--ka-border);
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.ka-brand-icon{
+    width:38px;
+    height:38px;
+    border-radius:11px;
+    display:grid;
+    place-items:center;
+    background:var(--ka-green);
+    color:#fff;
+    font-weight:900;
+}
+
+.ka-brand strong{
+    display:block;
+    color:var(--ka-text);
+    font-size:15px;
+}
+
+.ka-brand small{
+    display:block;
+    color:var(--ka-muted);
+    font-size:12px;
+    margin-top:2px;
+}
+
+.ka-side-scroll{
+    flex:1;
+    overflow:auto;
+    padding:10px 0;
+}
+
+.ka-section{
+    padding:14px 14px 6px;
+    color:#98a2b3;
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+}
+
+.ka-nav{
+    min-height:38px;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    margin:2px 8px;
+    padding:8px 11px;
+    border-radius:13px;
+    color:#667085;
+    font-size:13px;
+    font-weight:750;
+    text-decoration:none;
+    transition:.16s ease;
+}
+
+.ka-nav span{
+    margin-left:auto;
+    background:var(--ka-green-soft);
+    color:var(--ka-green-dark);
+    border-radius:999px;
+    font-size:10px;
+    padding:2px 7px;
+}
+
+.ka-nav:hover{
+    background:#f5f7fb;
+    color:#101828;
+}
+
+.ka-nav.active{
+    background:var(--ka-green-soft);
+    color:var(--ka-green-dark);
+}
+
+.ka-side-footer{
+    padding:12px;
+    border-top:1px solid var(--ka-border);
+}
+
+.ka-logout{
+    width:100%;
+    min-height:38px;
+    border:0;
+    background:transparent;
+    color:#667085;
+    font-weight:750;
+    text-align:left;
+    border-radius:13px;
+    padding:8px 11px;
+    cursor:pointer;
+}
+
+.ka-logout:hover{background:#f5f7fb}
+
+.ka-main{
+    flex:1;
+    min-width:0;
+    overflow:auto;
+    padding:28px;
+}
+
+.ka-topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:18px;
+    margin-bottom:24px;
+}
+
+.ka-topbar h1{
+    margin:0;
+    color:var(--ka-text);
+    font-size:24px;
+    font-weight:800;
+    letter-spacing:-.025em;
+}
+
+.ka-topbar p{
+    margin:4px 0 0;
+    color:var(--ka-muted);
+    font-size:13px;
+}
+
+.ka-top-actions{
+    display:flex;
+    gap:9px;
+    flex-wrap:wrap;
+}
+
+.ka-top-actions a{
+    min-height:38px;
+    display:inline-flex;
+    align-items:center;
+    padding:0 16px;
+    border:1px solid var(--ka-border);
+    background:#fff;
+    color:var(--ka-text);
+    border-radius:13px;
+    font-size:13px;
+    font-weight:800;
+    text-decoration:none;
+}
+
+.ka-top-actions a.primary{
+    background:var(--ka-green);
+    color:#fff;
+    border-color:var(--ka-green);
+}
+
+.ka-stat-grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:14px;
+    margin-bottom:22px;
+}
+
+.ka-stat{
+    background:#fff;
+    border:1px solid var(--ka-border);
+    border-radius:20px;
+    padding:17px 18px;
+    box-shadow:var(--ka-shadow);
+    position:relative;
+    overflow:hidden;
+}
+
+.ka-stat.accent{border-color:#7ed8bd}
+
+.ka-stat span{
+    display:block;
+    color:var(--ka-muted);
+    font-size:11px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    margin-bottom:8px;
+}
+
+.ka-stat strong{
+    display:block;
+    color:var(--ka-text);
+    font-size:26px;
+    line-height:1.1;
+    letter-spacing:-.035em;
+}
+
+.ka-stat.accent strong{color:var(--ka-green-dark)}
+
+.ka-stat small{
+    display:flex;
+    gap:6px;
+    align-items:center;
+    margin-top:8px;
+    color:var(--ka-muted);
+    font-size:12px;
+}
+
+.ka-stat small b.green{
+    background:var(--ka-green-soft);
+    color:var(--ka-green-dark);
+    border-radius:999px;
+    padding:2px 8px;
+    font-size:11px;
+}
+
+.ka-row-2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    margin-bottom:22px;
+}
+
+.ka-card{
+    background:#fff;
+    border:1px solid var(--ka-border);
+    border-radius:22px;
+    padding:18px;
+    box-shadow:var(--ka-shadow);
+    min-width:0;
+}
+
+.ka-card-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:14px;
+}
+
+.ka-card-head h2{
+    margin:0;
+    color:var(--ka-text);
+    font-size:16px;
+    font-weight:850;
+}
+
+.ka-card-head span,
+.ka-card-head a{
+    color:var(--ka-green);
+    font-size:12px;
+    font-weight:850;
+    text-decoration:none;
+}
+
+.ka-shortcuts{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+}
+
+.ka-shortcuts a{
+    display:flex;
+    align-items:flex-start;
+    gap:11px;
+    padding:12px;
+    border:1px solid var(--ka-border);
+    border-radius:15px;
+    color:var(--ka-text);
+    text-decoration:none;
+    transition:.16s ease;
+}
+
+.ka-shortcuts a:hover{
+    background:#f8fafc;
+    transform:translateY(-2px);
+}
+
+.ka-shortcuts i{
+    width:34px;
+    height:34px;
+    display:grid;
+    place-items:center;
+    border-radius:11px;
+    background:var(--ka-green-soft);
+    font-style:normal;
+    flex:0 0 34px;
+}
+
+.ka-shortcuts b{
+    display:block;
+    font-size:13px;
+    margin-bottom:2px;
+}
+
+.ka-shortcuts small{
+    color:var(--ka-muted);
+    font-size:12px;
+}
+
+.ka-empty{
+    text-align:center;
+    padding:26px 0;
+    color:var(--ka-muted);
+}
+
+.ka-empty span{
+    width:38px;
+    height:38px;
+    display:grid;
+    place-items:center;
+    margin:0 auto 9px;
+    border-radius:50%;
+    background:var(--ka-green-soft);
+    color:var(--ka-green-dark);
+    font-weight:900;
+}
+
+.ka-queue-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    border:1px solid var(--ka-border);
+    border-radius:15px;
+    padding:12px;
+    margin-bottom:8px;
+}
+
+.ka-queue-item b{display:block;font-size:13px}
+.ka-queue-item small{display:block;color:var(--ka-muted);font-size:12px;margin-top:2px}
+.ka-queue-item button{
+    min-height:34px;
+    border:0;
+    background:var(--ka-green);
+    color:#fff;
+    border-radius:11px;
+    padding:0 12px;
+    font-weight:800;
+}
+
+.ka-health-head{
+    border-top:1px solid var(--ka-border);
+    margin-top:14px;
+    padding-top:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.ka-health-head h3{
+    font-size:14px;
+    margin:0;
+    color:var(--ka-text);
+}
+
+.ka-health-head span{
+    color:var(--ka-green-dark);
+    font-size:12px;
+    font-weight:800;
+    display:flex;
+    align-items:center;
+    gap:6px;
+}
+
+.ka-health-head i{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:var(--ka-green);
+    display:inline-block;
+}
+
+.ka-health-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-top:12px;
+}
+
+.ka-health-grid div{
+    border:1px solid var(--ka-border);
+    border-radius:14px;
+    padding:12px;
+    text-align:center;
+}
+
+.ka-health-grid b{
+    display:block;
+    color:var(--ka-text);
+    font-size:21px;
+}
+
+.ka-health-grid small{
+    display:block;
+    color:var(--ka-muted);
+    font-size:11px;
+    margin-top:3px;
+}
+
+.ka-table-wrap{
+    overflow:auto;
+    border:1px solid var(--ka-border);
+    border-radius:16px;
+}
+
+.ka-table{
+    width:100%;
+    min-width:850px;
+    border-collapse:collapse;
+}
+
+.ka-table th{
+    text-align:left;
+    color:var(--ka-muted);
+    background:#fbfcfe;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    padding:10px 14px;
+    border-bottom:1px solid var(--ka-border);
+}
+
+.ka-table td{
+    padding:13px 14px;
+    border-bottom:1px solid var(--ka-border);
+    color:var(--ka-text);
+    font-size:13px;
+    vertical-align:middle;
+}
+
+.ka-table tr:last-child td{border-bottom:0}
+.ka-table tr:hover td{background:#fbfcfe}
+
+.ka-table b{display:block;font-size:13px}
+.ka-table small{display:block;color:var(--ka-muted);font-size:12px;margin-top:2px}
+
+.ka-type,
+.ka-status{
+    display:inline-flex;
+    border-radius:999px;
+    padding:4px 9px;
+    font-size:11px;
+    font-weight:850;
+}
+
+.ka-type.product{background:var(--ka-blue-soft);color:#0c447c}
+.ka-type.classified{background:var(--ka-amber-soft);color:#633806}
+.ka-status.approved,.ka-status.active,.ka-status.published{background:var(--ka-green-soft);color:var(--ka-green-dark)}
+.ka-status.pending{background:var(--ka-amber-soft);color:#633806}
+.ka-status.rejected,.ka-status.suspended{background:#fee2e2;color:#991b1b}
+
+.ka-link{
+    color:var(--ka-green);
+    font-weight:850;
+}
+
+/* Apply compact sidebar style to inner admin pages using existing sa markup */
+.sa-wrap{
+    background:#f5f7fb!important;
+    overflow-x:hidden!important;
+}
+
+.sa-shell{
+    width:min(1480px,calc(100% - 32px))!important;
+    max-width:1480px!important;
+    margin:24px auto 48px!important;
+    grid-template-columns:244px minmax(0,1fr)!important;
+    gap:18px!important;
+}
+
+.sa-sidebar{
+    background:#fff!important;
+    color:var(--ka-text)!important;
+    border:1px solid var(--ka-border)!important;
+    box-shadow:var(--ka-shadow)!important;
+    border-radius:24px!important;
+    padding:12px!important;
+    max-height:calc(100vh - 48px)!important;
+    overflow:auto!important;
+}
+
+.sa-sidebar .ka-brand,
+.sa-sidebar .sa-logo{
+    border-bottom:1px solid var(--ka-border)!important;
+    margin-bottom:10px!important;
+    padding:10px 8px 14px!important;
+}
+
+.sa-sidebar nav a,
+.sa-sidebar .ka-nav{
+    color:#667085!important;
+    min-height:38px!important;
+    border-radius:13px!important;
+    font-size:13px!important;
+    padding:8px 11px!important;
+}
+
+.sa-sidebar nav a.active,
+.sa-sidebar nav a:hover{
+    background:var(--ka-green-soft)!important;
+    color:var(--ka-green-dark)!important;
+}
+
+.sa-main{min-width:0!important;overflow:hidden!important}
+.sa-table-wrap{overflow:auto!important}
+.sa-table{min-width:850px!important}
+
+/* Responsive */
+@media(max-width:1100px){
+    .ka-dash{display:block}
+    .ka-sidebar{
+        width:100%;
+        min-height:auto;
+        border-right:0;
+        border-bottom:1px solid var(--ka-border);
+    }
+    .ka-side-scroll{max-height:none}
+    .ka-sidebar nav,.ka-side-scroll{
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:4px;
+    }
+    .ka-section{grid-column:1/-1}
+    .ka-main{padding:20px}
+    .ka-stat-grid{grid-template-columns:repeat(2,1fr)}
+    .ka-row-2{grid-template-columns:1fr}
+    .sa-shell{grid-template-columns:1fr!important}
+}
+
+@media(max-width:680px){
+    .ka-dash{
+        width:calc(100% - 16px);
+        margin:8px auto 28px;
+        border-radius:18px;
+    }
+    .ka-sidebar nav,.ka-side-scroll{grid-template-columns:1fr}
+    .ka-main{padding:16px}
+    .ka-topbar{display:block}
+    .ka-top-actions{margin-top:12px}
+    .ka-stat-grid,.ka-shortcuts,.ka-health-grid{grid-template-columns:1fr}
+    .ka-table{min-width:720px}
+}

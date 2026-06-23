@@ -1,0 +1,1 @@
+@extends('layouts.app') @section('content')<section class="section"><h1>Reviews</h1><p>Reviews module is enabled in this production release structure and ready for business rules/payment integration.</p></section>@endsection

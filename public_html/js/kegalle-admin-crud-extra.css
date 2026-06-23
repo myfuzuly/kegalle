@@ -1,0 +1,61 @@
+/* Admin CRUD premium refinements */
+.sa-form-wide{
+    grid-template-columns:1fr 120px 120px 120px 160px!important;
+}
+
+.sa-location-form{
+    grid-template-columns:210px 1fr 150px 110px 120px 150px!important;
+}
+
+.sa-check{
+    min-height:52px;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:0 12px;
+    border:1px solid #e6ebf2;
+    border-radius:15px;
+    background:#fff;
+    color:#334155;
+    font-weight:800;
+}
+
+.sa-check input{
+    width:18px;
+    height:18px;
+}
+
+.sa-edit-form{
+    display:grid;
+    gap:14px;
+    max-width:720px;
+}
+
+.sa-edit-form label{
+    font-weight:900;
+    color:#334155;
+}
+
+.sa-edit-form input,
+.sa-edit-form select{
+    height:52px;
+    border:1px solid #e6ebf2;
+    border-radius:15px;
+    padding:0 16px;
+}
+
+.sa-edit-form button{
+    height:54px;
+    border:0;
+    border-radius:15px;
+    background:#059669;
+    color:#fff;
+    font-weight:900;
+}
+
+@media(max-width:1100px){
+    .sa-form-wide,
+    .sa-location-form{
+        grid-template-columns:1fr!important;
+    }
+}

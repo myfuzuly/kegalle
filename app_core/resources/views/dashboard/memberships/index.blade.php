@@ -1,0 +1,1 @@
+@extends('layouts.app') @section('content')<section class="section"><h1>Membership</h1><p>Membership module is enabled in this production release structure and ready for business rules/payment integration.</p></section>@endsection

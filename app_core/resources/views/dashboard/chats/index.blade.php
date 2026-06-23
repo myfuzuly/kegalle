@@ -1,0 +1,1 @@
+@extends('layouts.app') @section('content')<section class="section"><h1>Chat</h1><p>Chat module is enabled in this production release structure and ready for business rules/payment integration.</p></section>@endsection

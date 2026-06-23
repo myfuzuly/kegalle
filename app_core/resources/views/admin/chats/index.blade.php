@@ -1,0 +1,1 @@
+@extends('layouts.admin') @section('content')<section class="section"><h1>Chats</h1><p>Chats management area.</p>@isset($items) @foreach($items as $item)<div class="row"><span>#{$item->id}</span><span>{$item->status ?? ''}</span></div>@endforeach @endisset</section>@endsection

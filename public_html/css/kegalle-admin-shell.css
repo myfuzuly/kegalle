@@ -1,0 +1,695 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&display=swap');
+/* =========================================================
+   Dedicated Kegalle Super Admin Shell
+   No public header/footer. Independent admin application.
+   ========================================================= */
+
+:root{
+    --ka-bg:#f5f7fb;
+    --ka-surface:#ffffff;
+    --ka-text:#101828;
+    --ka-muted:#667085;
+    --ka-border:#e7ecf3;
+    --ka-green:#1B5E20;
+    --ka-green-dark:#155016;
+    --ka-green-soft:#E8F5E9;
+    --ka-red:#dc2626;
+    --ka-amber:#f59e0b;
+    --ka-radius:18px;
+    --ka-shadow:0 14px 40px rgba(15,23,42,.055);
+}
+
+*{box-sizing:border-box}
+
+html,
+body{
+    margin:0;
+    min-height:100%;
+    overflow-x:hidden;
+}
+
+a{color:inherit;text-decoration:none}
+
+.ka-admin-body{
+    background:var(--ka-bg);
+    color:var(--ka-text);
+    font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+}
+
+.ka-shell{
+    min-height:100vh;
+    display:grid;
+    grid-template-columns:244px minmax(0,1fr);
+    background:var(--ka-bg);
+}
+
+/* Sidebar */
+.ka-sidebar{
+    background:#fff;
+    border-right:1px solid var(--ka-border);
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+    position:sticky;
+    top:0;
+    align-self:start;
+}
+
+.ka-brand{
+    min-height:76px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:18px;
+    border-bottom:1px solid var(--ka-border);
+}
+
+.ka-brand-logo{
+    width:38px;
+    height:38px;
+    border-radius:11px;
+    display:grid;
+    place-items:center;
+    background:var(--ka-green);
+    color:#fff;
+    font-weight:900;
+    text-decoration:none;
+}
+
+.ka-brand strong{
+    display:block;
+    font-size:15px;
+    line-height:1.1;
+}
+
+.ka-brand small{
+    display:block;
+    font-size:12px;
+    color:var(--ka-muted);
+    margin-top:3px;
+}
+
+.ka-nav-group{
+    flex:1;
+    overflow:auto;
+    padding:10px 0;
+}
+
+.ka-nav-title{
+    padding:14px 14px 6px;
+    color:#98a2b3;
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+}
+
+.ka-nav{
+    min-height:38px;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    margin:2px 8px;
+    padding:8px 11px;
+    border-radius:13px;
+    color:#667085;
+    font-size:13px;
+    font-weight:750;
+    text-decoration:none;
+    transition:.16s ease;
+}
+
+.ka-nav span{
+    width:20px;
+    text-align:center;
+}
+
+.ka-nav:hover{
+    background:#f5f7fb;
+    color:#101828;
+}
+
+.ka-nav.active{
+    background:var(--ka-green-soft);
+    color:var(--ka-green-dark);
+}
+
+.ka-sidebar-footer{
+    padding:12px;
+    border-top:1px solid var(--ka-border);
+}
+
+.ka-sidebar-footer a{
+    display:flex;
+    align-items:center;
+    min-height:38px;
+    padding:8px 11px;
+    color:#667085;
+    font-size:13px;
+    font-weight:750;
+    text-decoration:none;
+    border-radius:13px;
+}
+
+.ka-sidebar-footer a:hover{
+    background:#f5f7fb;
+}
+
+/* Workspace */
+.ka-workspace{
+    min-width:0;
+    height:100vh;
+    overflow:auto;
+}
+
+.ka-admin-topbar{
+    min-height:92px;
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--ka-border);
+    position:sticky;
+    top:0;
+    z-index:20;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    padding:18px 28px;
+}
+
+.ka-breadcrumb{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    font-size:12px;
+    color:var(--ka-muted);
+    margin-bottom:4px;
+}
+
+.ka-breadcrumb a{
+    color:var(--ka-green-dark);
+    font-weight:800;
+    text-decoration:none;
+}
+
+.ka-admin-topbar h1{
+    margin:0;
+    font-size:24px;
+    line-height:1.15;
+    letter-spacing:-.03em;
+}
+
+.ka-admin-topbar p{
+    margin:4px 0 0;
+    color:var(--ka-muted);
+    font-size:13px;
+}
+
+.ka-top-actions{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    flex-wrap:wrap;
+}
+
+.ka-top-actions form{
+    margin:0;
+}
+
+.ka-btn{
+    min-height:38px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:0 16px;
+    border-radius:13px;
+    border:1px solid var(--ka-border);
+    background:#fff;
+    color:var(--ka-text);
+    text-decoration:none;
+    font-size:13px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.ka-btn-primary{
+    background:var(--ka-green);
+    border-color:var(--ka-green);
+    color:#fff;
+}
+
+.ka-btn-light{
+    background:#fff;
+}
+
+.ka-btn-danger{
+    background:#fff;
+    color:#b42318;
+}
+
+.ka-content{
+    padding:24px 28px 56px;
+}
+
+.ka-alert{
+    margin:18px 28px 0;
+    background:var(--ka-green-soft);
+    color:var(--ka-green-dark);
+    border:1px solid #b7ead8;
+    border-radius:14px;
+    padding:12px 14px;
+    font-size:13px;
+    font-weight:750;
+}
+
+.ka-alert-danger{
+    background:#fee2e2;
+    color:#991b1b;
+    border-color:#fecaca;
+}
+
+/* Dashboard */
+.ka-stat-grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:14px;
+    margin-bottom:22px;
+}
+
+.ka-stat-card{
+    background:#fff;
+    border:1px solid var(--ka-border);
+    border-radius:20px;
+    padding:17px 18px;
+    box-shadow:var(--ka-shadow);
+}
+
+.ka-stat-card span{
+    display:block;
+    color:var(--ka-muted);
+    font-size:11px;
+    font-weight:900;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    margin-bottom:8px;
+}
+
+.ka-stat-card strong{
+    display:block;
+    color:var(--ka-text);
+    font-size:26px;
+    line-height:1.1;
+    letter-spacing:-.035em;
+}
+
+.ka-stat-card small{
+    display:block;
+    margin-top:8px;
+    color:var(--ka-muted);
+    font-size:12px;
+}
+
+.ka-stat-highlight{
+    border-color:#7ed8bd;
+}
+
+.ka-stat-highlight strong{
+    color:var(--ka-green-dark);
+}
+
+.ka-grid-2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    margin-bottom:22px;
+}
+
+.ka-panel{
+    background:#fff;
+    border:1px solid var(--ka-border);
+    border-radius:22px;
+    padding:18px;
+    box-shadow:var(--ka-shadow);
+    min-width:0;
+}
+
+.ka-panel-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:14px;
+}
+
+.ka-panel-head h2{
+    margin:0;
+    color:var(--ka-text);
+    font-size:16px;
+    font-weight:850;
+}
+
+.ka-panel-head span,
+.ka-panel-head a{
+    color:var(--ka-green);
+    font-size:12px;
+    font-weight:850;
+    text-decoration:none;
+}
+
+.ka-shortcut-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:9px;
+}
+
+.ka-shortcut-grid a{
+    display:flex;
+    align-items:flex-start;
+    gap:11px;
+    padding:12px;
+    border:1px solid var(--ka-border);
+    border-radius:15px;
+    color:var(--ka-text);
+    text-decoration:none;
+    transition:.16s ease;
+}
+
+.ka-shortcut-grid a:hover{
+    background:#f8fafc;
+    transform:translateY(-2px);
+}
+
+.ka-shortcut-grid i{
+    width:34px;
+    height:34px;
+    display:grid;
+    place-items:center;
+    border-radius:11px;
+    background:var(--ka-green-soft);
+    font-style:normal;
+    flex:0 0 34px;
+}
+
+.ka-shortcut-grid b{
+    display:block;
+    font-size:13px;
+    margin-bottom:2px;
+}
+
+.ka-shortcut-grid small{
+    color:var(--ka-muted);
+    font-size:12px;
+}
+
+.ka-empty-state{
+    text-align:center;
+    padding:26px 0;
+    color:var(--ka-muted);
+}
+
+.ka-empty-state b{
+    width:38px;
+    height:38px;
+    display:grid;
+    place-items:center;
+    margin:0 auto 9px;
+    border-radius:50%;
+    background:var(--ka-green-soft);
+    color:var(--ka-green-dark);
+}
+
+.ka-queue-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    border:1px solid var(--ka-border);
+    border-radius:15px;
+    padding:12px;
+    margin-bottom:8px;
+}
+
+.ka-queue-row b{
+    display:block;
+    font-size:13px;
+}
+
+.ka-queue-row small{
+    display:block;
+    color:var(--ka-muted);
+    font-size:12px;
+    margin-top:2px;
+}
+
+.ka-queue-row button{
+    min-height:34px;
+    border:0;
+    background:var(--ka-green);
+    color:#fff;
+    border-radius:11px;
+    padding:0 12px;
+    font-weight:800;
+}
+
+.ka-health{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    border-top:1px solid var(--ka-border);
+    padding-top:14px;
+    margin-top:14px;
+}
+
+.ka-health div{
+    border:1px solid var(--ka-border);
+    border-radius:14px;
+    padding:12px;
+    text-align:center;
+}
+
+.ka-health strong{
+    display:block;
+    color:var(--ka-text);
+    font-size:21px;
+}
+
+.ka-health span{
+    display:block;
+    color:var(--ka-muted);
+    font-size:11px;
+    margin-top:3px;
+}
+
+/* Common tables/forms for admin CRUD pages */
+.ka-table-wrap,
+.sa-table-wrap{
+    overflow:auto;
+    border:1px solid var(--ka-border);
+    border-radius:16px;
+    background:#fff;
+}
+
+.ka-table,
+.sa-table{
+    width:100%;
+    min-width:850px;
+    border-collapse:collapse;
+}
+
+.ka-table th,
+.sa-table th{
+    text-align:left;
+    color:var(--ka-muted);
+    background:#fbfcfe;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    padding:10px 14px;
+    border-bottom:1px solid var(--ka-border);
+}
+
+.ka-table td,
+.sa-table td{
+    padding:13px 14px;
+    border-bottom:1px solid var(--ka-border);
+    color:var(--ka-text);
+    font-size:13px;
+    vertical-align:middle;
+}
+
+.ka-table tr:last-child td,
+.sa-table tr:last-child td{
+    border-bottom:0;
+}
+
+.ka-table b,
+.sa-table b{
+    display:block;
+    font-size:13px;
+}
+
+.ka-table small,
+.sa-table small{
+    display:block;
+    color:var(--ka-muted);
+    font-size:12px;
+    margin-top:2px;
+}
+
+.ka-badge,
+.ka-status,
+.sa-status{
+    display:inline-flex;
+    border-radius:999px;
+    padding:4px 9px;
+    font-size:11px;
+    font-weight:850;
+    background:#e6f1fb;
+    color:#0c447c;
+}
+
+.ka-status.approved,
+.ka-status.active,
+.ka-status.published,
+.sa-status.approved,
+.sa-status.active,
+.sa-status.published{
+    background:var(--ka-green-soft);
+    color:var(--ka-green-dark);
+}
+
+.ka-status.pending,
+.sa-status.pending{
+    background:#faeeda;
+    color:#633806;
+}
+
+.ka-status.rejected,
+.ka-status.suspended,
+.sa-status.rejected,
+.sa-status.suspended{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.ka-link{
+    color:var(--ka-green);
+    font-weight:850;
+}
+
+/* Compatibility: make old admin pages look inside new shell when converted */
+.sa-wrap{
+    background:transparent!important;
+    padding:0!important;
+}
+
+.sa-shell{
+    width:100%!important;
+    max-width:100%!important;
+    margin:0!important;
+    display:block!important;
+    padding:0!important;
+}
+
+.sa-shell > .ka-sidebar,
+.sa-shell > .sa-sidebar{
+    display:none!important;
+}
+
+.sa-main{
+    min-width:0!important;
+    overflow:hidden!important;
+}
+
+.sa-card{
+    background:#fff!important;
+    border:1px solid var(--ka-border)!important;
+    border-radius:22px!important;
+    padding:18px!important;
+    box-shadow:var(--ka-shadow)!important;
+}
+
+.sa-head{
+    display:flex!important;
+    justify-content:space-between!important;
+    gap:16px!important;
+    margin-bottom:18px!important;
+}
+
+.sa-head h1{
+    font-size:24px!important;
+}
+
+/* Responsive */
+@media(max-width:1100px){
+    .ka-shell{
+        grid-template-columns:1fr;
+    }
+
+    .ka-sidebar{
+        position:relative;
+        min-height:auto;
+        border-right:0;
+        border-bottom:1px solid var(--ka-border);
+    }
+
+    .ka-nav-group{
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:4px;
+        padding:10px;
+    }
+
+    .ka-nav-title{
+        grid-column:1/-1;
+    }
+
+    .ka-sidebar-footer{
+        display:none;
+    }
+
+    .ka-workspace{
+        height:auto;
+        min-height:100vh;
+    }
+
+    .ka-stat-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .ka-grid-2{
+        grid-template-columns:1fr;
+    }
+}
+
+@media(max-width:680px){
+    .ka-admin-topbar{
+        display:block;
+        padding:16px;
+    }
+
+    .ka-top-actions{
+        margin-top:12px;
+    }
+
+    .ka-content{
+        padding:16px 12px 40px;
+    }
+
+    .ka-nav-group{
+        grid-template-columns:1fr;
+    }
+
+    .ka-stat-grid,
+    .ka-shortcut-grid,
+    .ka-health{
+        grid-template-columns:1fr;
+    }
+
+    .ka-table,
+    .sa-table{
+        min-width:720px;
+    }
+}
+
+h1,h2,h3,.ka-admin-topbar h1,.ka-card-head h2,.sa-card-head h2,.ka-brand strong{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800}

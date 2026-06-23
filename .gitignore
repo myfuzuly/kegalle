@@ -1,0 +1,31 @@
+# Dependencies
+app_core/vendor/
+app_core/node_modules/
+
+# Environment / secrets
+app_core/.env
+app_core/.env.*
+!app_core/.env.example
+
+# Laravel runtime/cache
+app_core/storage/framework/cache/*
+app_core/storage/framework/sessions/*
+app_core/storage/framework/views/*
+app_core/storage/framework/testing/*
+app_core/bootstrap/cache/*.php
+!app_core/storage/framework/cache/.gitignore
+!app_core/storage/framework/sessions/.gitignore
+!app_core/storage/framework/views/.gitignore
+!app_core/storage/framework/testing/.gitignore
+app_core/storage/logs/*.log
+
+# User-uploaded content (kept on server, not in repo)
+app_core/storage/app/public/*
+!app_core/storage/app/public/.gitkeep
+
+# OS/editor cruft
+.DS_Store
+Thumbs.db
+
+# Stray archives accidentally placed in app_core
+app_core/*.zip
