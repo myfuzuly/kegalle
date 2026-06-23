@@ -15,6 +15,11 @@
     <div id="createPostEditor" style="background:#fff;min-height:200px"></div>
     <textarea name="body" id="createPostBody" style="display:none"></textarea>
 </div>
+<div style="width:100%;border-top:1px solid #E5E8EF;margin-top:14px;padding-top:14px">
+    <div style="font-weight:700;font-size:13px;margin-bottom:10px;color:#0D1B2A">🔍 SEO Settings (optional — falls back to title/excerpt if left blank)</div>
+    <input name="meta_title" placeholder="SEO meta title (~50-60 characters ideal)" style="width:100%;margin-bottom:8px" maxlength="180">
+    <textarea name="meta_description" placeholder="SEO meta description (~150-160 characters ideal)" maxlength="320" style="width:100%;min-height:60px;border:1px solid #E5E8EF;border-radius:8px;padding:10px;font-family:inherit"></textarea>
+</div>
 <button>Add Article</button>
 </form>
 </section>

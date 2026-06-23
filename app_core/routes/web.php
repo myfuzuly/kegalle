@@ -156,10 +156,25 @@ Route::prefix('admin')->middleware('auth')->group(function () {
 
     Route::get('/memberships', [MembershipController::class, 'index'])->name('admin.memberships.index');
     Route::post('/memberships', [MembershipController::class, 'store'])->name('admin.memberships.store');
+    Route::get('/memberships/{membership}/edit', [MembershipController::class, 'edit'])->name('admin.memberships.edit');
+    Route::put('/memberships/{membership}', [MembershipController::class, 'update'])->name('admin.memberships.update');
+    Route::post('/memberships/{membership}/toggle', [MembershipController::class, 'toggle'])->name('admin.memberships.toggle');
+    Route::delete('/memberships/{membership}', [MembershipController::class, 'destroy'])->name('admin.memberships.destroy');
 
     Route::get('/payments', [PaymentController::class, 'index'])->name('admin.payments.index');
+    Route::post('/payments/{payment}/status', [PaymentController::class, 'updateStatus'])->name('admin.payments.status');
+    Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])->name('admin.payments.destroy');
+
     Route::get('/chats', [ChatController::class, 'index'])->name('admin.chats.index');
+    Route::get('/chats/{chat}', [ChatController::class, 'show'])->name('admin.chats.show');
+    Route::post('/chats/{chat}/close', [ChatController::class, 'close'])->name('admin.chats.close');
+    Route::delete('/chats/{chat}', [ChatController::class, 'destroy'])->name('admin.chats.destroy');
+
     Route::get('/reviews', [ReviewController::class, 'index'])->name('admin.reviews.index');
+    Route::post('/reviews/{review}/approve', [ReviewController::class, 'approve'])->name('admin.reviews.approve');
+    Route::post('/reviews/{review}/reject', [ReviewController::class, 'reject'])->name('admin.reviews.reject');
+    Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('admin.reviews.destroy');
+
     Route::get('/settings', [SettingController::class, 'index'])->name('admin.settings.index');
     Route::post('/settings', [SettingController::class, 'update'])->name('admin.settings.update');
 });

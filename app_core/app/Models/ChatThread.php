@@ -12,4 +12,19 @@ class ChatThread extends Model
     {
         return $this->hasMany(ChatMessage::class, 'thread_id');
     }
+
+    public function buyer()
+    {
+        return $this->belongsTo(User::class, 'buyer_id');
+    }
+
+    public function seller()
+    {
+        return $this->belongsTo(User::class, 'seller_id');
+    }
+
+    public function listing()
+    {
+        return $this->belongsTo(Listing::class);
+    }
 }

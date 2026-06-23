@@ -26,6 +26,8 @@ class PostManagementController extends Controller
             'body' => 'nullable|string',
             'image' => 'nullable|image|max:4096',
             'is_published' => 'nullable|boolean',
+            'meta_title' => 'nullable|string|max:180',
+            'meta_description' => 'nullable|string|max:320',
         ]);
 
         $path = null;
@@ -41,6 +43,8 @@ class PostManagementController extends Controller
             'image' => $path,
             'is_published' => $request->boolean('is_published', true),
             'published_at' => $request->boolean('is_published', true) ? now() : null,
+            'meta_title' => $data['meta_title'] ?? null,
+            'meta_description' => $data['meta_description'] ?? null,
         ]);
 
         return back()->with('success', 'Article created successfully.');
@@ -60,6 +64,8 @@ class PostManagementController extends Controller
             'body' => 'nullable|string',
             'image' => 'nullable|image|max:4096',
             'is_published' => 'nullable|boolean',
+            'meta_title' => 'nullable|string|max:180',
+            'meta_description' => 'nullable|string|max:320',
         ]);
 
         $path = $post->image;
@@ -78,6 +84,8 @@ class PostManagementController extends Controller
             'image' => $path,
             'is_published' => $isPublished,
             'published_at' => $isPublished && ! $wasPublished ? now() : ($isPublished ? $post->published_at ?? now() : $post->published_at),
+            'meta_title' => $data['meta_title'] ?? null,
+            'meta_description' => $data['meta_description'] ?? null,
         ]);
 
         return redirect('/admin/posts')->with('success', 'Article updated successfully.');
