@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-@section('title','Kegalle - Buy, Sell & Discover')
+@section('title','Kegalle Marketplace — Buy, Sell & Discover Locally in Kegalle')
+@section('meta_description','Buy and sell products, vehicles, property, electronics and more in Kegalle, Sri Lanka. Browse trusted local stores, classified ads, and verified sellers — all in one place.')
 
 @section('content')
 @php

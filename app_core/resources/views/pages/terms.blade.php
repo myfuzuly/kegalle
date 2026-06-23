@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('title','Terms & Conditions · Kegalle Marketplace')
+@section('meta_description','Read the Terms & Conditions for using Kegalle Marketplace.')
 @section('content')
 <section class="cats-hero"><div class="cats-hero-inner"><h1>Terms & Conditions</h1><p>Please read these terms carefully before using Kegalle Marketplace.</p></div></section>
 <div class="container" style="padding-top:32px;padding-bottom:48px">

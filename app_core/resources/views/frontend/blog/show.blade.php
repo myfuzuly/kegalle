@@ -1,15 +1,22 @@
 @extends('layouts.app')
 
-@section('title', ($post->title ?? 'Article').' · Kegalle Marketplace')
-
-@section('content')
 @php
     $gradients = ['linear-gradient(135deg,#1565C0,#0D47A1)','linear-gradient(135deg,#6A1B9A,#4A148C)','linear-gradient(135deg,#E65100,#BF360C)'];
+    $postDesc = $post->excerpt ?? \Illuminate\Support\Str::limit(strip_tags($post->body ?? ''), 155);
+    $postImage = $post->image ? asset('storage/'.ltrim($post->image,'/')) : null;
 @endphp
+
+@section('title', ($post->title ?? 'Article').' · Kegalle Marketplace Blog')
+@section('meta_description', $postDesc)
+@if($postImage)
+@section('og_image', $postImage)
+@endif
+
+@section('content')
 
 <div class="blog-detail-hero">
     <div class="blog-detail-hero-inner">
-        <div class="blog-detail-title">{{ $post->title }}</div>
+        <h1 class="blog-detail-title">{{ $post->title }}</h1>
         <div class="blog-detail-meta">
             <div class="blog-detail-meta-item">
                 <div style="width:30px;height:30px;border-radius:50%;background:var(--k-primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">K</div>
@@ -106,4 +113,22 @@
         </div>
     </div>
 </div>
+
+@push('schema')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": {!! json_encode($post->title) !!},
+    "description": {!! json_encode($postDesc) !!},
+    @if($postImage)
+    "image": {!! json_encode($postImage) !!},
+    @endif
+    "datePublished": {!! json_encode(optional($post->published_at)->toIso8601String()) !!},
+    "author": {"@type": "Organization", "name": "Kegalle Marketplace"},
+    "publisher": {"@type": "Organization", "name": "Kegalle Marketplace", "logo": {"@type": "ImageObject", "url": {!! json_encode(asset('images/kegalle-placeholder.png')) !!}}},
+    "mainEntityOfPage": {!! json_encode(url()->current()) !!}
+}
+</script>
+@endpush
 @endsection

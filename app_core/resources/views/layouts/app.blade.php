@@ -4,13 +4,41 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<title>@yield('title','Kegalle Marketplace')</title>
-<meta name="description" content="Kegalle Marketplace — Buy, Sell & Discover locally">
+@php
+    $seoTitle = trim($__env->yieldContent('title')) ?: 'Kegalle Marketplace — Buy, Sell & Discover Locally';
+    $seoDescription = trim($__env->yieldContent('meta_description')) ?: 'Kegalle Marketplace is the local online marketplace for the Kegalle district — buy, sell and discover products, services, stores and classified ads near you.';
+    $seoImage = trim($__env->yieldContent('og_image')) ?: asset('images/kegalle-hero-tower.jpg');
+    $seoCanonical = trim($__env->yieldContent('canonical')) ?: request()->url();
+    $seoNoindex = trim($__env->yieldContent('noindex')) === '1';
+@endphp
+<title>{{ $seoTitle }}</title>
+<meta name="description" content="{{ $seoDescription }}">
+<link rel="canonical" href="{{ $seoCanonical }}">
+@if($seoNoindex)
+<meta name="robots" content="noindex,follow">
+@endif
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kegalle Marketplace">
+<meta property="og:title" content="{{ $seoTitle }}">
+<meta property="og:description" content="{{ $seoDescription }}">
+<meta property="og:url" content="{{ $seoCanonical }}">
+<meta property="og:image" content="{{ $seoImage }}">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ $seoTitle }}">
+<meta name="twitter:description" content="{{ $seoDescription }}">
+<meta name="twitter:image" content="{{ $seoImage }}">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="icon" href="/images/kegalle-placeholder.png">
 <link rel="stylesheet" href="/css/kurulla-main.css?v=16">
+@stack('schema')
 @stack('styles')
 </head>
 <body>
@@ -121,6 +149,30 @@
 </footer>
 
 <a href="https://wa.me/94771234567" target="_blank" style="position:fixed;right:22px;bottom:22px;z-index:1200;display:inline-flex;align-items:center;padding:0 18px;height:48px;border-radius:999px;background:#25D366;color:#fff;font-weight:700;text-decoration:none;box-shadow:0 16px 36px rgba(37,211,102,.3)">WhatsApp</a>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Kegalle Marketplace",
+    "url": "{{ url('/') }}",
+    "logo": "{{ asset('images/kegalle-placeholder.png') }}",
+    "sameAs": []
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Kegalle Marketplace",
+    "url": "{{ url('/') }}",
+    "potentialAction": {
+        "@type": "SearchAction",
+        "target": "{{ url('/listings') }}?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+    }
+}
+</script>
 
 <script>
 (function () {

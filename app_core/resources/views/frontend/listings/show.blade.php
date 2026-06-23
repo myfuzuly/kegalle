@@ -1,8 +1,5 @@
 @extends('layouts.app')
 
-@section('title', ($listing->title ?? 'Listing').' · Kegalle Marketplace')
-
-@section('content')
 @php
     $images = $listing->images ?? collect();
     $hasImages = $images->count() > 0;
@@ -13,7 +10,23 @@
     $price = ($listing->price ?? 0) > 0 ? 'LKR '.number_format($listing->price) : 'Contact Seller';
     $whatsappNumber = preg_replace('/[^0-9]/', '', optional($listing->store)->whatsapp ?? optional($listing->store)->phone ?? '94771234567');
     $callNumber = optional($listing->store)->phone ?? optional($listing->user)->phone ?? '+94771234567';
+    $seoAction = match(strtolower($listing->ad_type ?? 'sale')) {
+        'rent' => 'for Rent',
+        'wanted' => 'Wanted',
+        'free' => 'Free',
+        'exchange' => 'for Exchange',
+        default => 'for Sale',
+    };
+    $seoDesc = \Illuminate\Support\Str::limit(strip_tags($listing->description ?? ''), 155) ?: ($listing->title.' '.$seoAction.' in '.$location.' — '.$price.'. Browse on Kegalle Marketplace.');
 @endphp
+
+@section('title', ($listing->title ?? 'Listing').' '.$seoAction.' in '.$location.' — '.$price.' · Kegalle Marketplace')
+@section('meta_description', $seoDesc)
+@if($mainImageUrl)
+@section('og_image', $mainImageUrl)
+@endif
+
+@section('content')
 
 <div class="container" style="padding-top:12px;padding-bottom:40px">
     <div class="k-breadcrumb">
@@ -162,4 +175,36 @@
         </div>
     @endif
 </div>
+
+@push('schema')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": {!! json_encode($listing->title) !!},
+    "description": {!! json_encode($seoDesc) !!},
+    @if($mainImageUrl)
+    "image": {!! json_encode($mainImageUrl) !!},
+    @endif
+    "offers": {
+        "@type": "Offer",
+        "priceCurrency": "LKR",
+        "price": "{{ (float) ($listing->price ?? 0) }}",
+        "availability": "https://schema.org/InStock",
+        "url": {!! json_encode(url()->current()) !!}
+    }
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": {!! json_encode(url('/')) !!}},
+        {"@type": "ListItem", "position": 2, "name": "All Ads", "item": {!! json_encode(url('/listings')) !!}},
+        {"@type": "ListItem", "position": 3, "name": {!! json_encode($listing->title) !!}, "item": {!! json_encode(url()->current()) !!}}
+    ]
+}
+</script>
+@endpush
 @endsection

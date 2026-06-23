@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('title','How to Sell · Kegalle Marketplace')
+@section('meta_description','Learn how to post your first ad and start selling to local buyers on Kegalle Marketplace.')
 @section('content')
 <section class="cats-hero"><div class="cats-hero-inner"><h1>How to Sell</h1><p>Post your first ad and start reaching local buyers today.</p></div></section>
 <div class="container" style="padding-top:32px;padding-bottom:48px">

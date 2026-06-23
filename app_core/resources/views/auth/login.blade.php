@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('title','Login · Kegalle Marketplace')
+@section('meta_description','Log in to your Kegalle Marketplace account to manage your listings, stores, and messages.')
 @section('content')
 <div class="k-auth-page">
     <div class="k-auth-main">

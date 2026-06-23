@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title','Classified Ads · Kegalle Marketplace')
+@section('title','Classified Ads in Kegalle — Buy, Sell, Rent & Exchange · Kegalle Marketplace')
+@section('meta_description','Post and browse free personal classified ads in Kegalle — buy, sell, rent or exchange items quickly with local buyers and sellers near you.')
+@section('canonical', url('/classified'))
 
 @section('content')
 @php

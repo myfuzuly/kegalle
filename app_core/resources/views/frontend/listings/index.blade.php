@@ -1,9 +1,13 @@
 @extends('layouts.app')
 
-@section('title','All Ads · Kegalle Marketplace')
+@section('title','All Ads — Browse Classifieds & Products in Kegalle · Kegalle Marketplace')
+@section('meta_description','Browse all classified ads and products for sale in Kegalle and nearby towns. Filter by category, location and price to find exactly what you need.')
+@section('canonical', url('/listings'))
 
 @section('content')
 <div class="container" style="padding-top:28px;padding-bottom:40px">
+    <h1 style="font-family:var(--font-display);font-size:24px;font-weight:800;margin-bottom:4px">All Ads in Kegalle</h1>
+    <p style="color:var(--k-text-secondary);font-size:14px;margin-bottom:20px">Browse classifieds and products from trusted local sellers across the Kegalle district.</p>
     <div class="k-listing-page-grid">
         <!-- Filter Sidebar -->
         <div class="k-filter-sidebar">

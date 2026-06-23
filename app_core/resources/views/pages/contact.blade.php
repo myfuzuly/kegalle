@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('title','Contact Us · Kegalle Marketplace')
+@section('meta_description','Get in touch with the Kegalle Marketplace team — send us a message, call, or chat with us on WhatsApp.')
 @section('content')
 <section class="cats-hero"><div class="cats-hero-inner"><h1>Contact Us</h1><p>Questions, feedback, or need help? We're here for you.</p></div></section>
 <div class="container" style="padding-top:32px;padding-bottom:48px">

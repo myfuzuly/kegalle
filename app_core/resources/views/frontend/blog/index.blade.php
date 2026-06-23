@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title','Blog · Kegalle Marketplace')
+@section('title','Kegalle Marketplace Blog — Tips, Guides & Local Insights')
+@section('meta_description','Tips, guides and local insights for buyers and sellers in Kegalle — travel guides, safety tips, and advice to help you buy and sell smarter.')
+@section('canonical', url('/blog'))
 
 @section('content')
 @php

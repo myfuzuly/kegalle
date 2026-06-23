@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title','All Categories · Kegalle Marketplace')
+@section('title','Browse All Categories · Kegalle Marketplace')
+@section('meta_description','Explore listings by category in Kegalle — electronics, vehicles, property, fashion, jobs, services and more. Find exactly what you need, fast.')
+@section('canonical', url('/categories'))
 
 @section('content')
 @php

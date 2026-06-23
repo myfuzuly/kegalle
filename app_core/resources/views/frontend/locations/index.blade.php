@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title','All Locations · Kegalle Marketplace')
+@section('title','Browse Listings by Location · Kegalle Marketplace')
+@section('meta_description','Find listings near you across the Kegalle district — Kegalle, Mawanella, Ruwanwella, Aranayake, Warakapola and more towns.')
+@section('canonical', url('/locations'))
 
 @section('content')
 @php

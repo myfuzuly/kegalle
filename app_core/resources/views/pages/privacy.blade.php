@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('title','Privacy Policy · Kegalle Marketplace')
+@section('meta_description','Read the Kegalle Marketplace Privacy Policy to understand how we collect, use, and protect your information.')
 @section('content')
 <section class="cats-hero"><div class="cats-hero-inner"><h1>Privacy Policy</h1><p>How we collect, use, and protect your information.</p></div></section>
 <div class="container" style="padding-top:32px;padding-bottom:48px">

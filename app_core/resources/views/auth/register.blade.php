@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('title','Create Account · Kegalle Marketplace')
+@section('meta_description','Create a free Kegalle Marketplace account to start buying, selling, or listing your store in the Kegalle district today.')
 @section('content')
 <div class="k-auth-page">
     <div class="k-auth-main">

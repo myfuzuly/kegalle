@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
-@section('title','All Stores · Kegalle Marketplace')
+@section('title','All Stores — Verified Local Businesses in Kegalle · Kegalle Marketplace')
+@section('meta_description','Discover trusted, verified stores and businesses across Kegalle, Mawanella, Ruwanwella and beyond. Browse local shops and contact sellers directly.')
+@section('canonical', url('/stores'))
 
 @section('content')
 <div class="k-stores-header">

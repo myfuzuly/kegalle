@@ -1,12 +1,18 @@
 @extends('layouts.app')
 
-@section('title', ($store->name ?? 'Store').' · Kegalle Marketplace')
-
-@section('content')
 @php
     $logo = !empty($store->logo) ? asset('storage/'.ltrim($store->logo,'/')) : null;
     $banner = !empty($store->banner) ? asset('storage/'.ltrim($store->banner,'/')) : (!empty($store->cover_image) ? asset('storage/'.ltrim($store->cover_image,'/')) : null);
+    $storeDesc = \Illuminate\Support\Str::limit(strip_tags($store->description ?? ''), 155) ?: ($store->name.' — verified store on Kegalle Marketplace with '.($store->listings_count ?? 0).'+ products. Browse and contact directly.');
 @endphp
+
+@section('title', $store->name.' — Verified Store in '.($store->city ?? 'Kegalle').' · Kegalle Marketplace')
+@section('meta_description', $storeDesc)
+@if($logo)
+@section('og_image', $logo)
+@endif
+
+@section('content')
 
 <div class="container"><div class="k-breadcrumb"><a href="/">Home</a><span>›</span><a href="/stores">Stores</a><span>›</span><span class="current">{{ $store->name }}</span></div></div>
 
@@ -29,10 +35,10 @@
             @endif
         </div>
         <div class="k-store-profile-info">
-            <div class="k-store-profile-name">
+            <h1 class="k-store-profile-name">
                 {{ $store->name }}
                 <span class="k-verified-badge">✓ Verified Store</span>
-            </div>
+            </h1>
             <div class="k-stars">★★★★★ (4.8 · 128 reviews)</div>
             <div class="k-store-profile-meta">
                 <div class="k-store-profile-meta-item">⊛ {{ $store->listings_count ?? 0 }}+ Products</div>
@@ -155,4 +161,39 @@
         </div>
     </div>
 </div>
+
+@push('schema')
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": {!! json_encode($store->name) !!},
+    "description": {!! json_encode($storeDesc) !!},
+    @if($logo)
+    "image": {!! json_encode($logo) !!},
+    @endif
+    "address": {
+        "@type": "PostalAddress",
+        "addressLocality": {!! json_encode($store->city ?? 'Kegalle') !!},
+        "addressRegion": "Sabaragamuwa",
+        "addressCountry": "LK"
+    },
+    @if($store->phone)
+    "telephone": {!! json_encode($store->phone) !!},
+    @endif
+    "url": {!! json_encode(url()->current()) !!}
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Home", "item": {!! json_encode(url('/')) !!}},
+        {"@type": "ListItem", "position": 2, "name": "Stores", "item": {!! json_encode(url('/stores')) !!}},
+        {"@type": "ListItem", "position": 3, "name": {!! json_encode($store->name) !!}, "item": {!! json_encode(url()->current()) !!}}
+    ]
+}
+</script>
+@endpush
 @endsection
