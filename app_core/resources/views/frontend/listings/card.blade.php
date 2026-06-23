@@ -5,7 +5,14 @@
     $location = optional($listing->locationModel)->name ?? $listing->location ?? 'Kegalle';
     $price = ($listing->price ?? 0) > 0 ? 'LKR '.number_format($listing->price) : 'Contact Seller';
     $placeholderIcon = optional($listing->category)->icon ?: '🛍️';
-    $palette = ['#E8F5E9','#E3F2FD','#FCE4EC','#FFF8E1','#F3E8FD','#E0F2F1'];
+    $palette = [
+        'linear-gradient(135deg,#E8F5E9 0%,#C8E6C9 100%)',
+        'linear-gradient(135deg,#E3F2FD 0%,#BBDEFB 100%)',
+        'linear-gradient(135deg,#FCE4EC 0%,#F8BBD0 100%)',
+        'linear-gradient(135deg,#FFF8E1 0%,#FFECB3 100%)',
+        'linear-gradient(135deg,#F3E8FD 0%,#E1BEE7 100%)',
+        'linear-gradient(135deg,#E0F2F1 0%,#B2DFDB 100%)',
+    ];
     $phBg = $palette[($listing->id ?? 0) % count($palette)];
     $tagType = strtolower($listing->ad_type ?? $listing->type ?? 'sale');
     $tagClass = match(true) {
@@ -20,7 +27,7 @@
         @if($hasImage)
             <img loading="lazy" decoding="async" src="{{ $imgUrl }}" alt="{{ $listing->title ?? 'Listing' }}" style="width:100%;height:100%;object-fit:cover">
         @else
-            <div class="k-listing-img-placeholder" style="background:{{ $phBg }}">{{ $placeholderIcon }}</div>
+            <div class="k-listing-img-placeholder" style="background:{{ $phBg }};filter:drop-shadow(0 4px 8px rgba(0,0,0,.08))">{{ $placeholderIcon }}</div>
         @endif
         <div class="k-listing-badge">
             @if(!empty($listing->is_featured))<span class="k-tag k-tag-featured">FEATURED</span>@endif
