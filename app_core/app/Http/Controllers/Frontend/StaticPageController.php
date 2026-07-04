@@ -18,7 +18,7 @@ class StaticPageController extends Controller
         ]);
 
         try {
-            Mail::to(config('mail.from.address'))
+            Mail::to('support@kurulla.com')
                 ->send(new ContactMessageMail($data['name'], $data['email'], $data['message']));
         } catch (\Throwable $e) {
             return back()->withInput()->with('success', 'Sorry, we could not send your message right now. Please try again later or contact us via WhatsApp.');

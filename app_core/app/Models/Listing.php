@@ -6,7 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Listing extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'user_id', 'created_by_admin_id', 'store_id', 'category_id', 'location_id',
+        'ad_type', 'type', 'title', 'slug', 'description', 'price', 'currency',
+        'condition', 'location', 'status', 'is_featured', 'is_top', 'is_urgent',
+        'bumped_at', 'expires_at', 'views',
+    ];
 
     protected $casts = [
         'is_active' => 'boolean',
@@ -17,6 +22,11 @@ class Listing extends Model
     public function images()
     {
         return $this->hasMany(ListingImage::class, 'listing_id');
+    }
+
+    public function variants()
+    {
+        return $this->hasMany(ListingVariant::class, 'listing_id')->orderBy('sort_order');
     }
 
     public function user()
@@ -37,6 +47,11 @@ class Listing extends Model
     public function locationModel()
     {
         return $this->belongsTo(Location::class, 'location_id');
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
     }
 
     public function scopePublished($query)
@@ -67,4 +82,17 @@ class Listing extends Model
 {
     return $this->hasMany(ListingFieldValue::class, 'listing_id');
 }
+
+    protected static function booted()
+    {
+        static::created(function (Listing $listing) {
+            $isClassified = strtolower((string) ($listing->type ?? '')) === 'classified';
+            AdminNotification::log(
+                $isClassified ? 'classified_created' : 'listing_created',
+                $isClassified ? 'New classified ad posted' : 'New listing posted',
+                $listing->title,
+                '/admin/listings/'.$listing->id.'/edit'
+            );
+        });
+    }
 }

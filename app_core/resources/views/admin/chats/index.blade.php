@@ -5,7 +5,7 @@
 @section('subheading','View and moderate buyer-seller conversations')
 @section('content')
 <section class="sa-card"><div class="sa-card-head"><h2>Conversations from Database</h2><span>{{ $threads->total() }} threads</span></div>
-<div class="sa-table-wrap"><table class="sa-table"><thead><tr><th>Buyer</th><th>Seller</th><th>About</th><th>Status</th><th>Started</th><th>Actions</th></tr></thead><tbody>
+<div class="sa-table-wrap"><table class="sa-table sa-table-chats"><thead><tr><th>Buyer</th><th>Seller</th><th>About</th><th>Status</th><th>Started</th><th>Actions</th></tr></thead><tbody>
 @forelse($threads as $thread)<tr>
     <td>{{ $thread->buyer->name ?? 'Unknown' }}</td>
     <td>{{ $thread->seller->name ?? 'Unknown' }}</td>

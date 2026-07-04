@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -28,16 +30,23 @@ class CategoryManagementController extends Controller
             'icon' => 'nullable|string|max:20',
             'sort_order' => 'nullable|integer',
             'is_active' => 'nullable|boolean',
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
         ]);
 
-        Category::create([
+        $payload = [
             'parent_id' => $data['parent_id'] ?? null,
             'name' => $data['name'],
             'slug' => ! empty($data['slug']) ? Str::slug($data['slug']) : Str::slug($data['name']),
             'icon' => $data['icon'] ?? '🛒',
             'sort_order' => $data['sort_order'] ?? 0,
             'is_active' => $request->boolean('is_active', true),
-        ]);
+        ];
+
+        if (Schema::hasColumn('categories', 'image') && $request->hasFile('image')) {
+            $payload['image'] = $request->file('image')->store('categories', 'public');
+        }
+
+        Category::create($payload);
 
         return back()->with('success', 'Category created successfully.');
     }
@@ -58,16 +67,32 @@ class CategoryManagementController extends Controller
             'icon' => 'nullable|string|max:20',
             'sort_order' => 'nullable|integer',
             'is_active' => 'nullable|boolean',
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'remove_image' => 'nullable|boolean',
         ]);
 
-        $category->update([
+        $payload = [
             'parent_id' => $data['parent_id'] ?? null,
             'name' => $data['name'],
             'slug' => Str::slug($data['slug']),
             'icon' => $data['icon'] ?? $category->icon,
             'sort_order' => $data['sort_order'] ?? 0,
             'is_active' => $request->boolean('is_active'),
-        ]);
+        ];
+
+        if (Schema::hasColumn('categories', 'image')) {
+            if ($request->hasFile('image')) {
+                if ($category->image) {
+                    Storage::disk('public')->delete($category->image);
+                }
+                $payload['image'] = $request->file('image')->store('categories', 'public');
+            } elseif ($request->boolean('remove_image') && $category->image) {
+                Storage::disk('public')->delete($category->image);
+                $payload['image'] = null;
+            }
+        }
+
+        $category->update($payload);
 
         return redirect('/admin/categories')->with('success', 'Category updated successfully.');
     }
@@ -87,6 +112,9 @@ class CategoryManagementController extends Controller
         }
         if (method_exists($category, 'listings') && $category->listings()->count() > 0) {
             return back()->with('success', 'Category has listings and cannot be deleted. Deactivate it instead.');
+        }
+        if (Schema::hasColumn('categories', 'image') && $category->image) {
+            Storage::disk('public')->delete($category->image);
         }
         $category->delete();
 

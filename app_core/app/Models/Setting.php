@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
 {
-    protected $guarded = [];
+    protected $fillable = ['key', 'value', 'type'];
 
     public static function getValue(string $key, mixed $default = null): mixed
     {

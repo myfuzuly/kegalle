@@ -7,6 +7,13 @@
     </div>
     <h3>{{ $store->name }}</h3>
     <p>{{ $store->city ?? $store->address ?? 'Kegalle' }}</p>
-    <div class="kg-trust-badges"><span>✓ Verified</span><span>{{ $store->listings_count ?? 0 }} Products</span><span>Fast Response</span></div>
+    @php $storeAvg = $store->approved_reviews_count > 0 ? round($store->approved_reviews_avg_rating ?? 0, 1) : 0; @endphp
+    @if($storeAvg > 0)
+    <div style="font-size:13px;margin:-4px 0 4px;color:#f59e0b;font-weight:600">★ {{ $storeAvg }} <span style="color:#94a3b8;font-weight:400">({{ $store->approved_reviews_count }})</span></div>
+    @endif
+    <div class="kg-trust-badges">
+        <span style="background:{{ $store->rank_color }};color:#fff;border-radius:4px;padding:1px 6px">{{ $store->rank_label }}</span>
+        <span>{{ $store->listings_count ?? 0 }} Products</span>
+    </div>
     <b>Visit Store</b>
 </a>

@@ -12,6 +12,10 @@
     <a href="/dashboard/listings/create" class="{{ request()->is('dashboard/listings/create') ? 'active' : '' }}">➕ Post New Ad</a>
     <a href="/dashboard/favorites" class="{{ request()->is('dashboard/favorites') ? 'active' : '' }}">🤍 Favorites</a>
 
+    <span>Deals</span>
+    <a href="/dashboard/deals" class="{{ request()->is('dashboard/deals') ? 'active' : '' }}">🔥 My Deals</a>
+    <a href="/dashboard/deals/create" class="{{ request()->is('dashboard/deals/create') ? 'active' : '' }}">➕ Submit Deal</a>
+
     <span>My Store</span>
     <a href="/dashboard/stores" class="{{ request()->is('dashboard/stores') ? 'active' : '' }}">🏪 My Stores</a>
     <a href="/dashboard/stores/create" class="{{ request()->is('dashboard/stores/create') ? 'active' : '' }}">➕ Create Store</a>

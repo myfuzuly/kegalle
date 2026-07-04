@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ListingImage extends Model
 {
-    protected $guarded = [];
+    protected $fillable = ['listing_id', 'path', 'sort_order'];
 
     public function listing()
     {

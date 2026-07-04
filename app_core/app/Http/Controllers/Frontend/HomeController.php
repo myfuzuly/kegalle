@@ -6,21 +6,47 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Listing;
 use App\Models\Post;
+use App\Models\Deal;
 use App\Models\Store;
+use App\Models\GovernmentService;
+use App\Models\Event;
 
 class HomeController extends Controller
 {
     public function index()
     {
+        $homeDeals = collect();
+        $hasRealDeals = false;
+        try {
+            $homeDeals = Deal::active()
+                ->with(['listing.images', 'listing.store', 'listing.category'])
+                ->latest()
+                ->take(10)
+                ->get();
+            $hasRealDeals = $homeDeals->isNotEmpty();
+        } catch (\Throwable $e) {}
+
+        if (!$hasRealDeals) {
+            $homeDeals = collect();
+        }
+
         $featuredListings = Listing::published()
             ->with(['images', 'store'])
             ->where('is_featured', 1)
             ->latest()
-            ->take(5)
+            ->take(10)
             ->get();
 
         $latestListings = Listing::published()
             ->with(['images', 'store'])
+            ->latest()
+            ->take(10)
+            ->get();
+
+        $featuredClassified = Listing::published()
+            ->with('images')
+            ->where('type', 'classified')
+            ->where('is_featured', 1)
             ->latest()
             ->take(5)
             ->get();
@@ -35,8 +61,17 @@ class HomeController extends Controller
         $featuredStores = Store::query()
             ->withCount('listings')
             ->whereIn('status', ['approved', 'active', 'published'])
-            ->take(5)
+            ->where('is_featured', 1)
+            ->take(10)
             ->get();
+
+        if ($featuredStores->isEmpty()) {
+            $featuredStores = Store::query()
+                ->withCount('listings')
+                ->whereIn('status', ['approved', 'active', 'published'])
+                ->take(10)
+                ->get();
+        }
 
         $categories = Category::query()
             ->where('is_active', 1)
@@ -46,13 +81,25 @@ class HomeController extends Controller
 
         $blogs = Post::published()->latest('published_at')->take(5)->get();
 
+        $govServices = GovernmentService::active()->withCount('items')->orderBy('sort_order')->take(8)->get();
+
+        $upcomingEvents = collect();
+        try {
+            $upcomingEvents = Event::upcoming()->orderBy('event_date')->take(6)->get();
+        } catch (\Throwable $e) {}
+
         return view('frontend.home', compact(
             'featuredListings',
             'latestListings',
+            'featuredClassified',
             'latestClassified',
             'featuredStores',
             'categories',
-            'blogs'
+            'blogs',
+            'homeDeals',
+            'hasRealDeals',
+            'govServices',
+            'upcomingEvents'
         ));
     }
 }

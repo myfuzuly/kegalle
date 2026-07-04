@@ -16,12 +16,12 @@ href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
 rel="stylesheet">
 
 <!-- ADMIN CORE -->
-<link rel="stylesheet" href="/css/kegalle-admin-shell.css?v=11">
+<link rel="stylesheet" href="/css/kegalle-admin-shell.css?v=25">
 
 <!-- ADMIN PREMIUM UI -->
-<link rel="stylesheet" href="/css/kegalle-admin-store-ui-polish.css?v=11">
-<link rel="stylesheet" href="/css/kegalle-admin-premium-components-select2.css?v=11">
-<link rel="stylesheet" href="/css/kegalle-admin-enterprise-ux-crud-v4.css?v=11">
+<link rel="stylesheet" href="/css/kegalle-admin-store-ui-polish.css?v=22">
+<link rel="stylesheet" href="/css/kegalle-admin-premium-components-select2.css?v=22">
+<link rel="stylesheet" href="/css/kegalle-admin-enterprise-ux-crud-v4.css?v=26">
 
 @stack('styles')
 
@@ -66,6 +66,39 @@ Super Admin
 <div class="ka-top-actions">
 
 @yield('actions')
+
+@php
+    $unreadNotifCount = 0;
+    $latestNotifs = collect();
+    try {
+        $unreadNotifCount = \App\Models\AdminNotification::where('is_read', false)->count();
+        $latestNotifs = \App\Models\AdminNotification::latest()->take(8)->get();
+    } catch (\Throwable $e) {}
+@endphp
+<div class="ka-notif-bell" id="kaNotifBell">
+    <button type="button" class="ka-btn ka-btn-light" id="kaNotifBtn">
+        🔔 @if($unreadNotifCount) <span class="ka-notif-badge">{{ $unreadNotifCount }}</span>@endif
+    </button>
+    <div class="ka-notif-dropdown" id="kaNotifDropdown">
+        <div class="ka-notif-dropdown-head">
+            <strong>Notifications</strong>
+            <form method="post" action="/admin/notifications/read-all"><input type="hidden" name="_token" value="{{ csrf_token() }}"><button type="submit">Mark all read</button></form>
+        </div>
+        @forelse($latestNotifs as $n)
+            <form method="post" action="/admin/notifications/{{ $n->id }}/read" class="ka-notif-item {{ $n->is_read ? '' : 'is-unread' }}">
+                @csrf
+                <button type="submit">
+                    <strong>{{ $n->title }}</strong>
+                    <span>{{ $n->message }}</span>
+                    <small>{{ $n->created_at?->diffForHumans() }}</small>
+                </button>
+            </form>
+        @empty
+            <div class="ka-notif-empty">No notifications yet.</div>
+        @endforelse
+        <a href="/admin/notifications" class="ka-notif-viewall">View all notifications →</a>
+    </div>
+</div>
 
 <a
 href="/"
@@ -143,11 +176,28 @@ Logout
 src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js">
 </script>
 
-<script src="/js/kegalle-admin-shell.js?v=11"></script>
-<script src="/js/kegalle-admin-premium-components-select2.js?v=11"></script>
-<script src="/js/kegalle-admin-enterprise-ux-crud-v4.js?v=11"></script>
+<script src="/js/kegalle-admin-shell.js?v=22"></script>
+<script src="/js/kegalle-admin-premium-components-select2.js?v=22"></script>
+<script src="/js/kegalle-admin-enterprise-ux-crud-v4.js?v=22"></script>
 
 @stack('scripts')
+
+<script>
+(function () {
+    var btn = document.getElementById('kaNotifBtn');
+    var dropdown = document.getElementById('kaNotifDropdown');
+    if (!btn || !dropdown) return;
+    btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        dropdown.classList.toggle('open');
+    });
+    document.addEventListener('click', function (e) {
+        if (!document.getElementById('kaNotifBell').contains(e.target)) {
+            dropdown.classList.remove('open');
+        }
+    });
+})();
+</script>
 
 </body>
 </html>

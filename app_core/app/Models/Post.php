@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Post extends Model
 {
-    protected $guarded = [];
+    protected $fillable = [
+        'title', 'meta_title', 'slug', 'image', 'excerpt',
+        'meta_description', 'body', 'is_published', 'published_at',
+    ];
 
     protected $casts = [
         'is_published' => 'boolean',

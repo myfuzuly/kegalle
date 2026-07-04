@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Location extends Model
 {
-    protected $guarded = [];
+    protected $fillable = ['parent_id', 'name', 'slug', 'type', 'sort_order', 'is_active'];
 
     protected $casts = [
         'is_active' => 'boolean',

@@ -16,6 +16,9 @@ class CategoryPageController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('frontend.categories.index', compact('categories'));
+        $parents = $categories->whereNull('parent_id')->values();
+        $childMap = $categories->whereNotNull('parent_id')->groupBy('parent_id');
+
+        return view('frontend.categories.index', compact('categories', 'parents', 'childMap'));
     }
 }

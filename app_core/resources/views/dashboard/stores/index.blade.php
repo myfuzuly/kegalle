@@ -5,7 +5,9 @@
 @section('subheading','Manage your business profiles and store dashboards.')
 
 @section('actions')
+@if(($stores ?? collect())->count() < (int) (auth()->user()->store_limit ?? 1) || in_array(auth()->user()->role, ['admin', 'super_admin']))
 <a href="/dashboard/stores/create" class="kd-btn kd-btn-primary">+ Create Store</a>
+@endif
 @endsection
 
 @section('content')

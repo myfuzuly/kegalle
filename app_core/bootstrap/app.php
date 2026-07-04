@@ -9,7 +9,13 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
     $middleware->alias([
         'verified.custom' => \App\Http\Middleware\EnsureEmailIsVerifiedCustom::class,
+        'is_admin' => \App\Http\Middleware\EnsureIsAdmin::class,
+        'account.active' => \App\Http\Middleware\EnsureAccountIsActive::class,
     ]);
 })
-    ->withExceptions(function (Exceptions $exceptions) {})
+    ->withExceptions(function (Exceptions $exceptions) {
+        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, $request) {
+            return redirect()->back()->withInput($request->except('password', 'password_confirmation'))->withErrors(['email' => 'Your session expired. Please try again.']);
+        });
+    })
     ->create();

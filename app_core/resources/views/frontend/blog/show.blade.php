@@ -13,6 +13,34 @@
 @section('og_image', $postImage)
 @endif
 
+@push('schema')
+<script type="application/ld+json">
+{!! json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'Article',
+    'headline' => $post->title,
+    'description' => $postDesc,
+    'image' => $postImage ?: asset('images/kegalle-placeholder.png'),
+    'datePublished' => $post->published_at?->toIso8601String() ?? $post->created_at?->toIso8601String(),
+    'dateModified' => $post->updated_at?->toIso8601String(),
+    'author' => ['@type' => 'Organization', 'name' => 'Kegalle Marketplace'],
+    'publisher' => ['@type' => 'Organization', 'name' => 'Kegalle Marketplace', 'logo' => ['@type' => 'ImageObject', 'url' => asset('images/kegalle-placeholder.png')]],
+    'url' => url('/blog/'.$post->slug),
+], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
+</script>
+<script type="application/ld+json">
+{!! json_encode([
+    '@context' => 'https://schema.org',
+    '@type' => 'BreadcrumbList',
+    'itemListElement' => [
+        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Home', 'item' => url('/')],
+        ['@type' => 'ListItem', 'position' => 2, 'name' => 'Blog', 'item' => url('/blog')],
+        ['@type' => 'ListItem', 'position' => 3, 'name' => $post->title],
+    ],
+], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+</script>
+@endpush
+
 @section('content')
 
 <div class="blog-detail-hero">
@@ -20,7 +48,7 @@
         <h1 class="blog-detail-title">{{ $post->title }}</h1>
         <div class="blog-detail-meta">
             <div class="blog-detail-meta-item">
-                <div style="width:30px;height:30px;border-radius:50%;background:var(--k-primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">K</div>
+                <div class="k-author-avatar">K</div>
                 <span>Kegalle Team</span>
             </div>
             <div class="blog-detail-meta-item">🗓 {{ optional($post->published_at)->format('M d, Y') }}</div>
@@ -28,17 +56,17 @@
     </div>
 </div>
 
-<div class="container" style="padding-top:32px;padding-bottom:48px">
-    <div class="k-layout-sidebar-right" style="gap:32px">
+<div class="container k-content-section">
+    <div class="k-layout-sidebar-right k-layout-gap">
         <!-- Main content -->
         <div>
             @if($post->image)
-                <div class="blog-detail-cover" style="background:url('{{ asset('storage/'.ltrim($post->image,'/')) }}') center/cover;margin:0 0 28px"></div>
+                <div class="blog-detail-cover k-blog-cover" style="background:url('{{ asset('storage/'.ltrim($post->image,'/')) }}') center/cover"></div>
             @else
-                <div class="blog-detail-cover" style="margin:0 0 28px">📰</div>
+                <div class="blog-detail-cover k-blog-cover">📰</div>
             @endif
 
-            <div class="blog-content" style="max-width:none;padding:0">
+            <div class="blog-content k-blog-body">
                 @if($post->body)
                     {!! $post->body !!}
                 @else
@@ -65,12 +93,12 @@
                 </div>
 
                 @if($related->count())
-                    <div style="margin-bottom:0">
-                        <h2 style="font-family:var(--font-display);font-size:20px;font-weight:800;margin-bottom:20px;padding-bottom:0;border-bottom:none">Related Articles</h2>
+                    <div class="mb-0">
+                        <h2 class="k-related-title">Related Articles</h2>
                         <div class="k-grid-3">
                             @foreach($related as $item)
                                 @php $g = $gradients[$loop->index % count($gradients)]; @endphp
-                                <a href="/blog/{{ $item->slug }}" class="blog-grid-card" style="text-decoration:none;color:inherit">
+                                <a href="/blog/{{ $item->slug }}" class="blog-grid-card k-card-link">
                                     <div class="blog-grid-img" style="background:{{ $g }}">📰</div>
                                     <div class="blog-grid-body">
                                         <div class="blog-grid-title">{{ $item->title }}</div>
@@ -87,12 +115,12 @@
         <!-- Sidebar (same as blog list page) -->
         <div>
             @if($popular->count())
-                <div class="k-card k-card-body mb-16" style="border-radius:var(--k-radius-lg)">
-                    <h3 style="font-family:var(--font-display);font-size:14px;font-weight:700;margin-bottom:14px">Popular Articles</h3>
+                <div class="k-card k-card-body mb-16 k-blog-sidebar-card">
+                    <h3 class="k-sidebar-heading">Popular Articles</h3>
                     <div>
                         @foreach($popular as $pop)
                             @php $g = $gradients[$loop->index % count($gradients)]; @endphp
-                            <a href="/blog/{{ $pop->slug }}" class="blog-popular-card" style="text-decoration:none;color:inherit">
+                            <a href="/blog/{{ $pop->slug }}" class="blog-popular-card k-card-link">
                                 <div class="blog-popular-img" style="background:{{ $g }}">📰</div>
                                 <div><div class="blog-popular-title">{{ $pop->title }}</div><div class="blog-popular-date">{{ optional($pop->published_at)->format('M d, Y') }}</div></div>
                             </a>
@@ -101,35 +129,18 @@
                 </div>
             @endif
 
-            <div style="background:linear-gradient(135deg,#1B5E20,#0D1B2A);border-radius:var(--k-radius-xl);padding:24px;color:#fff">
-                <div style="font-size:28px;margin-bottom:10px">📬</div>
-                <h3 style="font-family:var(--font-display);font-size:16px;font-weight:800;margin-bottom:6px">Stay Updated</h3>
-                <p style="font-size:13px;color:rgba(255,255,255,.75);margin-bottom:16px">Get the latest articles and marketplace updates in your inbox.</p>
+            <div class="k-newsletter-cta">
+                <div class="k-newsletter-icon">📬</div>
+                <h3 class="k-newsletter-title">Stay Updated</h3>
+                <p class="k-newsletter-desc">Get the latest articles and marketplace updates in your inbox.</p>
                 <form method="POST" action="#">
                     @csrf
-                    <input type="email" name="email" placeholder="Your email address" style="width:100%;background:rgba(255,255,255,.1);border:1.5px solid rgba(255,255,255,.2);color:#fff;border-radius:var(--k-radius);padding:10px 14px;font-size:13px;outline:none;margin-bottom:10px;font-family:var(--font-body)">
-                    <button type="submit" class="k-btn k-btn-primary w-full" style="justify-content:center;border:none;cursor:pointer">Subscribe Free</button>
+                    <input type="email" name="email" placeholder="Your email address" class="k-newsletter-input">
+                    <button type="submit" class="k-btn k-btn-primary w-full k-btn-center k-newsletter-btn">Subscribe Free</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-@push('schema')
-<script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    "headline": {!! json_encode($post->title) !!},
-    "description": {!! json_encode($postDesc) !!},
-    @if($postImage)
-    "image": {!! json_encode($postImage) !!},
-    @endif
-    "datePublished": {!! json_encode(optional($post->published_at)->toIso8601String()) !!},
-    "author": {"@type": "Organization", "name": "Kegalle Marketplace"},
-    "publisher": {"@type": "Organization", "name": "Kegalle Marketplace", "logo": {"@type": "ImageObject", "url": {!! json_encode(asset('images/kegalle-placeholder.png')) !!}}},
-    "mainEntityOfPage": {!! json_encode(url()->current()) !!}
-}
-</script>
-@endpush
 @endsection

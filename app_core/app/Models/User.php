@@ -17,13 +17,55 @@ class User extends Authenticatable
         'password',
         'role',
         'status',
+        'allow_multiple_stores',
+        'store_limit',
         'location_id',
+        'account_type',
+        'verification_token',
+        'email_verified_at',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
+
+    public function roleModel()
+    {
+        return $this->belongsTo(Role::class, 'role', 'key');
+    }
+
+    public function isAdminLevel(): bool
+    {
+        if (in_array($this->role, ['admin', 'super_admin'], true)) {
+            return true;
+        }
+
+        try {
+            return (bool) optional($this->roleModel)->is_admin_level;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    public function hasPermission(string $permission): bool
+    {
+        if ($this->role === 'super_admin') {
+            return true;
+        }
+
+        try {
+            $role = $this->roleModel;
+            if ($role) {
+                return $role->allows($permission);
+            }
+        } catch (\Throwable $e) {
+            // roles table unavailable — fall through to legacy behaviour
+        }
+
+        // Legacy: plain "admin" role gets everything except role management
+        return $this->role === 'admin' && $permission !== 'roles';
+    }
 
     public function stores()
     {
@@ -47,6 +89,20 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return in_array($this->role, ['admin', 'super_admin'], true);
+    }
+
+    protected static function booted()
+    {
+        static::created(function (User $user) {
+            if (! in_array($user->role, ['admin', 'super_admin'], true)) {
+                AdminNotification::log(
+                    'user_registered',
+                    'New user registered',
+                    $user->name.' ('.$user->email.')',
+                    '/admin/users'
+                );
+            }
+        });
     }
 }

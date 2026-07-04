@@ -57,4 +57,47 @@ class UserManagementController extends Controller
 
         return back()->with('success', 'User activated.');
     }
+
+    public function setStoreLimit(Request $request, User $user)
+    {
+        $data = $request->validate(['store_limit' => 'required|integer|min:1|max:999']);
+
+        $owned = $user->stores()->count();
+        if ($data['store_limit'] < $owned) {
+            return back()->with('success', "{$user->name} already owns {$owned} store(s) — limit must be at least {$owned}.");
+        }
+
+        $user->store_limit = $data['store_limit'];
+        $user->save();
+
+        return back()->with('success', "Store limit for {$user->name} set to {$data['store_limit']}.");
+    }
+
+    public function toggleMultipleStores(User $user)
+    {
+        $user->allow_multiple_stores = ! (bool) $user->allow_multiple_stores;
+        $user->save();
+
+        $state = $user->allow_multiple_stores ? 'enabled' : 'disabled';
+        return back()->with('success', "Multiple store creation {$state} for {$user->name}.");
+    }
+
+    public function destroy(User $user)
+    {
+        if ($user->id === auth()->id()) {
+            return back()->with('success', 'You cannot delete your own account.');
+        }
+
+        if (in_array($user->role, ['admin', 'super_admin'])) {
+            return back()->with('success', 'Admin accounts cannot be deleted here. Remove their admin role first.');
+        }
+
+        if ($user->listings()->count() > 0 || $user->stores()->count() > 0) {
+            return back()->with('success', 'This user has listings or stores attached and cannot be deleted. Suspend the account instead.');
+        }
+
+        $user->delete();
+
+        return back()->with('success', 'User deleted permanently.');
+    }
 }

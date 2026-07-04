@@ -1,7 +1,7 @@
 @extends('layouts.dashboard')
 
 @push('styles')
-<link rel="stylesheet" href="/css/kurulla-main.css?v=17">
+<link rel="stylesheet" href="/css/kurulla-main.css?v=44">
 @endpush
 
 @section('title','My Favorites')

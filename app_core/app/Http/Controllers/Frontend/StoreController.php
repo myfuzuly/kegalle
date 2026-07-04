@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Listing;
 use App\Models\Location;
+use App\Models\Review;
 use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -16,7 +17,9 @@ class StoreController extends Controller
     {
         $query = Store::query()
             ->whereIn('status', ['approved', 'published', 'active'])
-            ->withCount(['listings' => fn ($q) => $q->published()]);
+            ->withCount(['listings' => fn ($q) => $q->published()])
+            ->withCount(['approvedReviews'])
+            ->withAvg('approvedReviews', 'rating');
 
         if ($request->filled('q')) {
             $keyword = trim($request->q);
@@ -42,6 +45,10 @@ class StoreController extends Controller
         };
 
         $categories = Category::where('is_active', 1)
+            ->whereNull('parent_id')
+            ->with(['children' => fn ($q) => $q->where('is_active', 1)
+                ->withCount(['listings' => fn ($q2) => $q2->published()])
+            ])
             ->withCount(['listings' => fn ($q) => $q->published()])
             ->orderBy('sort_order')
             ->orderBy('name')
@@ -97,6 +104,40 @@ class StoreController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('frontend.stores.show', compact('store', 'products', 'categories'));
+        $reviews = Review::where('store_id', $store->id)
+            ->where('status', 'approved')
+            ->with('user')
+            ->latest()
+            ->get();
+
+        return view('frontend.stores.show', compact('store', 'products', 'categories', 'reviews'));
+    }
+
+    public function storeReview(Request $request, Store $store)
+    {
+        $data = $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'required|string|min:5|max:1000',
+        ]);
+
+        $existing = Review::where('user_id', auth()->id())
+            ->where('store_id', $store->id)
+            ->whereNull('listing_id')
+            ->first();
+
+        if ($existing) {
+            return back()->with('error', 'You have already reviewed this store.');
+        }
+
+        Review::create([
+            'user_id' => auth()->id(),
+            'store_id' => $store->id,
+            'listing_id' => null,
+            'rating' => $data['rating'],
+            'comment' => $data['comment'],
+            'status' => 'approved',
+        ]);
+
+        return back()->with('success', 'Review submitted successfully!');
     }
 }

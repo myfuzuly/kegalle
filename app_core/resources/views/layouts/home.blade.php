@@ -102,7 +102,7 @@
                     <div class="km-store-logo">{{ strtoupper(substr($store->name,0,1)) }}</div>
                     <h3>{{ $store->name }}</h3>
                     <p>{{ $store->address ?? 'Kegalle' }}</p>
-                    <span>Verified Store · {{ $store->products_count ?? 0 }} Products</span>
+                    <span>Verified Store@if(($store->products_count ?? 0) > 0) · {{ $store->products_count }} {{ $store->products_count == 1 ? 'Product' : 'Products' }}@endif</span>
                     <b>Visit Store</b>
                 </a>
             @endforeach

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Post;
+use App\Support\HtmlSanitizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -24,7 +25,7 @@ class PostManagementController extends Controller
             'slug' => 'nullable|string|max:200|unique:posts,slug',
             'excerpt' => 'nullable|string|max:500',
             'body' => 'nullable|string',
-            'image' => 'nullable|image|max:4096',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'is_published' => 'nullable|boolean',
             'meta_title' => 'nullable|string|max:180',
             'meta_description' => 'nullable|string|max:320',
@@ -39,7 +40,7 @@ class PostManagementController extends Controller
             'title' => $data['title'],
             'slug' => ! empty($data['slug']) ? Str::slug($data['slug']) : Str::slug($data['title']),
             'excerpt' => $data['excerpt'] ?? null,
-            'body' => $data['body'] ?? null,
+            'body' => HtmlSanitizer::clean($data['body'] ?? null),
             'image' => $path,
             'is_published' => $request->boolean('is_published', true),
             'published_at' => $request->boolean('is_published', true) ? now() : null,
@@ -62,7 +63,7 @@ class PostManagementController extends Controller
             'slug' => ['required', 'string', 'max:200', Rule::unique('posts', 'slug')->ignore($post->id)],
             'excerpt' => 'nullable|string|max:500',
             'body' => 'nullable|string',
-            'image' => 'nullable|image|max:4096',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
             'is_published' => 'nullable|boolean',
             'meta_title' => 'nullable|string|max:180',
             'meta_description' => 'nullable|string|max:320',
@@ -80,7 +81,7 @@ class PostManagementController extends Controller
             'title' => $data['title'],
             'slug' => Str::slug($data['slug']),
             'excerpt' => $data['excerpt'] ?? null,
-            'body' => $data['body'] ?? null,
+            'body' => HtmlSanitizer::clean($data['body'] ?? null),
             'image' => $path,
             'is_published' => $isPublished,
             'published_at' => $isPublished && ! $wasPublished ? now() : ($isPublished ? $post->published_at ?? now() : $post->published_at),

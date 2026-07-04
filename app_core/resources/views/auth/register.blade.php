@@ -38,6 +38,10 @@
 
                 <form method="POST" action="{{ route('register.submit') }}">
                     @csrf
+                    <div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden" aria-hidden="true">
+                        <label for="website">Leave this field empty</label>
+                        <input type="text" name="website" id="website" tabindex="-1" autocomplete="off">
+                    </div>
                     <div style="margin-bottom:16px">
                         <label class="k-form-label">I want to join as</label>
                         <div class="k-account-types">
@@ -65,6 +69,13 @@
                     </div>
 
                     <div class="k-form-grid">
+                        <div class="k-form-group k-store-field" style="{{ old('account_type', request('account_type','store')) === 'store' ? '' : 'display:none' }}">
+                            <label class="k-form-label" for="register-store-name">Store Name</label>
+                            <div class="k-form-icon-wrap">
+                                <span class="k-form-icon">🏪</span>
+                                <input id="register-store-name" type="text" name="store_name" value="{{ old('store_name') }}" class="k-form-control with-icon" placeholder="Enter your store or business name">
+                            </div>
+                        </div>
                         <div class="k-form-group">
                             <label class="k-form-label" for="register-name">Full Name</label>
                             <div class="k-form-icon-wrap">
@@ -125,7 +136,7 @@
         <div class="k-auth-trust"><div class="k-auth-trust-icon">🛡️</div><div class="k-auth-trust-text"><strong>Trusted Community</strong><span>Join a community of verified users</span></div></div>
         <div class="k-auth-trust"><div class="k-auth-trust-icon">🏷️</div><div class="k-auth-trust-text"><strong>Best Deals</strong><span>Find amazing deals every day</span></div></div>
         <div class="k-auth-trust"><div class="k-auth-trust-icon">📦</div><div class="k-auth-trust-text"><strong>Wide Categories</strong><span>Explore thousands of products & services</span></div></div>
-        <div class="k-auth-trust"><div class="k-auth-trust-icon">🔒</div><div class="k-auth-trust-text"><strong>Secure Payments</strong><span>Safe and secure transactions</span></div></div>
+        <div class="k-auth-trust"><div class="k-auth-trust-icon">🔒</div><div class="k-auth-trust-text"><strong>Secure & Private</strong><span>Your data is safe with us</span></div></div>
     </div>
 </div>
 
@@ -134,6 +145,9 @@ document.querySelectorAll('.k-account-type input[type=radio]').forEach(function(
     r.addEventListener('change', function(){
         document.querySelectorAll('.k-account-type').forEach(function(el){ el.classList.remove('selected'); });
         r.closest('.k-account-type').classList.add('selected');
+        document.querySelectorAll('.k-store-field').forEach(function(el){
+            el.style.display = r.value === 'store' ? '' : 'none';
+        });
     });
 });
 </script>

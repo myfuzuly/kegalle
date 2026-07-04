@@ -5,7 +5,7 @@
 @section('subheading','Review and update the status of membership and store payments')
 @section('content')
 <section class="sa-card"><div class="sa-card-head"><h2>Payments from Database</h2><span>{{ $payments->total() }} payments</span></div>
-<div class="sa-table-wrap"><table class="sa-table"><thead><tr><th>User</th><th>Plan</th><th>Amount</th><th>Gateway</th><th>Reference</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>
+<div class="sa-table-wrap"><table class="sa-table sa-table-payments"><thead><tr><th>User</th><th>Plan</th><th>Amount</th><th>Gateway</th><th>Reference</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>
 @forelse($payments as $payment)<tr>
     <td><b>{{ $payment->user->name ?? 'Unknown' }}</b><small>#{{ $payment->id }}</small></td>
     <td>{{ $payment->membershipPlan->name ?? '—' }}</td>

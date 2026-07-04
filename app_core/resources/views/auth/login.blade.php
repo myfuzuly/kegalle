@@ -58,7 +58,7 @@
                         <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer">
                             <input type="checkbox" name="remember" style="accent-color:var(--k-primary)"> Remember me
                         </label>
-                        <a href="#" style="font-size:13px;color:var(--k-primary);font-weight:600;text-decoration:none">Forgot Password?</a>
+                        <a href="/forgot-password" style="font-size:13px;color:var(--k-primary);font-weight:600;text-decoration:none">Forgot Password?</a>
                     </div>
                     <button type="submit" class="k-btn k-btn-primary k-btn-lg w-full" style="justify-content:center;margin-bottom:16px;border:none;cursor:pointer">Login</button>
                 </form>

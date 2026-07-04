@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Event;
 use App\Models\Listing;
+use App\Models\Location;
 use App\Models\Post;
 use App\Models\Store;
 use Illuminate\Support\Facades\Response;
@@ -13,17 +15,39 @@ class SitemapController extends Controller
 {
     public function index()
     {
-        $urls = [];
+        $sitemaps = [
+            ['loc' => url('/sitemap-pages.xml'), 'lastmod' => now()->toDateString()],
+            ['loc' => url('/sitemap-listings.xml'), 'lastmod' => now()->toDateString()],
+            ['loc' => url('/sitemap-stores.xml'), 'lastmod' => now()->toDateString()],
+            ['loc' => url('/sitemap-events.xml'), 'lastmod' => now()->toDateString()],
+            ['loc' => url('/sitemap-blog.xml'), 'lastmod' => now()->toDateString()],
+            ['loc' => url('/sitemap-towns.xml'), 'lastmod' => now()->toDateString()],
+        ];
 
-        // Static pages
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        $xml .= '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+        foreach ($sitemaps as $s) {
+            $xml .= "  <sitemap>\n    <loc>{$s['loc']}</loc>\n    <lastmod>{$s['lastmod']}</lastmod>\n  </sitemap>\n";
+        }
+        $xml .= '</sitemapindex>';
+
+        return Response::make($xml, 200, ['Content-Type' => 'application/xml']);
+    }
+
+    public function pages()
+    {
+        $urls = [];
         $static = [
             ['url' => '/', 'priority' => '1.0', 'changefreq' => 'daily'],
             ['url' => '/listings', 'priority' => '0.9', 'changefreq' => 'hourly'],
             ['url' => '/stores', 'priority' => '0.8', 'changefreq' => 'daily'],
             ['url' => '/classified', 'priority' => '0.8', 'changefreq' => 'hourly'],
+            ['url' => '/events', 'priority' => '0.8', 'changefreq' => 'daily'],
             ['url' => '/categories', 'priority' => '0.7', 'changefreq' => 'weekly'],
             ['url' => '/locations', 'priority' => '0.7', 'changefreq' => 'weekly'],
             ['url' => '/blog', 'priority' => '0.6', 'changefreq' => 'weekly'],
+            ['url' => '/deals', 'priority' => '0.7', 'changefreq' => 'daily'],
+            ['url' => '/government-services', 'priority' => '0.6', 'changefreq' => 'weekly'],
             ['url' => '/about-us', 'priority' => '0.4', 'changefreq' => 'monthly'],
             ['url' => '/contact-us', 'priority' => '0.4', 'changefreq' => 'monthly'],
             ['url' => '/help-center', 'priority' => '0.4', 'changefreq' => 'monthly'],
@@ -44,11 +68,25 @@ class SitemapController extends Controller
             ];
         }
 
-        // Listings
+        Category::where('is_active', 1)->select('slug')->get()->each(function ($category) use (&$urls) {
+            $urls[] = [
+                'loc' => url('/listings?categories[]=' . $category->slug),
+                'lastmod' => now()->toDateString(),
+                'changefreq' => 'weekly',
+                'priority' => '0.5',
+            ];
+        });
+
+        return $this->renderUrlset($urls);
+    }
+
+    public function listings()
+    {
+        $urls = [];
         Listing::published()->select(['slug', 'updated_at'])->orderByDesc('updated_at')->chunk(200, function ($listings) use (&$urls) {
             foreach ($listings as $listing) {
                 $urls[] = [
-                    'loc' => url('/listings/'.$listing->slug),
+                    'loc' => url('/listings/' . $listing->slug),
                     'lastmod' => $listing->updated_at?->toDateString() ?? now()->toDateString(),
                     'changefreq' => 'weekly',
                     'priority' => '0.7',
@@ -56,11 +94,16 @@ class SitemapController extends Controller
             }
         });
 
-        // Stores
+        return $this->renderUrlset($urls);
+    }
+
+    public function stores()
+    {
+        $urls = [];
         Store::whereIn('status', ['approved', 'active', 'published'])->select(['slug', 'updated_at'])->chunk(200, function ($stores) use (&$urls) {
             foreach ($stores as $store) {
                 $urls[] = [
-                    'loc' => url('/store/'.$store->slug),
+                    'loc' => url('/store/' . $store->slug),
                     'lastmod' => $store->updated_at?->toDateString() ?? now()->toDateString(),
                     'changefreq' => 'weekly',
                     'priority' => '0.6',
@@ -68,28 +111,60 @@ class SitemapController extends Controller
             }
         });
 
-        // Categories
-        Category::where('is_active', 1)->select('slug')->get()->each(function ($category) use (&$urls) {
-            $urls[] = [
-                'loc' => url('/listings?categories[]='.$category->slug),
-                'lastmod' => now()->toDateString(),
-                'changefreq' => 'weekly',
-                'priority' => '0.5',
-            ];
+        return $this->renderUrlset($urls);
+    }
+
+    public function events()
+    {
+        $urls = [];
+        Event::published()->select(['slug', 'updated_at'])->orderByDesc('updated_at')->chunk(200, function ($events) use (&$urls) {
+            foreach ($events as $event) {
+                $urls[] = [
+                    'loc' => url('/events/' . $event->slug),
+                    'lastmod' => $event->updated_at?->toDateString() ?? now()->toDateString(),
+                    'changefreq' => 'weekly',
+                    'priority' => '0.6',
+                ];
+            }
         });
 
-        // Blog posts
+        return $this->renderUrlset($urls);
+    }
+
+    public function blog()
+    {
+        $urls = [];
         Post::published()->select(['slug', 'updated_at'])->get()->each(function ($post) use (&$urls) {
             $urls[] = [
-                'loc' => url('/blog/'.$post->slug),
+                'loc' => url('/blog/' . $post->slug),
                 'lastmod' => $post->updated_at?->toDateString() ?? now()->toDateString(),
                 'changefreq' => 'monthly',
                 'priority' => '0.5',
             ];
         });
 
-        $xml = view('sitemap.index', compact('urls'))->render();
+        return $this->renderUrlset($urls);
+    }
 
+    public function towns()
+    {
+        $urls = [];
+        $towns = Location::where('is_active', 1)->select(['slug', 'updated_at'])->get();
+        foreach ($towns as $town) {
+            $urls[] = [
+                'loc' => url('/town/' . $town->slug),
+                'lastmod' => $town->updated_at?->toDateString() ?? now()->toDateString(),
+                'changefreq' => 'weekly',
+                'priority' => '0.6',
+            ];
+        }
+
+        return $this->renderUrlset($urls);
+    }
+
+    private function renderUrlset(array $urls)
+    {
+        $xml = view('sitemap.index', compact('urls'))->render();
         return Response::make($xml, 200, ['Content-Type' => 'application/xml']);
     }
 }

@@ -22,7 +22,7 @@
     </div>
 </section>
 
-<div class="container" style="padding-top:32px;padding-bottom:48px">
+<div class="container k-content-section">
     <div class="k-breadcrumb"><a href="/">Home</a><span class="sep">›</span><span class="current">All Locations</span></div>
 
     <!-- Popular quick strip -->
@@ -40,11 +40,11 @@
     </div>
 
     <!-- Full mega location grid -->
-    <div class="k-section-header"><h2 class="k-section-title">All Locations</h2><span style="font-size:13px;color:var(--k-text-tertiary)">{{ $locations->count() }} towns · {{ number_format($totalAds) }} active ads</span></div>
-    <div class="k-grid-3" style="gap:20px">
+    <div class="k-section-header"><h2 class="k-section-title">All Locations</h2><span class="k-text-sm k-text-tertiary">{{ $locations->count() }} towns · {{ number_format($totalAds) }} active ads</span></div>
+    <div class="k-grid-3 k-grid-gap-20">
         @foreach($locations as $location)
             @php $bg = $palette[$loop->index % count($palette)]; @endphp
-            <a href="/listings?location={{ $location->name }}" class="cat-mega-card" style="text-decoration:none;color:inherit">
+            <a href="/listings?location={{ $location->name }}" class="cat-mega-card k-card-link">
                 <div class="cat-mega-header">
                     <div class="cat-mega-icon" style="background:{{ $bg }}">📍</div>
                     <div>
