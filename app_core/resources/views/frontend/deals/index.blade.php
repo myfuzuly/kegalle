@@ -250,6 +250,9 @@
                                 <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:48px;background:var(--k-surface-2)">🛍️</div>
                             @endif
                             <span class="k-deal-badge-pct">-{{ number_format($discountPct, 0) }}%</span>
+                            @if($item instanceof \App\Models\Deal && $item->is_featured)
+                                <span style="position:absolute;top:10px;right:46px;background:#FFF8E1;color:#B45309;font-size:10px;font-weight:800;padding:3px 9px;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.12)">⭐ FEATURED</span>
+                            @endif
                             <button class="k-deal-heart" aria-label="Save">♡</button>
                         </div>
                         <div class="k-deal-card-info">
@@ -259,7 +262,7 @@
                                 <span class="k-deal-card-sale">LKR {{ number_format($salePrice) }}</span>
                                 <span class="k-deal-card-orig">LKR {{ number_format($originalPrice) }}</span>
                             </div>
-                            <div class="k-deal-card-store">🏪 @if($storeSlug)<a href="/store/{{ $storeSlug }}" class="k-deal-store-link" onclick="event.stopPropagation()">{{ $storeName }}</a>@else{{ $storeName }}@endif</div>
+                            <div class="k-deal-card-store">🏪 @if($storeSlug)<span class="k-deal-store-link" role="link" tabindex="0" style="cursor:pointer" onclick="event.preventDefault();event.stopPropagation();window.location='/store/{{ $storeSlug }}'">{{ $storeName }}</span>@else{{ $storeName }}@endif</div>
                         </div>
                     </a>
                 @endforeach

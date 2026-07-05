@@ -62,7 +62,8 @@ class DealsController extends Controller
                 'discount' => $query->orderByDesc('discount_percent'),
                 'price_low' => $query->orderBy('deal_price'),
                 'price_high' => $query->orderByDesc('deal_price'),
-                default => $query->latest(),
+                // Admin-featured deals always lead the grid
+                default => $query->orderByDesc('is_featured')->latest(),
             };
 
             $featuredDeals = $query->paginate(12)->withQueryString();

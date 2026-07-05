@@ -205,6 +205,29 @@ class ListingController extends Controller
         return back()->with('success', 'Review submitted successfully!');
     }
 
+    public function brands()
+    {
+        $brands = \App\Models\Brand::where('is_active', true)->orderBy('name')->get();
+
+        // Count published listings per brand via the brand_id custom field
+        $counts = collect();
+        $brandField = \App\Models\CustomField::where('name', 'brand_id')->first();
+        if ($brandField) {
+            $publishedIds = Listing::published()->pluck('id');
+            $counts = \App\Models\ListingFieldValue::where('custom_field_id', $brandField->id)
+                ->whereIn('listing_id', $publishedIds)
+                ->selectRaw('value, count(*) as c')
+                ->groupBy('value')
+                ->pluck('c', 'value');
+        }
+
+        foreach ($brands as $brand) {
+            $brand->listings_count = (int) ($counts[(string) $brand->id] ?? 0);
+        }
+
+        return view('frontend.brands', compact('brands'));
+    }
+
     public function brand($slug)
     {
         $brand = \App\Models\Brand::where('slug', $slug)->where('is_active', true)->firstOrFail();

@@ -37,6 +37,7 @@
     <td><span class="sa-status-mark {{ $markClass }}">{{ $markChar }}</span></td>
     <td class="sa-actions-inline">
         @if($deal->listing)<a href="/listings/{{ $deal->listing->slug }}" target="_blank">View</a>@endif
+        <a href="/admin/deals/{{ $deal->id }}/edit" title="Edit deal">Edit</a>
         @if($deal->status === 'pending')
             <form method="post" action="/admin/deals/{{ $deal->id }}/approve">@csrf<button title="Approve">Approve</button></form>
             <form method="post" action="/admin/deals/{{ $deal->id }}/reject">@csrf<button class="danger" title="Reject">Reject</button></form>

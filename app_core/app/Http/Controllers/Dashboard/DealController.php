@@ -90,6 +90,55 @@ class DealController extends Controller
             ->with('success', 'Deal submitted for admin approval!');
     }
 
+    public function edit(Deal $deal)
+    {
+        $user = auth()->user();
+        $isAdmin = in_array($user->role ?? '', ['super_admin', 'admin']);
+        if (!$isAdmin && $deal->user_id !== $user->id) {
+            abort(403);
+        }
+
+        $deal->load('listing.images');
+
+        return view('dashboard.deals.edit', compact('deal'));
+    }
+
+    public function update(Request $request, Deal $deal)
+    {
+        $user = auth()->user();
+        $isAdmin = in_array($user->role ?? '', ['super_admin', 'admin']);
+        if (!$isAdmin && $deal->user_id !== $user->id) {
+            abort(403);
+        }
+
+        $data = $request->validate([
+            'deal_price' => 'required|numeric|min:1',
+            'starts_at' => 'required|date',
+            'ends_at' => 'required|date|after:starts_at',
+            'is_flash' => 'boolean',
+            'stock_qty' => 'nullable|integer|min:1',
+        ]);
+
+        $originalPrice = $deal->original_price ?: optional($deal->listing)->price ?: 0;
+        if ($originalPrice > 0 && $data['deal_price'] >= $originalPrice) {
+            return back()->withInput()->with('error', 'Deal price must be lower than the original price (LKR ' . number_format($originalPrice) . ').');
+        }
+
+        $deal->update([
+            'deal_price' => $data['deal_price'],
+            'discount_percent' => $originalPrice > 0 ? round((($originalPrice - $data['deal_price']) / $originalPrice) * 100, 2) : 0,
+            'starts_at' => $data['starts_at'],
+            'ends_at' => $data['ends_at'],
+            'is_flash' => $request->boolean('is_flash'),
+            'stock_qty' => $data['stock_qty'] ?? null,
+            // Edited deals go back for admin review (unless an admin is editing)
+            'status' => $isAdmin ? $deal->status : 'pending',
+        ]);
+
+        return redirect()->route('dashboard.deals.index')
+            ->with('success', $isAdmin ? 'Deal updated.' : 'Deal updated and sent for admin re-approval.');
+    }
+
     public function destroy(Deal $deal)
     {
         if ($deal->user_id !== auth()->id()) {

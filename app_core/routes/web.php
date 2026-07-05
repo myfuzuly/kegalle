@@ -51,6 +51,8 @@ Route::get('/listing/{slug}', [ListingController::class, 'show'])->name('listing
 Route::get('/listings/{slug}', [ListingController::class, 'show'])->name('listings.show');
 Route::post('/listings/{listing}/review', [ListingController::class, 'storeReview'])->name('listings.review.store')->middleware('auth');
 Route::post('/store/{store}/review', [\App\Http\Controllers\Frontend\StoreController::class, 'storeReview'])->name('store.review.store')->middleware('auth');
+Route::get('/brand', [ListingController::class, 'brands'])->name('brands.index');
+Route::get('/brands', fn () => redirect('/brand'));
 Route::get('/brand/{slug}', [ListingController::class, 'brand'])->name('brand.show');
 
 Route::get('/deals', [\App\Http\Controllers\Frontend\DealsController::class, 'index'])->name('deals.index');
@@ -77,6 +79,7 @@ Route::get('/explore', [\App\Http\Controllers\Frontend\ExploreController::class,
 Route::get('/explore/{slug}', [\App\Http\Controllers\Frontend\ExploreController::class, 'show'])->name('pages.explore.show');
 
 Route::get('/towns', [\App\Http\Controllers\Frontend\TownController::class, 'index'])->name('towns.index');
+Route::get('/town', fn () => redirect('/towns'));
 Route::get('/town/{slug}', [\App\Http\Controllers\Frontend\TownController::class, 'show'])->name('town.show');
 
 Route::get('/events', [\App\Http\Controllers\Frontend\EventController::class, 'index'])->name('events.index');
@@ -202,6 +205,8 @@ Route::middleware(['auth', 'verified.custom', 'account.active'])->prefix('dashbo
     Route::get('deals', [\App\Http\Controllers\Dashboard\DealController::class, 'index'])->name('dashboard.deals.index');
     Route::get('deals/create', [\App\Http\Controllers\Dashboard\DealController::class, 'create'])->name('dashboard.deals.create');
     Route::post('deals', [\App\Http\Controllers\Dashboard\DealController::class, 'store'])->name('dashboard.deals.store');
+    Route::get('deals/{deal}/edit', [\App\Http\Controllers\Dashboard\DealController::class, 'edit'])->name('dashboard.deals.edit');
+    Route::put('deals/{deal}', [\App\Http\Controllers\Dashboard\DealController::class, 'update'])->name('dashboard.deals.update');
     Route::delete('deals/{deal}', [\App\Http\Controllers\Dashboard\DealController::class, 'destroy'])->name('dashboard.deals.destroy');
 
     Route::resource('stores', DashStore::class)->names('dashboard.stores');
@@ -315,6 +320,8 @@ Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
     Route::delete('/payments/{payment}', [PaymentController::class, 'destroy'])->name('admin.payments.destroy');
 
     Route::get('/deals', [\App\Http\Controllers\Admin\DealManagementController::class, 'index'])->name('admin.deals.index');
+    Route::get('/deals/{deal}/edit', [\App\Http\Controllers\Admin\DealManagementController::class, 'edit'])->name('admin.deals.edit');
+    Route::put('/deals/{deal}', [\App\Http\Controllers\Admin\DealManagementController::class, 'update'])->name('admin.deals.update');
     Route::post('/deals/{deal}/approve', [\App\Http\Controllers\Admin\DealManagementController::class, 'approve'])->name('admin.deals.approve');
     Route::post('/deals/{deal}/reject', [\App\Http\Controllers\Admin\DealManagementController::class, 'reject'])->name('admin.deals.reject');
     Route::post('/deals/{deal}/feature', [\App\Http\Controllers\Admin\DealManagementController::class, 'feature'])->name('admin.deals.feature');

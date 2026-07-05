@@ -44,6 +44,7 @@
             </div>
             <div style="display:flex;gap:8px;align-items:center">
                 @if($deal->listing)<a href="/listings/{{ $deal->listing->slug }}" target="_blank" class="kd-mini-btn">View</a>@endif
+                <a href="/dashboard/deals/{{ $deal->id }}/edit" class="kd-mini-btn">Edit</a>
                 @if($deal->status !== 'approved')
                     <form method="post" action="/dashboard/deals/{{ $deal->id }}" style="display:inline">@csrf @method('DELETE')
                         <button class="kd-mini-btn" style="background:#fee2e2;color:#991b1b;border:none;cursor:pointer">Delete</button>
