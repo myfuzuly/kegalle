@@ -90,12 +90,12 @@
 
 @push('scripts')
 <script>
-window.listingVariants = {!! json_encode($listing->variants->mapWithKeys(fn ($v) => [$v->name => $v->price])->toArray()) !!};
+window.listingVariants = {!! json_encode($listing->variants->mapWithKeys(fn ($v) => [$v->name => $v->price])->toArray(), JSON_HEX_TAG | JSON_HEX_APOS) !!};
 window.cfExistingValues = {!! json_encode(
     array_merge(
         $listing->condition ? ['cf_condition' => $listing->condition] : [],
         $listing->values->filter(fn ($v) => $v->field !== null)->mapWithKeys(fn ($v) => ['cf_' . $v->field->name => $v->value])->toArray()
-    )
+    ), JSON_HEX_TAG | JSON_HEX_APOS
 ) !!};
 </script>
 <script src="/js/category-fields.js?v=10"></script>

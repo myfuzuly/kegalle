@@ -396,9 +396,12 @@ Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
     Route::post('/notifications/read-all', [\App\Http\Controllers\Admin\AdminNotificationController::class, 'markAllRead'])->name('admin.notifications.readAll');
 });
 
+Route::middleware('throttle:60,1')->group(function () {
+
 Route::get('/api/search-suggestions', function (\Illuminate\Http\Request $request) {
     $q = trim($request->input('q', ''));
     if (strlen($q) < 2) return response()->json([]);
+    $q = str_replace(['%', '_'], ['\%', '\_'], $q);
     $listings = \App\Models\Listing::published()
         ->where('title', 'like', '%'.$q.'%')
         ->with('category')
@@ -471,5 +474,7 @@ Route::get('/api/brand-models/{brandId}', function ($brandId) {
 Route::get('/api/subcategories/{parentId}', function ($parentId) {
     return response()->json(\App\Models\Category::where('parent_id', $parentId)->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get(['id', 'name', 'slug', 'icon']));
 });
+
+}); // end throttle:60,1 group
 
 Route::fallback(fn () => abort(404));
