@@ -599,6 +599,28 @@
 </script>
 @endpush
 
+@push('scripts')
+<script>
+(function(){
+    var item = {
+        id: {{ $listing->id }},
+        title: {!! json_encode(\Illuminate\Support\Str::limit($listing->title, 40), JSON_HEX_TAG) !!},
+        slug: {!! json_encode($listing->slug, JSON_HEX_TAG) !!},
+        price: {!! json_encode($price, JSON_HEX_TAG) !!},
+        image: {!! json_encode($mainImageUrl ?? '', JSON_HEX_TAG) !!},
+        ts: Date.now()
+    };
+    var key = 'k_recently_viewed';
+    var list = [];
+    try { list = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) {}
+    list = list.filter(function(x) { return x.id !== item.id; });
+    list.unshift(item);
+    if (list.length > 12) list = list.slice(0, 12);
+    localStorage.setItem(key, JSON.stringify(list));
+})();
+</script>
+@endpush
+
 @if(isset($activeDeal) && $activeDeal)
 @push('scripts')
 <script>

@@ -26,7 +26,7 @@
     <div class="sa-card-head"><h2>Stores from Database</h2><span>{{ $stores->total() }} stores</span></div>
     <div class="sa-table-wrap">
         <table class="sa-table sa-table-stores-mgmt">
-            <thead><tr><th>Logo</th><th>Store</th><th>Owner</th><th>Contact</th><th>Listings</th><th>Status</th><th>Featured</th><th>Actions</th></tr></thead>
+            <thead><tr><th>Logo</th><th>Store</th><th>Owner</th><th>Contact</th><th>Listings</th><th>Status</th><th>Verified</th><th>Featured</th><th>Actions</th></tr></thead>
             <tbody>
             @forelse($stores as $store)
                 <tr>
@@ -42,16 +42,18 @@
                     <td>{{ $store->phone ?? '-' }}<small>{{ $store->email ?? '' }}</small></td>
                     <td>{{ $store->listings_count }}</td>
                     <td><span class="sa-status {{ $store->status }}">{{ ucfirst($store->status) }}</span></td>
+                    <td><span class="sa-status {{ $store->is_verified ? 'active' : 'suspended' }}">{{ $store->is_verified ? '✓ Verified' : '✕ No' }}</span></td>
                     <td><span class="sa-status {{ $store->is_featured ? 'active' : 'suspended' }}">{{ $store->is_featured ? 'Featured' : 'Not Featured' }}</span></td>
                     <td class="sa-actions-inline">
                         <a href="/store/{{ $store->slug }}" target="_blank">View</a>
                         <a href="/admin/stores/{{ $store->id }}/edit">Edit</a>
                         <form method="post" action="/admin/stores/{{ $store->id }}/suspend" onsubmit="return confirm('Suspend this store? It will move to the Danger Zone.')">@csrf<button class="danger" title="Suspend — moves to Danger Zone">Suspend</button></form>
+                        <form method="post" action="/admin/stores/{{ $store->id }}/verify">@csrf<button>{{ $store->is_verified ? 'Unverify' : 'Verify' }}</button></form>
                         <form method="post" action="/admin/stores/{{ $store->id }}/feature">@csrf<button>{{ $store->is_featured ? 'Unfeature' : 'Feature' }}</button></form>
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="8">No stores found.</td></tr>
+                <tr><td colspan="9">No stores found.</td></tr>
             @endforelse
             </tbody>
         </table>

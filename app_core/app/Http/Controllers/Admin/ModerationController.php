@@ -351,6 +351,15 @@ class ModerationController extends Controller
         return back()->with('success', 'Store featured status updated.');
     }
 
+    public function verifyStore(Store $store)
+    {
+        $store->is_verified = ! (bool) $store->is_verified;
+        $store->save();
+
+        $label = $store->is_verified ? 'verified' : 'unverified';
+        return back()->with('success', "Store marked as {$label}.");
+    }
+
     public function editStore(Store $store)
     {
         $users = User::orderBy('name')->get();

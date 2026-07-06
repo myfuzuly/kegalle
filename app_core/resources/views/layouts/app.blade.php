@@ -38,7 +38,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
 <link rel="icon" href="/images/kegalle-placeholder.png">
-<link rel="stylesheet" href="/css/kurulla-main.css?v=126">
+<link rel="stylesheet" href="/css/kurulla-main.css?v=127">
 <link rel="stylesheet" href="/css/kurulla-events.css?v=5">
 @stack('schema')
 @stack('styles')
@@ -238,7 +238,7 @@
 }
 </script>
 
-<script src="/js/kurulla-main.js?v=2"></script>
+<script src="/js/kurulla-main.js?v=3"></script>
 @stack('scripts')
 <script>
 (function(){var s=JSON.parse(localStorage.getItem('k_saved')||'[]'),c=s.length;if(!c)return;

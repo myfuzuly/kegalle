@@ -79,7 +79,7 @@
         <div class="k-store-profile-info">
             <h1 class="k-store-profile-name">
                 {{ $store->name }}
-                <span class="k-verified-badge">✓ Verified Store</span>
+                @if($store->is_verified)<span class="k-verified-badge">✓ Verified Store</span>@endif
                 <span class="k-rank-badge" style="background:{{ $rankColor }};color:#fff;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;margin-left:6px">{{ $rankLabel }}</span>
             </h1>
             <div class="k-store-profile-meta">

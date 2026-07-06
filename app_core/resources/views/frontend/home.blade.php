@@ -107,7 +107,7 @@
                                         <span>{{ strtoupper(substr($store->name,0,1)) }}</span>
                                     @endif
                                 </div>
-                                <div class="k-store-card-v2-name">{{ $store->name }}</div>
+                                <div class="k-store-card-v2-name">{{ $store->name }}@if($store->is_verified)<span class="k-verified-tick" title="Verified Store">✓</span>@endif</div>
                                 <div class="k-store-card-v2-meta">@if(($store->listings_count ?? 0) > 0){{ $store->listings_count }} {{ $store->listings_count == 1 ? 'Product' : 'Products' }} · @endif{{ $store->city ?? 'Kegalle' }}</div>
                             </a>
                         </div>
@@ -168,6 +168,15 @@
                         <div class="k-empty-state">No latest ads found.</div>
                     @endforelse
                 </div>
+            </div>
+
+            <!-- Recently Viewed -->
+            <div class="k-section k-recently-viewed-section" id="kRecentlyViewed" style="display:none">
+                <div class="k-section-header">
+                    <h2 class="k-section-title">Recently Viewed</h2>
+                    <a href="#" class="k-section-link" onclick="localStorage.removeItem('k_recently_viewed');document.getElementById('kRecentlyViewed').style.display='none';return false">Clear</a>
+                </div>
+                <div class="k-grid-4" id="kRecentlyViewedGrid"></div>
             </div>
 
             <!-- CTA Banner -->
@@ -546,6 +555,25 @@
 <script>
 document.addEventListener('DOMContentLoaded', function(){
     document.querySelectorAll('.k-sidebar-skeleton').forEach(function(el){ el.style.display='none'; });
+
+    var rv = [];
+    try { rv = JSON.parse(localStorage.getItem('k_recently_viewed') || '[]'); } catch(e){}
+    if (rv.length > 0) {
+        var section = document.getElementById('kRecentlyViewed');
+        var grid = document.getElementById('kRecentlyViewedGrid');
+        if (section && grid) {
+            section.style.display = '';
+            grid.innerHTML = rv.slice(0, 4).map(function(item) {
+                var imgHtml = item.image
+                    ? '<div class="k-listing-img"><img src="' + item.image + '" alt="" class="k-img-loaded" loading="lazy"></div>'
+                    : '<div class="k-listing-img"><div class="k-listing-img-placeholder">🛍️</div></div>';
+                return '<a href="/listings/' + item.slug + '" class="k-listing-card">' +
+                    imgHtml +
+                    '<div class="k-listing-body"><h3 class="k-listing-title">' + item.title + '</h3>' +
+                    '<div class="k-listing-price">' + item.price + '</div></div></a>';
+            }).join('');
+        }
+    }
 });
 </script>
 @endpush

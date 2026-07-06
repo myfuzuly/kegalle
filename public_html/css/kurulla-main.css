@@ -2227,3 +2227,35 @@ a { color: inherit; text-decoration: none; }
 }
 .k-whatsapp-btn { transition: transform .2s, box-shadow .2s, opacity .3s; }
 .k-whatsapp-btn.k-wa-hidden { opacity: 0; pointer-events: none; }
+
+/* 3. Hero tablet overlap fix (768-1100px) */
+@media (max-width: 1100px) and (min-width: 761px) {
+  .home-hero-inner { grid-template-columns: minmax(0,1fr); gap: 24px; }
+  .hero-actions-card { max-width: 480px; }
+  .home-hero h1 { font-size: 36px; }
+}
+
+/* 4. Form submit loading state */
+@keyframes k-spinner { to { transform: rotate(360deg); } }
+.k-btn-loading, button.k-btn-loading, .kd-primary.k-btn-loading {
+  pointer-events: none; opacity: .7; position: relative;
+}
+.k-btn-loading::after {
+  content: ''; position: absolute; right: 12px; top: 50%; margin-top: -8px;
+  width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.4);
+  border-top-color: #fff; border-radius: 50%; animation: k-spinner .6s linear infinite;
+}
+
+/* 5. Store verified badge conditional */
+.k-verified-badge { display: inline-flex; align-items: center; gap: 4px; background: #E8F5E9; color: #1B5E20; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-left: 6px; }
+.k-store-card-v2 .k-verified-tick { color: #1B5E20; font-size: 13px; font-weight: 800; margin-left: 4px; }
+
+/* 6. Seller onboarding banner */
+.kd-onboarding { background: linear-gradient(135deg, #E8F5E9, #fff); border: 1.5px solid #C8E6C9; border-radius: 16px; padding: 28px; margin-bottom: 24px; }
+.kd-onboarding h2 { font-size: 20px; font-weight: 800; margin: 0 0 8px; color: #1B5E20; }
+.kd-onboarding p { color: #475569; font-size: 14px; margin: 0 0 16px; line-height: 1.6; }
+.kd-onboarding-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.kd-onboarding-step { background: #fff; border: 1px solid #E5E8EF; border-radius: 12px; padding: 16px; text-align: center; }
+.kd-onboarding-step .kd-step-num { width: 32px; height: 32px; border-radius: 50%; background: #1B5E20; color: #fff; font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+.kd-onboarding-step strong { display: block; font-size: 13px; margin-bottom: 4px; }
+.kd-onboarding-step small { color: #667085; font-size: 12px; }

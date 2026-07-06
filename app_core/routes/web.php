@@ -248,6 +248,7 @@ Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
     Route::post('/stores/{store}/approve', [ModerationController::class, 'approveStore'])->name('admin.stores.approve');
     Route::post('/stores/{store}/suspend', [ModerationController::class, 'suspendStore'])->name('admin.stores.suspend');
     Route::post('/stores/{store}/feature', [ModerationController::class, 'featureStore'])->name('admin.stores.feature');
+    Route::post('/stores/{store}/verify', [ModerationController::class, 'verifyStore'])->name('admin.stores.verify');
     Route::get('/stores/{store}/edit', [ModerationController::class, 'editStore'])->name('admin.stores.edit');
     Route::put('/stores/{store}', [ModerationController::class, 'updateStore'])->name('admin.stores.update');
     Route::post('/stores/{store}/transfer', [ModerationController::class, 'transferStore'])->name('admin.stores.transfer');

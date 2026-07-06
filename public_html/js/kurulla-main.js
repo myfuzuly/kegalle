@@ -213,6 +213,18 @@ document.addEventListener('DOMContentLoaded', function() {
         sp.style.width = h > 0 ? (window.scrollY / h * 100) + '%' : '0';
     }, {passive: true});
 
+    // Form submit loading state
+    document.addEventListener('submit', function(e) {
+        var form = e.target;
+        if (!form.matches('form')) return;
+        var btn = form.querySelector('button[type="submit"], .kd-primary[type="submit"], .k-btn-primary[type="submit"], button:not([type])');
+        if (btn && !btn.classList.contains('k-btn-loading')) {
+            btn.classList.add('k-btn-loading');
+            btn.disabled = true;
+            setTimeout(function() { btn.classList.remove('k-btn-loading'); btn.disabled = false; }, 10000);
+        }
+    });
+
     // Hide WhatsApp button when it overlaps footer
     var waBtn = document.querySelector('.k-whatsapp-btn');
     var footer = document.querySelector('.k-footer');

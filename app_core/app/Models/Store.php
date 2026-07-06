@@ -23,6 +23,7 @@ class Store extends Model
         'opening_hours',
         'status',
         'is_featured',
+        'is_verified',
         'membership_plan_id',
         'membership_expires_at',
     ];
@@ -30,6 +31,7 @@ class Store extends Model
     protected $casts = [
         'opening_hours' => 'array',
         'is_featured' => 'boolean',
+        'is_verified' => 'boolean',
         'membership_expires_at' => 'datetime',
     ];
 

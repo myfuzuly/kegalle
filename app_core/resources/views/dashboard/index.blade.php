@@ -9,6 +9,33 @@
 @endsection
 
 @section('content')
+
+@if(($stats['listings'] ?? 0) === 0 && ($stats['stores'] ?? 0) === 0)
+<div class="kd-onboarding">
+    <h2>Welcome to Kegalle Marketplace!</h2>
+    <p>Get started in 3 simple steps to reach thousands of buyers in the Kegalle district.</p>
+    <div class="kd-onboarding-steps">
+        <div class="kd-onboarding-step">
+            <div class="kd-step-num">1</div>
+            <strong>Create Your Store</strong>
+            <small>Set up your business profile with logo and contact details</small>
+            <a href="/dashboard/stores/create" class="kd-btn kd-btn-primary" style="margin-top:10px;display:inline-block;font-size:12px;padding:6px 14px">Create Store</a>
+        </div>
+        <div class="kd-onboarding-step">
+            <div class="kd-step-num">2</div>
+            <strong>Post Your First Ad</strong>
+            <small>Add products or services with photos and pricing</small>
+            <a href="/dashboard/listings/create" class="kd-btn kd-btn-primary" style="margin-top:10px;display:inline-block;font-size:12px;padding:6px 14px">Post Ad</a>
+        </div>
+        <div class="kd-onboarding-step">
+            <div class="kd-step-num">3</div>
+            <strong>Start Selling</strong>
+            <small>Buyers will contact you via WhatsApp or chat</small>
+        </div>
+    </div>
+</div>
+@endif
+
 <div class="kd-widget-grid">
     <article class="kd-widget"><span>Total Ads</span><strong>{{ $stats['listings'] ?? 0 }}</strong><small>Your classified listings</small></article>
     <article class="kd-widget"><span>Approved</span><strong>{{ $stats['approved'] ?? 0 }}</strong><small>Live on marketplace</small></article>
