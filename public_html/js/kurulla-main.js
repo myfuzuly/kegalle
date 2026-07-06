@@ -212,4 +212,20 @@ document.addEventListener('DOMContentLoaded', function() {
         var h = document.documentElement.scrollHeight - window.innerHeight;
         sp.style.width = h > 0 ? (window.scrollY / h * 100) + '%' : '0';
     }, {passive: true});
+
+    // Hide WhatsApp button when it overlaps footer
+    var waBtn = document.querySelector('.k-whatsapp-btn');
+    var footer = document.querySelector('.k-footer');
+    if (waBtn && footer) {
+        var waHidden = false;
+        window.addEventListener('scroll', function() {
+            var fRect = footer.getBoundingClientRect();
+            var wRect = waBtn.getBoundingClientRect();
+            var overlap = wRect.bottom > fRect.top && wRect.top < fRect.bottom;
+            if (overlap !== waHidden) {
+                waHidden = overlap;
+                waBtn.classList.toggle('k-wa-hidden', overlap);
+            }
+        }, {passive: true});
+    }
 });
