@@ -2,3 +2,4 @@
 .kd-wrap,.kd-container{overflow-x:hidden}
 @media(max-width:900px){.kd-head{display:block}.kd-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.kd-row{grid-template-columns:1fr}.kd-row-head{display:none}.kd-form-grid{grid-template-columns:1fr}}
 @media(max-width:560px){.kd-stats{grid-template-columns:1fr}.kd-head h1{font-size:30px}.kd-container{padding:0 16px}.kd-wrap{padding:28px 0 56px}.kd-card,.kd-form{padding:18px;border-radius:20px}}
+.ka-field-error input,.ka-field-error select,.ka-field-error textarea{border-color:#dc2626!important}.ka-field-error-msg{display:block;color:#dc2626;font-size:12px;font-weight:600;margin-top:4px}

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ChatThread;
 use App\Models\Favorite;
 use App\Models\Listing;
+use App\Models\Category;
 use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -32,10 +33,12 @@ class StoreController extends Controller
             return redirect()->route('dashboard.stores.index')->with('success', "You have reached your store limit ({$storeLimit}). Contact admin to increase it.");
         }
         $locations = \App\Models\Location::where('is_active', 1)->orderBy('sort_order')->orderBy('name')->get();
+        $categories = Category::whereNull('parent_id')->where('is_active', 1)->orderBy('sort_order')->orderBy('name')->with('children')->get();
         return view('dashboard.stores.form', [
             'store' => new Store,
             'mode' => 'create',
             'locations' => $locations,
+            'categories' => $categories,
         ]);
     }
 
@@ -58,9 +61,15 @@ class StoreController extends Controller
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
             'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'banner' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
+            'whatsapp_same' => ['nullable'],
+            'categories' => ['nullable', 'array'],
+            'categories.*' => ['integer', 'exists:categories,id'],
         ]);
 
-        unset($data['logo'], $data['banner']);
+        if ($request->has('whatsapp_same') && ! empty($data['phone'])) {
+            $data['whatsapp'] = $data['phone'];
+        }
+        unset($data['logo'], $data['banner'], $data['whatsapp_same'], $data['categories']);
         $data = self::normalizePhones($data);
 
         $data['user_id'] = auth()->id();
@@ -78,7 +87,11 @@ class StoreController extends Controller
             $data['banner'] = \App\Helpers\ImageHelper::finalize($data['banner'], false, 1600);
         }
 
-        Store::create($data);
+        $store = Store::create($data);
+
+        if ($request->has('categories')) {
+            $store->categories()->sync($request->input('categories', []));
+        }
 
         return redirect()
             ->route('dashboard.stores.index')
@@ -111,11 +124,13 @@ class StoreController extends Controller
     {
         $this->authorizeStore($store);
         $locations = \App\Models\Location::where('is_active', 1)->orderBy('sort_order')->orderBy('name')->get();
+        $categories = Category::whereNull('parent_id')->where('is_active', 1)->orderBy('sort_order')->orderBy('name')->with('children')->get();
 
         return view('dashboard.stores.form', [
             'store' => $store,
             'mode' => 'edit',
             'locations' => $locations,
+            'categories' => $categories,
         ]);
     }
 
@@ -137,9 +152,15 @@ class StoreController extends Controller
             'banner' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
             'remove_logo' => ['nullable', 'boolean'],
             'remove_banner' => ['nullable', 'boolean'],
+            'whatsapp_same' => ['nullable'],
+            'categories' => ['nullable', 'array'],
+            'categories.*' => ['integer', 'exists:categories,id'],
         ]);
 
-        unset($data['logo'], $data['banner'], $data['remove_logo'], $data['remove_banner']);
+        if ($request->has('whatsapp_same') && ! empty($data['phone'])) {
+            $data['whatsapp'] = $data['phone'];
+        }
+        unset($data['logo'], $data['banner'], $data['remove_logo'], $data['remove_banner'], $data['whatsapp_same'], $data['categories']);
         $data = self::normalizePhones($data);
 
         if ($store->name !== $data['name']) {
@@ -172,6 +193,7 @@ class StoreController extends Controller
         }
 
         $store->update($data);
+        $store->categories()->sync($request->input('categories', []));
 
         return redirect()
             ->route('dashboard.stores.show', $store)

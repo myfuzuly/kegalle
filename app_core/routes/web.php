@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\FieldManagementController;
 use App\Http\Controllers\Admin\ChatController;
 use App\Http\Controllers\Admin\LocationManagementController;
 use App\Http\Controllers\Admin\MembershipController;
+use App\Http\Controllers\Admin\AdminListingController;
+use App\Http\Controllers\Admin\AdminStoreController;
 use App\Http\Controllers\Admin\ModerationController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\ReviewController;
@@ -240,18 +242,18 @@ Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
 
     Route::get('/approvals', [ModerationController::class, 'approvals'])->name('admin.approvals');
     Route::get('/inactive', [ModerationController::class, 'inactive'])->name('admin.inactive');
-    Route::delete('/listings/{listing}', [ModerationController::class, 'destroyListing'])->name('admin.listings.destroy');
-    Route::delete('/stores/{store}', [ModerationController::class, 'destroyStore'])->name('admin.stores.destroy');
-    Route::get('/stores', [ModerationController::class, 'stores'])->name('admin.stores.index');
-    Route::get('/stores/create', [ModerationController::class, 'createStore'])->name('admin.stores.create');
-    Route::post('/stores', [ModerationController::class, 'storeStore'])->name('admin.stores.store');
-    Route::post('/stores/{store}/approve', [ModerationController::class, 'approveStore'])->name('admin.stores.approve');
-    Route::post('/stores/{store}/suspend', [ModerationController::class, 'suspendStore'])->name('admin.stores.suspend');
-    Route::post('/stores/{store}/feature', [ModerationController::class, 'featureStore'])->name('admin.stores.feature');
-    Route::post('/stores/{store}/verify', [ModerationController::class, 'verifyStore'])->name('admin.stores.verify');
-    Route::get('/stores/{store}/edit', [ModerationController::class, 'editStore'])->name('admin.stores.edit');
-    Route::put('/stores/{store}', [ModerationController::class, 'updateStore'])->name('admin.stores.update');
-    Route::post('/stores/{store}/transfer', [ModerationController::class, 'transferStore'])->name('admin.stores.transfer');
+    Route::delete('/listings/{listing}', [AdminListingController::class, 'destroy'])->name('admin.listings.destroy');
+    Route::delete('/stores/{store}', [AdminStoreController::class, 'destroy'])->name('admin.stores.destroy');
+    Route::get('/stores', [AdminStoreController::class, 'index'])->name('admin.stores.index');
+    Route::get('/stores/create', [AdminStoreController::class, 'create'])->name('admin.stores.create');
+    Route::post('/stores', [AdminStoreController::class, 'store'])->name('admin.stores.store');
+    Route::post('/stores/{store}/approve', [AdminStoreController::class, 'approve'])->name('admin.stores.approve');
+    Route::post('/stores/{store}/suspend', [AdminStoreController::class, 'suspend'])->name('admin.stores.suspend');
+    Route::post('/stores/{store}/feature', [AdminStoreController::class, 'feature'])->name('admin.stores.feature');
+    Route::post('/stores/{store}/verify', [AdminStoreController::class, 'verify'])->name('admin.stores.verify');
+    Route::get('/stores/{store}/edit', [AdminStoreController::class, 'edit'])->name('admin.stores.edit');
+    Route::put('/stores/{store}', [AdminStoreController::class, 'update'])->name('admin.stores.update');
+    Route::post('/stores/{store}/transfer', [AdminStoreController::class, 'transfer'])->name('admin.stores.transfer');
 
     Route::get('/brands', [\App\Http\Controllers\Admin\BrandManagementController::class, 'index'])->name('admin.brands.index');
     Route::get('/brands/create', [\App\Http\Controllers\Admin\BrandManagementController::class, 'create'])->name('admin.brands.create');
@@ -264,16 +266,16 @@ Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
     Route::put('/brands/models/{model}', [\App\Http\Controllers\Admin\BrandManagementController::class, 'updateModel'])->name('admin.brands.models.update');
     Route::delete('/brands/models/{model}', [\App\Http\Controllers\Admin\BrandManagementController::class, 'destroyModel'])->name('admin.brands.models.destroy');
 
-    Route::get('/listings', [ModerationController::class, 'listings'])->name('admin.listings.index');
-    Route::get('/classifieds', [ModerationController::class, 'classifieds'])->name('admin.classifieds.index');
-    Route::get('/listings/create', [ModerationController::class, 'createListing'])->name('admin.listings.create');
-    Route::post('/listings', [ModerationController::class, 'storeListing'])->name('admin.listings.store');
-    Route::get('/listings/{listing}/edit', [ModerationController::class, 'editListing'])->name('admin.listings.edit');
-    Route::put('/listings/{listing}', [ModerationController::class, 'updateListing'])->name('admin.listings.update');
-    Route::post('/listings/{listing}/approve', [ModerationController::class, 'approveListing'])->name('admin.listings.approve');
-    Route::post('/listings/{listing}/reject', [ModerationController::class, 'rejectListing'])->name('admin.listings.reject');
-    Route::post('/listings/{listing}/feature', [ModerationController::class, 'featureListing'])->name('admin.listings.feature');
-    Route::post('/listings/{listing}/top', [ModerationController::class, 'topListing'])->name('admin.listings.top');
+    Route::get('/listings', [AdminListingController::class, 'index'])->name('admin.listings.index');
+    Route::get('/classifieds', [AdminListingController::class, 'classifieds'])->name('admin.classifieds.index');
+    Route::get('/listings/create', [AdminListingController::class, 'create'])->name('admin.listings.create');
+    Route::post('/listings', [AdminListingController::class, 'store'])->name('admin.listings.store');
+    Route::get('/listings/{listing}/edit', [AdminListingController::class, 'edit'])->name('admin.listings.edit');
+    Route::put('/listings/{listing}', [AdminListingController::class, 'update'])->name('admin.listings.update');
+    Route::post('/listings/{listing}/approve', [AdminListingController::class, 'approve'])->name('admin.listings.approve');
+    Route::post('/listings/{listing}/reject', [AdminListingController::class, 'reject'])->name('admin.listings.reject');
+    Route::post('/listings/{listing}/feature', [AdminListingController::class, 'feature'])->name('admin.listings.feature');
+    Route::post('/listings/{listing}/top', [AdminListingController::class, 'top'])->name('admin.listings.top');
 
     Route::get('/categories', [CategoryManagementController::class, 'index'])->name('admin.categories.index');
     Route::post('/categories', [CategoryManagementController::class, 'store'])->name('admin.categories.store');

@@ -23,6 +23,9 @@ app_core/storage/logs/*.log
 app_core/storage/app/public/*
 !app_core/storage/app/public/.gitkeep
 
+# Deploy scripts (contain FTP credentials)
+deploy_*.py
+
 # OS/editor cruft
 .DS_Store
 Thumbs.db

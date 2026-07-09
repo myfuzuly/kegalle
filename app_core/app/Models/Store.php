@@ -45,6 +45,11 @@ class Store extends Model
         return $this->hasMany(Listing::class);
     }
 
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'category_store');
+    }
+
     public function reviews()
     {
         return $this->hasMany(Review::class);

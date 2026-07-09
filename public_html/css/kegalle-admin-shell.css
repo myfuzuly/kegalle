@@ -839,33 +839,32 @@ a{color:inherit;text-decoration:none}
     font-size:24px!important;
 }
 
+/* Hamburger button — hidden on desktop */
+.ka-menu-toggle{
+    display:none;
+    width:40px;height:40px;border:none;background:none;cursor:pointer;
+    font-size:22px;color:var(--ka-text);border-radius:10px;flex-shrink:0;
+}
+.ka-menu-toggle:hover{background:#f5f7fb}
+.ka-sidebar-overlay{
+    display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:39;
+}
+
 /* Responsive */
 @media(max-width:1100px){
     .ka-shell{
         grid-template-columns:1fr;
     }
 
+    .ka-menu-toggle{display:inline-flex;align-items:center;justify-content:center}
+
     .ka-sidebar{
-        position:relative;
-        min-height:auto;
-        border-right:0;
-        border-bottom:1px solid var(--ka-border);
+        position:fixed;top:0;left:0;bottom:0;width:270px;z-index:40;
+        min-height:100vh;border-right:1px solid var(--ka-border);
+        transform:translateX(-100%);transition:transform .25s ease;
     }
-
-    .ka-nav-group{
-        display:grid;
-        grid-template-columns:repeat(2,minmax(0,1fr));
-        gap:4px;
-        padding:10px;
-    }
-
-    .ka-nav-title{
-        grid-column:1/-1;
-    }
-
-    .ka-sidebar-footer{
-        display:none;
-    }
+    .ka-sidebar.open{transform:translateX(0)}
+    .ka-sidebar-overlay.open{display:block}
 
     .ka-workspace{
         height:auto;
@@ -879,36 +878,77 @@ a{color:inherit;text-decoration:none}
     .ka-grid-2{
         grid-template-columns:minmax(0,1fr);
     }
+
+    .ka-admin-topbar h1{font-size:20px}
 }
 
 @media(max-width:680px){
     .ka-admin-topbar{
-        display:block;
-        padding:16px;
+        padding:14px 12px;
     }
 
+    .ka-admin-topbar h1{font-size:18px}
+    .ka-admin-topbar p{font-size:12px}
+    .ka-breadcrumb{font-size:11px}
+
     .ka-top-actions{
-        margin-top:12px;
+        margin-top:10px;
+        gap:6px;
+    }
+
+    .ka-top-actions .ka-btn{
+        min-height:34px;font-size:12px;padding:0 10px;
     }
 
     .ka-content{
-        padding:16px 12px 40px;
-    }
-
-    .ka-nav-group{
-        grid-template-columns:1fr;
+        padding:14px 10px 40px;
     }
 
     .ka-stat-grid,
     .ka-shortcut-grid,
     .ka-health{
-        grid-template-columns:1fr;
+        grid-template-columns:repeat(2,minmax(0,1fr));
     }
+
+    .ka-stat-card strong{font-size:20px}
+    .ka-stat-card span{font-size:10px}
 
     .ka-table,
     .sa-table{
         min-width:720px;
     }
+
+    .ka-notif-dropdown{width:calc(100vw - 24px);right:-60px}
+
+    .sa-card{padding:14px!important}
+    .sa-card-head h2{font-size:15px!important}
+
+    .ka-queue-row{flex-wrap:wrap}
+    .ka-queue-row button{width:100%;margin-top:6px}
+}
+
+@media(max-width:400px){
+    .ka-stat-grid,
+    .ka-shortcut-grid,
+    .ka-health{
+        grid-template-columns:1fr;
+    }
+}
+
+/* Inline form validation */
+.ka-field-error input,
+.ka-field-error select,
+.ka-field-error textarea{border-color:#dc2626!important}
+.ka-field-error-msg{display:block;color:#dc2626;font-size:12px;font-weight:600;margin-top:4px}
+
+/* Premium form grid responsive */
+@media(max-width:680px){
+    .ka-form-grid{grid-template-columns:1fr!important}
+    .ka-span-2{grid-column:auto!important}
+    .ka-premium-form label{font-size:13px}
+    .ka-premium-form input,
+    .ka-premium-form select,
+    .ka-premium-form textarea{font-size:14px}
 }
 
 h1,h2,h3,.ka-admin-topbar h1,.ka-card-head h2,.sa-card-head h2,.ka-brand strong{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800}

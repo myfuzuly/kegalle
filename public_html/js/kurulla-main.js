@@ -225,6 +225,44 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Inline form validation for seller dashboard
+    document.querySelectorAll('.kd-form').forEach(function(form) {
+        form.setAttribute('novalidate', '');
+        form.addEventListener('submit', function(e) {
+            var ok = true;
+            form.querySelectorAll('.ka-field-error').forEach(function(f) { f.classList.remove('ka-field-error'); });
+            form.querySelectorAll('.ka-field-error-msg').forEach(function(m) { m.remove(); });
+            form.querySelectorAll('[required]').forEach(function(inp) {
+                if (!(inp.value || '').trim()) {
+                    ok = false;
+                    var wrap = inp.closest('label') || inp.parentElement;
+                    wrap.classList.add('ka-field-error');
+                    var msg = document.createElement('small');
+                    msg.className = 'ka-field-error-msg';
+                    msg.textContent = 'This field is required';
+                    inp.insertAdjacentElement('afterend', msg);
+                }
+            });
+            form.querySelectorAll('[type="email"]').forEach(function(inp) {
+                var val = (inp.value || '').trim();
+                if (val && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
+                    ok = false;
+                    var wrap = inp.closest('label') || inp.parentElement;
+                    wrap.classList.add('ka-field-error');
+                    var msg = document.createElement('small');
+                    msg.className = 'ka-field-error-msg';
+                    msg.textContent = 'Please enter a valid email';
+                    inp.insertAdjacentElement('afterend', msg);
+                }
+            });
+            if (!ok) { e.preventDefault(); form.querySelector('.ka-field-error-msg').scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+        });
+        form.addEventListener('input', function(e) {
+            var wrap = e.target.closest('label') || e.target.parentElement;
+            if (wrap) { wrap.classList.remove('ka-field-error'); var m = wrap.querySelector('.ka-field-error-msg'); if (m) m.remove(); }
+        });
+    });
+
     // Hide WhatsApp button when it overlaps footer
     var waBtn = document.querySelector('.k-whatsapp-btn');
     var footer = document.querySelector('.k-footer');

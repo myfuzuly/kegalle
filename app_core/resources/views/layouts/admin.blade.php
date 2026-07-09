@@ -16,7 +16,7 @@ href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
 rel="stylesheet">
 
 <!-- ADMIN CORE -->
-<link rel="stylesheet" href="/css/kegalle-admin-shell.css?v=25">
+<link rel="stylesheet" href="/css/kegalle-admin-shell.css?v=26">
 
 <!-- ADMIN PREMIUM UI -->
 <link rel="stylesheet" href="/css/kegalle-admin-store-ui-polish.css?v=22">
@@ -31,12 +31,15 @@ rel="stylesheet">
 
 <div class="ka-shell">
 
+<div class="ka-sidebar-overlay" id="kaSidebarOverlay"></div>
 @include('admin.partials.sidebar')
 
 <section class="ka-workspace">
 
 <header class="ka-admin-topbar">
 
+<div style="display:flex;align-items:center;gap:10px">
+<button type="button" class="ka-menu-toggle" id="kaMenuToggle" aria-label="Toggle menu">☰</button>
 <div>
 
 <div class="ka-breadcrumb">
@@ -61,6 +64,7 @@ Super Admin
 @yield('subheading','Marketplace Control Center · Kegalle')
 </p>
 
+</div>
 </div>
 
 <div class="ka-top-actions">
@@ -195,6 +199,60 @@ src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js">
         if (!document.getElementById('kaNotifBell').contains(e.target)) {
             dropdown.classList.remove('open');
         }
+    });
+})();
+
+// Sidebar hamburger toggle
+(function(){
+    var tog=document.getElementById('kaMenuToggle'),
+        sb=document.getElementById('kaSidebar'),
+        ov=document.getElementById('kaSidebarOverlay');
+    if(!tog||!sb)return;
+    function open(){sb.classList.add('open');ov.classList.add('open');document.body.style.overflow='hidden';tog.textContent='✕';}
+    function close(){sb.classList.remove('open');ov.classList.remove('open');document.body.style.overflow='';tog.textContent='☰';}
+    tog.addEventListener('click',function(){sb.classList.contains('open')?close():open();});
+    ov.addEventListener('click',close);
+    sb.querySelectorAll('.ka-nav').forEach(function(a){a.addEventListener('click',close);});
+})();
+
+// Inline form validation
+(function(){
+    document.querySelectorAll('.ka-premium-form, .kd-form').forEach(function(form){
+        form.setAttribute('novalidate','');
+        form.addEventListener('submit',function(e){
+            var ok=true;
+            form.querySelectorAll('.ka-field-error').forEach(function(f){f.classList.remove('ka-field-error');});
+            form.querySelectorAll('.ka-field-error-msg').forEach(function(m){m.remove();});
+            form.querySelectorAll('[required]').forEach(function(inp){
+                var val=(inp.value||'').trim();
+                if(!val){
+                    ok=false;
+                    var wrap=inp.closest('.ka-field')||inp.closest('label')||inp.parentElement;
+                    wrap.classList.add('ka-field-error');
+                    var msg=document.createElement('small');
+                    msg.className='ka-field-error-msg';
+                    msg.textContent='This field is required';
+                    inp.insertAdjacentElement('afterend',msg);
+                }
+            });
+            form.querySelectorAll('[type="email"]').forEach(function(inp){
+                var val=(inp.value||'').trim();
+                if(val&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)){
+                    ok=false;
+                    var wrap=inp.closest('.ka-field')||inp.closest('label')||inp.parentElement;
+                    wrap.classList.add('ka-field-error');
+                    var msg=document.createElement('small');
+                    msg.className='ka-field-error-msg';
+                    msg.textContent='Please enter a valid email';
+                    inp.insertAdjacentElement('afterend',msg);
+                }
+            });
+            if(!ok){e.preventDefault();form.querySelector('.ka-field-error-msg').scrollIntoView({behavior:'smooth',block:'center'});}
+        });
+        form.addEventListener('input',function(e){
+            var wrap=e.target.closest('.ka-field')||e.target.closest('label')||e.target.parentElement;
+            if(wrap){wrap.classList.remove('ka-field-error');var m=wrap.querySelector('.ka-field-error-msg');if(m)m.remove();}
+        });
     });
 })();
 </script>

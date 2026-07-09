@@ -238,7 +238,7 @@
 }
 </script>
 
-<script src="/js/kurulla-main.js?v=3"></script>
+<script src="/js/kurulla-main.js?v=4"></script>
 @stack('scripts')
 <script>
 (function(){var s=JSON.parse(localStorage.getItem('k_saved')||'[]'),c=s.length;if(!c)return;
