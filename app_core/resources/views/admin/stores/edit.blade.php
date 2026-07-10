@@ -86,37 +86,25 @@
     <div class="ka-field ka-span-2">
         <label>Store Categories <small style="font-weight:400;color:#667085">(select all that apply)</small></label>
         <style>
-            #storeCategoryPicker input[type="checkbox"]{width:14px!important;height:14px!important;min-width:14px;margin:0!important;accent-color:#1b5e20;cursor:pointer}
-            #storeCategoryPicker .k-cat-chip{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;padding:5px 12px;border:1px solid #e5e8ef;border-radius:8px;cursor:pointer;transition:all .15s;line-height:1.3}
-            #storeCategoryPicker .k-cat-chip:hover{border-color:#a5d6a7;background:#f1f8e9}
-            #storeCategoryPicker .k-cat-parent{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#1b5e20;cursor:pointer;font-weight:700;line-height:1.3}
+            #storeCategoryPicker input[type="checkbox"]{width:16px!important;height:16px!important;min-width:16px;margin:0!important;accent-color:#1b5e20;cursor:pointer}
+            #storeCategoryPicker .k-cat-main{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;cursor:pointer;transition:all .15s}
         </style>
-        <div id="storeCategoryPicker" style="border:1.5px solid #e5e8ef;border-radius:10px;padding:12px;max-height:260px;overflow-y:auto;margin-top:4px">
+        <input type="text" id="catSearch" placeholder="Search categories..." style="margin-top:4px;margin-bottom:6px;padding:10px 14px;border:1.5px solid #e5e8ef;border-radius:10px;font-size:13px;width:100%;box-sizing:border-box">
+        <div id="storeCategoryPicker" style="border:1.5px solid #e5e8ef;border-radius:10px;padding:12px;max-height:300px;overflow-y:auto">
             @php $selectedCats = old('categories', $store->categories->pluck('id')->toArray()); @endphp
+            <div id="catNoResults" style="display:none;text-align:center;padding:16px;color:#94a3b8;font-size:13px">No categories found</div>
             @foreach($categories as $parent)
-                <div style="margin-bottom:10px" class="k-cat-group">
+                <div class="k-cat-group" data-name="{{ strtolower($parent->name) }} {{ strtolower($parent->children->pluck('name')->join(' ')) }}" style="margin-bottom:8px">
+                    <label class="k-cat-main" style="{{ in_array($parent->id, $selectedCats) ? 'background:#e8f5e9;border:1.5px solid #1b5e20' : 'background:#f8fafc;border:1.5px solid #e5e8ef' }}">
+                        <input type="checkbox" name="categories[]" value="{{ $parent->id }}" {{ in_array($parent->id, $selectedCats) ? 'checked' : '' }}>
+                        <span style="font-size:15px;line-height:1">{{ $parent->icon ?? '🏷' }}</span>
+                        <span style="font-weight:700;font-size:14px;color:#1b5e20">{{ $parent->name }}</span>
+                    </label>
                     @if($parent->children->isNotEmpty())
-                        <label class="k-cat-parent">
-                            <input type="checkbox" class="k-parent-cb" data-parent="{{ $parent->id }}">
-                            {{ $parent->icon ?? '' }} {{ $parent->name }}
-                        </label>
-                    @else
-                        <strong style="font-size:13px;color:#1b5e20">{{ $parent->icon ?? '' }} {{ $parent->name }}</strong>
+                        <div style="padding:4px 12px 2px 40px;font-size:11px;color:#94a3b8;line-height:1.6">
+                            {{ $parent->children->pluck('name')->join(' · ') }}
+                        </div>
                     @endif
-                    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;padding-left:4px">
-                        @foreach($parent->children as $child)
-                            <label class="k-cat-chip" data-parent="{{ $parent->id }}" style="{{ in_array($child->id, $selectedCats) ? 'background:#e8f5e9;border-color:#1b5e20' : '' }}">
-                                <input type="checkbox" name="categories[]" value="{{ $child->id }}" {{ in_array($child->id, $selectedCats) ? 'checked' : '' }}>
-                                {{ $child->name }}
-                            </label>
-                        @endforeach
-                        @if($parent->children->isEmpty())
-                            <label class="k-cat-chip" style="{{ in_array($parent->id, $selectedCats) ? 'background:#e8f5e9;border-color:#1b5e20' : '' }}">
-                                <input type="checkbox" name="categories[]" value="{{ $parent->id }}" {{ in_array($parent->id, $selectedCats) ? 'checked' : '' }}>
-                                {{ $parent->name }}
-                            </label>
-                        @endif
-                    </div>
                 </div>
             @endforeach
         </div>
@@ -215,37 +203,26 @@ if (waSame) {
     if (waSame.checked) toggleWaSame();
 }
 
-function styleChip(lbl, on) {
-    lbl.style.background = on ? '#e8f5e9' : '';
-    lbl.style.borderColor = on ? '#1b5e20' : '#e5e8ef';
-}
-function syncParentCb(parentId) {
-    var chips = document.querySelectorAll('.k-cat-chip[data-parent="' + parentId + '"] input');
-    var parentCb = document.querySelector('.k-parent-cb[data-parent="' + parentId + '"]');
-    if (!parentCb || !chips.length) return;
-    var all = true, none = true;
-    chips.forEach(function(c) { if (c.checked) none = false; else all = false; });
-    parentCb.checked = all;
-    parentCb.indeterminate = !all && !none;
-}
-document.querySelectorAll('.k-cat-chip input[type="checkbox"]').forEach(function(cb) {
+document.querySelectorAll('.k-cat-main input[type="checkbox"]').forEach(function(cb) {
     cb.addEventListener('change', function() {
-        styleChip(this.closest('.k-cat-chip'), this.checked);
-        var parent = this.closest('.k-cat-chip').getAttribute('data-parent');
-        if (parent) syncParentCb(parent);
+        var lbl = this.closest('.k-cat-main');
+        lbl.style.background = this.checked ? '#e8f5e9' : '#f8fafc';
+        lbl.style.borderColor = this.checked ? '#1b5e20' : '#e5e8ef';
     });
 });
-document.querySelectorAll('.k-parent-cb').forEach(function(pcb) {
-    var pid = pcb.getAttribute('data-parent');
-    syncParentCb(pid);
-    pcb.addEventListener('change', function() {
-        var on = this.checked;
-        document.querySelectorAll('.k-cat-chip[data-parent="' + pid + '"]').forEach(function(lbl) {
-            var cb = lbl.querySelector('input');
-            cb.checked = on;
-            styleChip(lbl, on);
+var catSearch = document.getElementById('catSearch');
+if (catSearch) {
+    catSearch.addEventListener('input', function() {
+        var q = this.value.toLowerCase().trim();
+        var groups = document.querySelectorAll('.k-cat-group');
+        var found = 0;
+        groups.forEach(function(g) {
+            var match = !q || g.getAttribute('data-name').indexOf(q) !== -1;
+            g.style.display = match ? '' : 'none';
+            if (match) found++;
         });
+        document.getElementById('catNoResults').style.display = found ? 'none' : 'block';
     });
-});
+}
 </script>
 @endsection
