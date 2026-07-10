@@ -139,7 +139,11 @@
                     @forelse($products as $listing)
                         @include('frontend.listings.card',['listing'=>$listing])
                     @empty
-                        <div class="k-empty-state">No products found. This store has no approved products yet.</div>
+                        <div class="k-empty-state">
+                            <p style="font-size:32px;margin:0 0 8px">📦</p>
+                            <p style="font-weight:700;margin:0 0 4px">No products yet</p>
+                            <p style="color:var(--k-text-secondary);font-size:13px;margin:0">This store hasn't added any products. Check back soon!</p>
+                        </div>
                     @endforelse
                 </div>
                 {{ $products->links('vendor.pagination.k-theme') }}
@@ -291,6 +295,13 @@
                         <span class="k-text-xs k-text-secondary">📍 {{ $store->city ?? 'Kegalle' }}</span>
                     </div>
                 @endif
+            <div class="k-info-card mb-16" style="text-align:center">
+                <h3 style="font-size:14px">Share This Store</h3>
+                <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+                    <a href="https://wa.me/?text={{ urlencode($store->name . ' — ' . url('/store/' . $store->slug)) }}" target="_blank" rel="noopener" class="k-btn k-btn-outline" style="font-size:12px;padding:8px 14px">WhatsApp</a>
+                    <button type="button" class="k-btn k-btn-outline" style="font-size:12px;padding:8px 14px" onclick="navigator.clipboard.writeText(window.location.href).then(function(){this.textContent='Copied!'}.bind(this))">📋 Copy Link</button>
+                </div>
+            </div>
             </div>
         </div>
     </div>

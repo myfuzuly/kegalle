@@ -39,8 +39,7 @@
                 <form method="POST" action="{{ route('register.submit') }}">
                     @csrf
                     <div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden" aria-hidden="true">
-                        <label for="website">Leave this field empty</label>
-                        <input type="text" name="website" id="website" tabindex="-1" autocomplete="off">
+                        <input type="text" name="website" id="website" tabindex="-1" autocomplete="off" aria-label="Do not fill this field">
                     </div>
                     <div style="margin-bottom:16px">
                         <label class="k-form-label">I want to join as</label>
@@ -110,7 +109,16 @@
                             <label class="k-form-label" for="register-password">Password</label>
                             <div class="k-form-icon-wrap">
                                 <span class="k-form-icon">🔒</span>
-                                <input id="register-password" type="password" name="password" class="k-form-control with-icon" placeholder="Create a password" required>
+                                <input id="register-password" type="password" name="password" class="k-form-control with-icon" placeholder="Create a password" required minlength="8">
+                            </div>
+                            <div id="pw-strength" style="margin-top:6px;display:none">
+                                <div style="display:flex;gap:3px;margin-bottom:4px">
+                                    <div class="pw-bar" style="flex:1;height:4px;border-radius:2px;background:#e2e8f0"></div>
+                                    <div class="pw-bar" style="flex:1;height:4px;border-radius:2px;background:#e2e8f0"></div>
+                                    <div class="pw-bar" style="flex:1;height:4px;border-radius:2px;background:#e2e8f0"></div>
+                                    <div class="pw-bar" style="flex:1;height:4px;border-radius:2px;background:#e2e8f0"></div>
+                                </div>
+                                <small id="pw-label" style="font-size:11px;color:#94a3b8">Min 8 characters</small>
                             </div>
                         </div>
                         <div class="k-form-group">
@@ -141,6 +149,19 @@
 </div>
 
 <script>
+(function(){
+    var pw=document.getElementById('register-password'),box=document.getElementById('pw-strength'),bars=box?box.querySelectorAll('.pw-bar'):[],lbl=document.getElementById('pw-label');
+    var colors=['#ef4444','#f59e0b','#22c55e','#059669'],labels=['Weak','Fair','Good','Strong'];
+    if(pw&&box){pw.addEventListener('input',function(){
+        var v=pw.value,s=0;
+        if(!v){box.style.display='none';return;}
+        box.style.display='block';
+        if(v.length>=8)s++;if(v.length>=12)s++;if(/[A-Z]/.test(v)&&/[a-z]/.test(v))s++;if(/[0-9]/.test(v)||/[^a-zA-Z0-9]/.test(v))s++;
+        s=Math.min(s,4);
+        for(var i=0;i<4;i++){bars[i].style.background=i<s?colors[Math.min(s-1,3)]:'#e2e8f0';}
+        lbl.textContent=s===0?'Min 8 characters':labels[s-1];lbl.style.color=colors[Math.min(s-1,3)];
+    });}
+})();
 document.querySelectorAll('.k-account-type input[type=radio]').forEach(function(r){
     r.addEventListener('change', function(){
         document.querySelectorAll('.k-account-type').forEach(function(el){ el.classList.remove('selected'); });

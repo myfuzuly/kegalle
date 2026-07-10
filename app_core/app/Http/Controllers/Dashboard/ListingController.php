@@ -9,6 +9,7 @@ use App\Models\ListingImage;
 use App\Models\Location;
 use App\Models\ListingFieldValue;
 use App\Models\Store;
+use App\Http\Requests\StoreListingRequest;
 use Illuminate\Http\Request;
 use App\Helpers\ImageHelper;
 use Illuminate\Support\Str;
@@ -42,16 +43,9 @@ class ListingController extends Controller
         return view('dashboard.listings.create', compact('categories', 'store', 'stores'));
     }
 
-    public function store(Request $request)
+    public function store(StoreListingRequest $request)
     {
-        $data = $request->validate([
-            'title' => ['required', 'string', 'max:190'],
-            'category_id' => ['nullable', 'exists:categories,id'],
-            'store_id' => ['nullable', 'exists:stores,id'],
-            'price' => ['nullable', 'numeric', 'min:0'],
-            'description' => ['required', 'string', 'min:5'],
-            'images.*' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
-        ]);
+        $data = $request->validated();
 
         // Only allow posting to the user's own stores
         if (! empty($data['store_id'])) {
@@ -119,18 +113,11 @@ class ListingController extends Controller
         return view('dashboard.listings.edit', compact('listing', 'categories', 'stores'));
     }
 
-    public function update(Request $request, Listing $listing)
+    public function update(StoreListingRequest $request, Listing $listing)
     {
         $this->authorizeListing($listing);
 
-        $data = $request->validate([
-            'title' => ['required', 'string', 'max:190'],
-            'category_id' => ['nullable', 'exists:categories,id'],
-            'store_id' => ['nullable', 'exists:stores,id'],
-            'price' => ['nullable', 'numeric', 'min:0'],
-            'description' => ['required', 'string', 'min:5'],
-            'images.*' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
-        ]);
+        $data = $request->validated();
 
         if (! empty($data['store_id'])) {
             $ownStore = Store::where('user_id', auth()->id())->where('id', $data['store_id'])->exists();

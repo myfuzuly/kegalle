@@ -38,7 +38,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
 <link rel="icon" href="/images/kegalle-placeholder.png">
-<link rel="stylesheet" href="/css/kurulla-main.css?v=127">
+<link rel="stylesheet" href="/css/kurulla-main.css?v=128">
 <link rel="stylesheet" href="/css/kurulla-events.css?v=5">
 @stack('schema')
 @stack('styles')
@@ -162,10 +162,7 @@
                 <strong>Kegalle</strong>
                 <p>Discover great deals, trusted sellers and local stores across Kegalle.</p>
                 <div class="k-footer-socials">
-                    <a href="#" class="k-footer-social">f</a>
-                    <a href="#" class="k-footer-social">in</a>
-                    <a href="#" class="k-footer-social">yt</a>
-                    <a href="#" class="k-footer-social">t</a>
+                    <a href="https://wa.me/94706930930" target="_blank" rel="noopener" class="k-footer-social" title="WhatsApp">W</a>
                 </div>
             </div>
             <div class="k-footer-col">
