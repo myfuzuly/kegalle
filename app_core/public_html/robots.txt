@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Disallow private/admin/dashboard areas
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /login
+Disallow: /register
+Disallow: /logout
+Disallow: /password/
+Disallow: /email/
+Disallow: /api/
+Disallow: /storage/
+
+# Disallow low-value filtered search pages
+Disallow: /listings?*sort=
+Disallow: /listings?*page=
+
+Sitemap: https://kegalle.com/sitemap.xml

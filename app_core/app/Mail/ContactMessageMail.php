@@ -9,6 +9,9 @@ use Illuminate\Queue\SerializesModels;
 class ContactMessageMail extends Mailable
 {
     use Queueable, SerializesModels;
+    public int $tries = 3;
+    public array $backoff = [10, 30, 60];
+
 
     public string $fromName;
     public string $fromEmail;

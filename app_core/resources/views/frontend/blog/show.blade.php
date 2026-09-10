@@ -68,7 +68,7 @@
 
             <div class="blog-content k-blog-body">
                 @if($post->body)
-                    {!! $post->body !!}
+                    {!! \App\Helpers\HtmlSanitizer::clean($post->body) !!}
                 @else
                     <p>{{ $post->excerpt }}</p>
                 @endif

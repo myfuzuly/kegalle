@@ -13,14 +13,14 @@
     <div class="ka-field ka-span-2">
         <label>Card Photo (optional)</label>
         @if($item->image)
-            <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
-                <img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->title }}" style="width:120px;height:90px;border-radius:10px;object-fit:cover;border:1.5px solid var(--ka-border,#E5E8EF)">
-                <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#D32F2F;cursor:pointer">
+            <div class="flex-row-14-mb10">
+                <img class="thumb-120x90" src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->title }}">
+                <label class="text-del-action">
                     <input type="checkbox" name="remove_image" value="1"> Remove current photo
                 </label>
             </div>
         @else
-            <p style="font-size:13px;color:#667085;margin-bottom:8px">No photo set — using icon + gradient.</p>
+            <p class="hint-text">No photo set — using icon + gradient.</p>
         @endif
         <input type="file" name="image" accept="image/jpeg,image/png,image/webp">
         <small>JPG/PNG/WEBP, max 3MB. Uploading replaces the current photo.</small>

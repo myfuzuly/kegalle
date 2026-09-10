@@ -1,67 +1,121 @@
 @extends('layouts.dashboard')
-
+@section('banner_sub', 'Submit listings as deals for discounted promotions.')
 @section('title','My Deals')
-@section('heading','🔥 My Deals')
-@section('subheading','Submit your listings as deals with special prices. Admin approval required before going live.')
+@section('eyebrow','Deals')
+@section('heading','My Deals')
 
 @section('actions')
-<a href="/dashboard/deals/create" class="kd-btn kd-btn-primary">+ Submit Deal</a>
+<a href="/dashboard/deals/create" class="kdl-tb-btn kdl-tb-btn-primary">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+  Submit Deal
+</a>
 @endsection
 
 @section('content')
-<section class="kd-card">
-    <div class="kd-card-head"><h2>Deal Submissions</h2><span>{{ $deals->total() }} total</span></div>
-    @forelse($deals as $deal)
-        @php
-            $statusColor = match($deal->status) {
-                'approved' => '#047857',
-                'rejected' => '#991b1b',
-                default => '#d97706',
-            };
-            $statusBg = match($deal->status) {
-                'approved' => '#ecfdf5',
-                'rejected' => '#fee2e2',
-                default => '#fffbeb',
-            };
-        @endphp
-        <div class="kd-row" style="flex-wrap:wrap">
-            <div style="flex:1;min-width:200px">
-                <strong>{{ \Illuminate\Support\Str::limit($deal->listing->title ?? 'Deleted', 35) }}</strong>
-                <small>{{ optional($deal->listing->category ?? null)->name ?? '' }}@if($deal->is_flash) · ⚡ Flash Deal @endif</small>
-            </div>
-            <div style="text-align:center;min-width:120px">
-                <strong style="color:var(--kd-brand)">LKR {{ number_format($deal->deal_price) }}</strong>
-                <small><s style="color:var(--kd-muted)">LKR {{ number_format($deal->original_price) }}</s></small>
-            </div>
-            <div style="text-align:center;min-width:60px">
-                <strong style="color:#dc2626">-{{ number_format($deal->discount_percent, 0) }}%</strong>
-            </div>
-            <div style="text-align:center;min-width:130px">
-                <small>{{ $deal->starts_at->format('M d') }} — {{ $deal->ends_at->format('M d, Y') }}</small>
-            </div>
-            <div style="text-align:center;min-width:80px">
-                <span style="display:inline-block;padding:4px 12px;border-radius:10px;font-size:12px;font-weight:800;background:{{ $statusBg }};color:{{ $statusColor }}">{{ ucfirst($deal->status) }}</span>
-            </div>
-            <div style="display:flex;gap:8px;align-items:center">
-                @if($deal->listing)<a href="/listings/{{ $deal->listing->slug }}" target="_blank" class="kd-mini-btn">View</a>@endif
-                <a href="/dashboard/deals/{{ $deal->id }}/edit" class="kd-mini-btn">Edit</a>
-                @if($deal->status !== 'approved')
-                    <form method="post" action="/dashboard/deals/{{ $deal->id }}" style="display:inline">@csrf @method('DELETE')
-                        <button class="kd-mini-btn" style="background:#fee2e2;color:#991b1b;border:none;cursor:pointer">Delete</button>
-                    </form>
-                @endif
-            </div>
-        </div>
-        @if($deal->status === 'rejected' && $deal->admin_note)
-            <div style="padding:0 0 12px;font-size:13px;color:#991b1b;font-weight:600">⚠ Admin note: {{ $deal->admin_note }}</div>
-        @endif
-    @empty
-        <div class="kd-empty">
-            <strong>No deals yet</strong>
-            <p>Submit your first deal to get featured on the Deals page.</p>
-            <a href="/dashboard/deals/create" class="kd-btn kd-btn-primary">Submit Deal</a>
-        </div>
-    @endforelse
-</section>
-@if(method_exists($deals,'links'))<div style="margin-top:20px">{{ $deals->links() }}</div>@endif
+
+@php
+  try {
+    $countAll      = $deals->total();
+    $countApproved = \App\Models\Deal::where('user_id', auth()->id())->where('status','approved')->count();
+    $countPending  = \App\Models\Deal::where('user_id', auth()->id())->where('status','pending')->count();
+    $countRejected = \App\Models\Deal::where('user_id', auth()->id())->where('status','rejected')->count();
+  } catch(\Throwable) {
+    $countAll = $countApproved = $countPending = $countRejected = 0;
+  }
+@endphp
+
+{{-- Info banner --}}
+<div class="di-info-banner">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+  <div>
+    <strong>How deals work</strong>
+    Submit a listing as a deal with a discounted price. Admin reviews and approves before it appears on the public Deals page.
+  </div>
+</div>
+
+{{-- Stats --}}
+<div class="di-stats">
+  <div class="di-stat"><div class="di-stat-dot bg-slate400"></div><div><div class="di-stat-n">{{ $countAll }}</div><div class="di-stat-l">Total</div></div></div>
+  <div class="di-stat"><div class="di-stat-dot bg-green400"></div><div><div class="di-stat-n">{{ $countApproved }}</div><div class="di-stat-l">Live</div></div></div>
+  <div class="di-stat"><div class="di-stat-dot bg-amber400"></div><div><div class="di-stat-n">{{ $countPending }}</div><div class="di-stat-l">Pending</div></div></div>
+  <div class="di-stat"><div class="di-stat-dot bg-rose400"></div><div><div class="di-stat-n">{{ $countRejected }}</div><div class="di-stat-l">Rejected</div></div></div>
+</div>
+
+{{-- Filter toolbar --}}
+<div class="flex-fw-g10-mb18b">
+  <div class="tab-group">
+    @foreach([''=>'All', 'approved'=>'Live', 'pending'=>'Pending', 'rejected'=>'Rejected'] as $val => $label)
+    <button type="button" class="di-pill-btn lp-filter-tab btn-bare" data-value="{{ $val }}">{{ $label }}</button>
+    @endforeach
+  </div>
+  <input class="filter-input-b" type="text" id="diQ" placeholder="Search deals…"
+>
+</div>
+
+{{-- Table --}}
+<div class="di-card">
+  <div class="di-card-head">
+    <h2>🔥 Deal Submissions</h2>
+    <span id="diBadge">{{ $deals->total() }} deal{{ $deals->total()===1?'':'s' }}</span>
+  </div>
+
+  <div id="diRows">@include('dashboard.deals._rows')</div>
+  <div id="diPagination">
+    @if(method_exists($deals,'links') && $deals->lastPage() > 1)
+      {{ $deals->links('vendor.pagination.dashboard') }}
+    @endif
+  </div>
+</div>
+
+@push('scripts')
+<script nonce="{{ $cspNonce ?? '' }}">
+(function(){
+  var timer, activeStatus='';
+
+  function updatePills(){
+    document.querySelectorAll('.di-pill-btn').forEach(function(btn){
+      btn.classList.toggle('active', btn.dataset.value===activeStatus);
+    });
+  }
+
+  function doFetch(page){
+    var q = document.getElementById('diQ').value.trim();
+    var p = new URLSearchParams({q:q, status:activeStatus});
+    if(page>1) p.set('page',page);
+    fetch('/dashboard/deals?'+p, {headers:{'X-Requested-With':'XMLHttpRequest'}})
+      .then(function(r){return r.json();})
+      .then(function(d){
+        document.getElementById('diRows').innerHTML = d.rows;
+        document.getElementById('diPagination').innerHTML = d.pagination;
+        var b=document.getElementById('diBadge');
+        if(b) b.textContent=d.total+' deal'+(d.total!==1?'s':'');
+        bindPages();
+      });
+  }
+
+  function bindPages(){
+    document.getElementById('diPagination').querySelectorAll('a[href]').forEach(function(a){
+      a.addEventListener('click',function(e){
+        e.preventDefault();
+        doFetch(new URL(a.href).searchParams.get('page')||1);
+        window.scrollTo({top:0,behavior:'smooth'});
+      });
+    });
+  }
+
+  document.querySelectorAll('.di-pill-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      activeStatus=btn.dataset.value; updatePills(); doFetch(1);
+    });
+  });
+  document.getElementById('diQ').addEventListener('input', function(){
+    clearTimeout(timer); timer=setTimeout(function(){doFetch(1);},320);
+  });
+
+  updatePills();
+  bindPages();
+})();
+</script>
+@endpush
+
 @endsection

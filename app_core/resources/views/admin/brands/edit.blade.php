@@ -1,136 +1,185 @@
 @extends('layouts.admin')
 @section('title','Edit Brand — ' . $brand->name)
 @section('page','Brands')
-@section('heading', $brand->name)
-@section('subheading','Edit brand details and manage models')
+@section('eyebrow','Marketplace')
+@section('page_heading', $brand->name)
+@section('subheading','Edit brand details and manage categories')
 @section('actions')
-<div style="display:flex;gap:8px">
-    <a class="ka-btn ka-btn-light" href="/admin/brands">Back to Brands</a>
-    <a class="ka-btn ka-btn-light" href="/brand/{{ $brand->slug }}" target="_blank">View on Site</a>
+<div class="flex-g8">
+    <a class="ka-btn ka-btn-light" href="/admin/brands">← All Brands</a>
+    <a class="ka-btn ka-btn-light" href="/brand/{{ $brand->slug }}" target="_blank">View on Site ↗</a>
 </div>
 @endsection
 
 @section('content')
 
 @if(session('success'))
-<div style="background:#E8F5E9;color:#2E7D32;padding:12px 18px;border-radius:12px;margin-bottom:18px;font-weight:600;font-size:13px">{{ session('success') }}</div>
-@endif
-
-<section class="sa-card" style="margin-bottom:24px">
-<div class="sa-card-head"><h2>Brand Details</h2></div>
-<form class="ka-premium-form" method="post" action="/admin/brands/{{ $brand->id }}">
-@csrf @method('PUT')
-<div class="ka-form-grid">
-    <div class="ka-field">
-        <label>Brand Name</label>
-        <input name="name" value="{{ old('name', $brand->name) }}" required>
-    </div>
-    <div class="ka-field">
-        <label>Sort Order</label>
-        <input type="number" name="sort_order" value="{{ old('sort_order', $brand->sort_order) }}">
-    </div>
-    <div class="ka-field">
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-            <input type="checkbox" name="is_active" value="1" style="accent-color:#1b5e20" @checked($brand->is_active)>
-            Active
-        </label>
-        <small>Inactive brands won't appear in listing forms or brand pages.</small>
-    </div>
-    <div class="ka-field">
-        <small style="color:#94a3b8">Slug: /brand/{{ $brand->slug }}</small>
-    </div>
-</div>
-<div class="ka-form-actions">
-    <button class="ka-btn ka-btn-primary">Update Brand</button>
-    <a href="/admin/brands" class="ka-btn ka-btn-light">Cancel</a>
-</div>
-</form>
-</section>
-
-<section class="sa-card" style="margin-bottom:24px">
-<div class="sa-card-head">
-    <h2>Models ({{ $models->count() }})</h2>
-</div>
-<div style="padding:20px;border-bottom:1px solid var(--ka-border,#e5e8ef)">
-    <form method="post" action="/admin/brands/models" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
-        @csrf
-        <input type="hidden" name="brand_id" value="{{ $brand->id }}">
-        <div style="flex:1;min-width:200px">
-            <label style="font-size:12px;font-weight:600;color:#667085;margin-bottom:4px;display:block">Model Name</label>
-            <input name="name" required placeholder="e.g. Corolla, Galaxy S24" style="width:100%;padding:10px 14px;border:1.5px solid #e5e8ef;border-radius:10px;font-size:14px">
-        </div>
-        <div style="width:100px">
-            <label style="font-size:12px;font-weight:600;color:#667085;margin-bottom:4px;display:block">Order</label>
-            <input type="number" name="sort_order" value="0" style="width:100%;padding:10px 14px;border:1.5px solid #e5e8ef;border-radius:10px;font-size:14px">
-        </div>
-        <button class="ka-btn ka-btn-primary" style="height:44px">Add Model</button>
-    </form>
-</div>
-@if($models->count())
-<div class="sa-table-wrap">
-<table class="sa-table">
-<thead><tr><th>Model Name</th><th>Slug</th><th style="text-align:center">Status</th><th style="text-align:center">Order</th><th>Actions</th></tr></thead>
-<tbody>
-@foreach($models as $model)
-<tr id="model-row-{{ $model->id }}">
-    <td><b>{{ $model->name }}</b></td>
-    <td><small style="color:#94a3b8">{{ $model->slug }}</small></td>
-    <td style="text-align:center"><span class="sa-status {{ $model->is_active ? 'active' : 'suspended' }}">{{ $model->is_active ? 'Active' : 'Inactive' }}</span></td>
-    <td style="text-align:center">{{ $model->sort_order }}</td>
-    <td class="sa-actions-inline">
-        <button onclick="toggleEditModel({{ $model->id }})" style="background:none;border:none;color:var(--ka-primary,#1b5e20);cursor:pointer;font-weight:600;font-size:13px">Edit</button>
-        <form method="post" action="/admin/brands/models/{{ $model->id }}" style="display:inline" onsubmit="return confirm('Delete model {{ addslashes($model->name) }}?')">@csrf @method('DELETE')
-            <button class="danger">Delete</button>
-        </form>
-    </td>
-</tr>
-<tr id="edit-model-{{ $model->id }}" style="display:none">
-    <td colspan="5" style="background:#f8fafc;padding:14px 20px">
-        <form method="post" action="/admin/brands/models/{{ $model->id }}" style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
-            @csrf @method('PUT')
-            <div style="flex:1;min-width:180px">
-                <label style="font-size:12px;font-weight:600;color:#667085;margin-bottom:4px;display:block">Name</label>
-                <input name="name" value="{{ $model->name }}" required style="width:100%;padding:8px 12px;border:1.5px solid #e5e8ef;border-radius:8px;font-size:13px">
-            </div>
-            <div style="width:80px">
-                <label style="font-size:12px;font-weight:600;color:#667085;margin-bottom:4px;display:block">Order</label>
-                <input type="number" name="sort_order" value="{{ $model->sort_order }}" style="width:100%;padding:8px 12px;border:1.5px solid #e5e8ef;border-radius:8px;font-size:13px">
-            </div>
-            <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer"><input type="checkbox" name="is_active" value="1" @checked($model->is_active)> Active</label>
-            <button class="ka-btn ka-btn-primary" style="font-size:12px;height:36px">Save</button>
-            <button type="button" onclick="toggleEditModel({{ $model->id }})" class="ka-btn ka-btn-light" style="font-size:12px;height:36px">Cancel</button>
-        </form>
-    </td>
-</tr>
-@endforeach
-</tbody>
-</table>
-</div>
-@else
-<div style="padding:30px;text-align:center;color:#94a3b8">
-    <p>No models yet. Add the first model above.</p>
+<div class="be-flash">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+    {{ session('success') }}
 </div>
 @endif
-</section>
 
-<section class="sa-card" style="border:1.5px solid #ffcdd2">
-<div class="sa-card-head"><h2 style="color:#d32f2f">Danger Zone</h2></div>
-<div style="padding:20px;display:flex;align-items:center;justify-content:space-between">
-    <div>
-        <b>Delete this brand</b>
-        <p style="font-size:13px;color:#667085;margin:4px 0 0">This will permanently delete {{ $brand->name }} and all its {{ $models->count() }} model(s).</p>
+{{-- Stats strip --}}
+<div class="be-stats">
+    <div class="be-stat">
+        <span class="be-stat-val">{{ $brand->categories->count() }}</span>
+        <span class="be-stat-key">Categories</span>
     </div>
-    <form method="post" action="/admin/brands/{{ $brand->id }}" onsubmit="return confirm('Are you sure you want to delete {{ addslashes($brand->name) }} and ALL its models? This cannot be undone.')">
-        @csrf @method('DELETE')
-        <button class="ka-btn" style="background:#d32f2f;color:#fff;border:none">Delete Brand</button>
+    <div class="be-stat">
+        <span class="be-stat-val">#{{ $brand->sort_order }}</span>
+        <span class="be-stat-key">Sort Order</span>
+    </div>
+    <div class="be-stat">
+        <span class="be-stat-val fs14-pt4">
+            <span class="sa-status {{ $brand->is_active ? 'active' : 'suspended' }}" class="fs-12">{{ $brand->is_active ? 'Active' : 'Inactive' }}</span>
+        </span>
+        <span class="be-stat-key">Status</span>
+    </div>
+</div>
+
+{{-- Brand Details --}}
+<div class="be-section">
+    <div class="be-section-head">
+        <div class="flex-row gap-14">
+            <div class="be-brand-avatar">{{ strtoupper(substr($brand->name,0,1)) }}</div>
+            <div>
+                <div class="be-section-title">{{ $brand->name }}</div>
+                <div class="be-section-sub">ID #{{ $brand->id }}{{ $brand->created_at ? ' · created ' . $brand->created_at->format('M j, Y') : '' }}</div>
+            </div>
+        </div>
+        <button class="be-slug-badge" type="button" data-action="copy-slug" title="Copy slug">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <span id="slugText">/brand/{{ $brand->slug }}</span>
+        </button>
+    </div>
+
+    <form method="post" action="/admin/brands/{{ $brand->id }}" id="brandForm">
+    @csrf @method('PUT')
+
+    <div class="be-section-body">
+        <div class="grid-2col-160-mb24">
+            <div class="be-field">
+                <label class="be-label" for="brandName">Brand Name</label>
+                <input class="be-input" id="brandName" name="name" value="{{ old('name', $brand->name) }}" required placeholder="e.g. Toyota, Samsung…">
+            </div>
+            <div class="be-field">
+                <label class="be-label" for="sortOrder">Sort Order</label>
+                <input class="be-input" id="sortOrder" name="sort_order" type="number" value="{{ old('sort_order', $brand->sort_order) }}" min="0">
+            </div>
+        </div>
+
+        {{-- Status toggle --}}
+        <div class="flex-jsb-card-mb24">
+            <div>
+                <div class="fs13-fw7-dark">Active Status</div>
+                <div class="fs12-muted-mt2">Inactive brands are hidden from listing forms and brand pages</div>
+            </div>
+            <label class="be-toggle">
+                <input type="checkbox" name="is_active" value="1" @checked($brand->is_active)>
+                <span class="be-toggle-track"></span>
+                <span class="be-toggle-label" id="toggleLabel">{{ $brand->is_active ? 'Active' : 'Inactive' }}</span>
+            </label>
+        </div>
+
+        {{-- Category chips --}}
+        <div>
+            <div class="flex-baseline-g8">
+                <span class="be-label">Top-Level Categories</span>
+                <span class="fs-11 text-muted">Select all that apply</span>
+            </div>
+            @php $selectedIds = old('category_ids', $brand->categories->pluck('id')->toArray()); @endphp
+            <div class="flex-wrap-g8">
+                @foreach($categories as $cat)
+                <label class="be-cat-chip">
+                    <input type="checkbox" name="category_ids[]" value="{{ $cat->id }}"
+                        {{ in_array($cat->id, (array) $selectedIds) ? 'checked' : '' }}>
+                    <span class="be-cat-chip-check">
+                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    </span>
+                    <span class="be-cat-chip-text">{{ $cat->name }}</span>
+                </label>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+    <div class="be-save-bar">
+        <button type="submit" class="be-btn be-btn-primary btn-42h-md">
+            Save Changes
+        </button>
+        <a href="/admin/brands" class="be-btn be-btn-light btn-42h-sm">Cancel</a>
+        <span class="mla-muted-hidden" id="saveHint">Unsaved changes</span>
+    </div>
     </form>
 </div>
-</section>
 
-<script>
-function toggleEditModel(id) {
-    var row = document.getElementById('edit-model-' + id);
-    row.style.display = row.style.display === 'none' ? '' : 'none';
+{{-- Danger Zone --}}
+<div class="be-danger-section">
+    <div class="be-danger-head">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span class="fs14-fw7-rose">Danger Zone</span>
+    </div>
+    <div class="p20-24-flex-jsb">
+        <div>
+            <div class="fs13-fw7-dark-mb4">Delete "{{ $brand->name }}"</div>
+            <div class="fs12-slate">Permanently deletes this brand and all its models. This action cannot be undone.</div>
+        </div>
+        <form method="post" action="/admin/brands/{{ $brand->id }}" onsubmit="return confirm('Permanently delete {{ addslashes($brand->name) }}? This cannot be undone.')">
+            @csrf @method('DELETE')
+            <button type="submit" class="be-btn btn-red-40h">Delete Brand</button>
+        </form>
+    </div>
+</div>
+
+@endsection
+
+@push('styles')
+
+@endpush
+
+@push('scripts')
+<script nonce="{{ $cspNonce ?? '' }}">
+(function(){
+    // Toggle status label
+    var toggleInput = document.querySelector('.be-toggle input');
+    if(toggleInput){
+        toggleInput.addEventListener('change', function(){
+            document.getElementById('toggleLabel').textContent = this.checked ? 'Active' : 'Inactive';
+        });
+    }
+
+    // Category chips — label natively toggles the checkbox; just sync the visual class
+    document.querySelectorAll('.be-cat-chip').forEach(function(chip){
+        var cb = chip.querySelector('input[type=checkbox]');
+        function sync(){ chip.classList.toggle('is-checked', cb.checked); }
+        sync(); // initial state
+        cb.addEventListener('change', sync);
+    });
+
+    // Unsaved changes hint
+    var dirty = false;
+    var form  = document.getElementById('brandForm');
+    var hint  = document.getElementById('saveHint');
+    if(form && hint){
+        form.addEventListener('input',  function(){ if(!dirty){ dirty=true; hint.style.display='block'; } });
+        form.addEventListener('change', function(){ if(!dirty){ dirty=true; hint.style.display='block'; } });
+        form.addEventListener('submit', function(){ dirty=false; });
+    }
+})();
+
+// Copy slug to clipboard — wired via data-action="copy-slug"
+document.querySelectorAll('[data-action="copy-slug"]').forEach(function(btn){
+    btn.addEventListener('click', copySlug);
+});
+function copySlug(){
+    var text = document.getElementById('slugText').textContent;
+    navigator.clipboard.writeText('https://kegalle.com'+text).then(function(){
+        var el = document.getElementById('slugText');
+        var orig = el.textContent;
+        el.textContent = 'Copied!';
+        setTimeout(function(){ el.textContent = orig; }, 1500);
+    });
 }
 </script>
-@endsection
+@endpush

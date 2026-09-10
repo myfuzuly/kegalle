@@ -80,6 +80,10 @@ class MembershipController extends Controller
 
     public function destroy(MembershipPlan $membership)
     {
+        if (\App\Models\Payment::where('membership_plan_id', $membership->id)->exists()) {
+            return back()->with('error', 'Cannot delete this plan — it has existing payment records. Deactivate it instead.');
+        }
+
         $membership->delete();
 
         return back()->with('success', 'Membership plan deleted successfully.');

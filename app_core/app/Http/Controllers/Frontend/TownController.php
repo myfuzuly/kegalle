@@ -12,10 +12,12 @@ class TownController extends Controller
 {
     public function index()
     {
-        $towns = Location::where('is_active', 1)
-            ->withCount(['listings' => fn ($q) => $q->where('status', 'approved')])
-            ->orderBy('name')
-            ->get();
+        $towns = cache()->remember('towns_index_list', 600, fn() =>
+            Location::where('is_active', 1)
+                ->withCount(['listings' => fn ($q) => $q->where('status', 'approved')])
+                ->orderBy('name')
+                ->get()
+        );
 
         return view('frontend.towns', compact('towns'));
     }

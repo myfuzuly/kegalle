@@ -3,166 +3,378 @@
 @section('page','Stores')
 @section('heading','Create Store')
 @section('subheading','Create a store for a customer — you can hand it over later')
-@section('actions')<a class="ka-btn ka-btn-light" href="/admin/stores">Back</a>@endsection
+@section('actions')<a class="ka-btn ka-btn-light" href="/admin/stores">← Back</a>@endsection
+
+@push('styles')
+
+@endpush
+
 @section('content')
-<section class="sa-card">
-<form class="ka-premium-form" method="post" action="/admin/stores" enctype="multipart/form-data">
-@csrf
-<div class="ka-form-grid">
-    <div class="ka-field">
-        <label>Store Logo</label>
-        <input type="file" name="logo" accept="image/jpeg,image/png,image/webp">
-        <small>Square image recommended. JPG/PNG/WEBP, max 2MB.</small>
-    </div>
-    <div class="ka-field">
-        <label>Store Banner</label>
-        <input type="file" name="banner" accept="image/jpeg,image/png,image/webp">
-        <small>Wide image recommended. JPG/PNG/WEBP, max 3MB.</small>
-    </div>
-    <div class="ka-field ka-span-2">
-        <label>Assign to User (Owner)</label>
-        <select name="user_id" required>
-            <option value="">Select a user...</option>
-            @foreach($users as $user)
-                <option value="{{ $user->id }}" @selected(old('user_id') == $user->id)>{{ $user->name }} — {{ $user->email }}</option>
-            @endforeach
-        </select>
-        <small>This user will own and manage the store. You can change this later.</small>
-    </div>
-    <div class="ka-field ka-span-2">
-        <label>Store Name</label>
-        <input name="name" value="{{ old('name') }}" required placeholder="e.g. Kegalle Auto Parts">
-    </div>
-    <div class="ka-field">
-        <label>Phone</label>
-        <input name="phone" value="{{ old('phone') }}" placeholder="077 1234567">
-    </div>
-    <div class="ka-field">
-        <label>Email</label>
-        <input type="email" name="email" value="{{ old('email') }}" placeholder="store@example.com">
-    </div>
-    <div class="ka-field">
-        <label>WhatsApp</label>
-        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
-            <input type="checkbox" name="whatsapp_same" id="whatsappSame" value="1" style="width:14px!important;height:14px!important;min-width:14px;margin:0!important;accent-color:#1b5e20" {{ old('whatsapp_same') ? 'checked' : '' }}>
-            <label for="whatsappSame" style="font-size:13px;font-weight:500;margin:0;cursor:pointer">Same as phone number</label>
-        </div>
-        <input name="whatsapp" id="whatsappInput" value="{{ old('whatsapp') }}" placeholder="94771234567">
-    </div>
-    <div class="ka-field">
-        <label>City / Location</label>
-        <select name="city">
-            <option value="">Select location...</option>
-            @foreach($locations as $loc)
-                <option value="{{ $loc->name }}" @selected(old('city') === $loc->name)>{{ $loc->name }}</option>
-            @endforeach
-        </select>
-    </div>
-    <div class="ka-field ka-span-2">
-        <label>Address</label>
-        <input name="address" value="{{ old('address') }}" placeholder="Full address...">
-    </div>
-
-    <div class="ka-field ka-span-2">
-        <label>Store Categories <small style="font-weight:400;color:#667085">(select all that apply)</small></label>
-        <style>
-            #storeCategoryPicker input[type="checkbox"]{width:16px!important;height:16px!important;min-width:16px;margin:0!important;accent-color:#1b5e20;cursor:pointer}
-            #storeCategoryPicker .k-cat-main{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;cursor:pointer;transition:all .15s}
-        </style>
-        <input type="text" id="catSearch" placeholder="Search categories..." style="margin-top:4px;margin-bottom:6px;padding:10px 14px;border:1.5px solid #e5e8ef;border-radius:10px;font-size:13px;width:100%;box-sizing:border-box">
-        <div id="storeCategoryPicker" style="border:1.5px solid #e5e8ef;border-radius:10px;padding:12px;max-height:300px;overflow-y:auto">
-            @php $selectedCats = old('categories', []); @endphp
-            <div id="catNoResults" style="display:none;text-align:center;padding:16px;color:#94a3b8;font-size:13px">No categories found</div>
-            @foreach($categories as $parent)
-                <div class="k-cat-group" data-name="{{ strtolower($parent->name) }} {{ strtolower($parent->children->pluck('name')->join(' ')) }}" style="margin-bottom:8px">
-                    <label class="k-cat-main" style="{{ in_array($parent->id, $selectedCats) ? 'background:#e8f5e9;border:1.5px solid #1b5e20' : 'background:#f8fafc;border:1.5px solid #e5e8ef' }}">
-                        <input type="checkbox" name="categories[]" value="{{ $parent->id }}" {{ in_array($parent->id, $selectedCats) ? 'checked' : '' }}>
-                        <span style="font-size:15px;line-height:1">{{ $parent->icon ?? '🏷' }}</span>
-                        <span style="font-weight:700;font-size:14px;color:#1b5e20">{{ $parent->name }}</span>
-                    </label>
-                    @if($parent->children->isNotEmpty())
-                        <div style="padding:4px 12px 2px 40px;font-size:11px;color:#94a3b8;line-height:1.6">
-                            {{ $parent->children->pluck('name')->join(' · ') }}
-                        </div>
-                    @endif
-                </div>
-            @endforeach
-        </div>
-    </div>
-
-    <input type="hidden" name="latitude" value="{{ old('latitude') }}">
-    <input type="hidden" name="longitude" value="{{ old('longitude') }}">
-
-    <div class="ka-field ka-span-2">
-        <label>Description</label>
-        <textarea name="description" placeholder="Brief description of what this store sells...">{{ old('description') }}</textarea>
-    </div>
-    <div class="ka-field">
-        <label>Status</label>
-        <select name="status">
-            <option value="approved" @selected(old('status', 'approved') === 'approved')>Approved</option>
-            <option value="pending" @selected(old('status') === 'pending')>Pending</option>
-        </select>
-    </div>
-    <label class="ka-check"><input type="checkbox" name="is_featured" value="1" @checked(old('is_featured'))> Featured Store</label>
+@if($errors->any())
+<div class="alert-error">
+    <ul class="list-pl">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>
 </div>
-<div class="ka-form-actions">
-    <button class="ka-btn ka-btn-primary">Create Store</button>
-    <a class="ka-btn ka-btn-light" href="/admin/stores">Cancel</a>
+@endif
+
+@php
+$oldUserId = old('user_id','');
+$oldCity   = old('city','');
+$oldStatus = old('status','approved');
+@endphp
+
+<form method="post" action="/admin/stores" enctype="multipart/form-data" id="ascForm">
+@csrf
+<input type="hidden" name="latitude" value="{{ old('latitude') }}">
+<input type="hidden" name="longitude" value="{{ old('longitude') }}">
+
+<div class="asc-shell">
+
+{{-- ── LEFT MAIN ──────────────────────────────────────── --}}
+<div>
+
+    {{-- Media --}}
+    <div class="asc-card">
+        <div class="asc-card-header">
+            <div class="asc-card-icon blue">🖼️</div>
+            <div>
+                <p class="asc-card-title">Store Media</p>
+                <p class="asc-card-sub">Logo and banner images</p>
+            </div>
+        </div>
+        <div class="asc-media-row">
+            {{-- Logo --}}
+            <div class="asc-field">
+                <label class="asc-label">Logo</label>
+                <input type="file" name="logo" id="ascLogoInput" accept="image/jpeg,image/png,image/webp" class="hidden">
+                <div class="asc-logo-zone" id="ascLogoZone">
+                    <div class="asc-zone-icon">🏪</div>
+                    <div class="asc-zone-label">Click to upload</div>
+                </div>
+                <span class="asc-hint">Square · JPG/PNG/WEBP · max 2MB</span>
+            </div>
+            {{-- Banner --}}
+            <div class="asc-field">
+                <label class="asc-label">Banner</label>
+                <input type="file" name="banner" id="ascBannerInput" accept="image/jpeg,image/png,image/webp" class="hidden">
+                <div class="asc-banner-zone" id="ascBannerZone">
+                    <div class="asc-zone-icon">🖼️</div>
+                    <div class="asc-zone-label">Click to upload banner</div>
+                </div>
+                <span class="asc-hint">1640×624 px recommended · max 3MB</span>
+            </div>
+        </div>
+    </div>
+
+    {{-- Owner --}}
+    <div class="asc-card">
+        <div class="asc-card-header">
+            <div class="asc-card-icon purple">👤</div>
+            <div>
+                <p class="asc-card-title">Store Owner</p>
+                <p class="asc-card-sub">Assign to a registered user</p>
+            </div>
+        </div>
+        <div class="asc-field">
+            <label class="asc-label">User <span class="asc-req">*</span></label>
+            <input type="hidden" name="user_id" id="ascUserVal" value="{{ $oldUserId }}" required>
+            <div class="ksd-wrap">
+                <button type="button" class="ksd-trigger {{ $oldUserId ? 'ksd-has-value' : '' }}" id="ascUserTrigger">
+                    <span class="ksd-trigger-text {{ $oldUserId ? '' : 'placeholder' }}" id="ascUserLabel">Select a user…</span>
+                    <svg class="ksd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="ksd-dropdown" id="ascUserDropdown">
+                    <div class="ksd-search-row"><input type="text" class="ksd-search" id="ascUserSearch" placeholder="Search user…" autocomplete="off"></div>
+                    <div class="ksd-list" id="ascUserList">
+                        @foreach($users as $user)
+                        <div class="ksd-item {{ $oldUserId==$user->id ? 'ksd-selected':'' }}"
+                             data-value="{{ $user->id }}"
+                             data-label="{{ $user->name }}"
+                             data-search="{{ strtolower($user->name.' '.$user->email) }}">{{ $user->name }} — {{ $user->email }}</div>
+                        @endforeach
+                        <div class="ksd-empty" id="ascUserEmpty" class="hidden">No users match</div>
+                    </div>
+                </div>
+            </div>
+            <span class="asc-hint">This user will own and manage the store. You can change this later.</span>
+        </div>
+    </div>
+
+    {{-- Store Details --}}
+    <div class="asc-card">
+        <div class="asc-card-header">
+            <div class="asc-card-icon green">🏪</div>
+            <div>
+                <p class="asc-card-title">Store Details</p>
+                <p class="asc-card-sub">Name and contact information</p>
+            </div>
+        </div>
+        <div class="asc-field asc-full" class="mb-14">
+            <label class="asc-label">Store Name <span class="asc-req">*</span></label>
+            <input name="name" required class="asc-input" value="{{ old('name') }}" placeholder="e.g. Kegalle Auto Parts">
+        </div>
+        <div class="asc-grid">
+            <div class="asc-field">
+                <label class="asc-label">Phone</label>
+                <input name="phone" id="ascPhone" class="asc-input" value="{{ old('phone') }}" placeholder="077 1234567">
+            </div>
+            <div class="asc-field">
+                <label class="asc-label">Email</label>
+                <input type="email" name="email" class="asc-input" value="{{ old('email') }}" placeholder="store@example.com">
+            </div>
+            <div class="asc-field asc-full">
+                <label class="asc-label">WhatsApp</label>
+                <label class="asc-wa-same">
+                    <input type="checkbox" name="whatsapp_same" id="whatsappSame" value="1" {{ old('whatsapp_same') ? 'checked' : '' }}>
+                    Same as phone number
+                </label>
+                <input name="whatsapp" id="whatsappInput" class="asc-input" value="{{ old('whatsapp') }}" placeholder="94771234567">
+            </div>
+        </div>
+    </div>
+
+    {{-- Location --}}
+    <div class="asc-card">
+        <div class="asc-card-header">
+            <div class="asc-card-icon amber">📍</div>
+            <div>
+                <p class="asc-card-title">Location</p>
+                <p class="asc-card-sub">City and address</p>
+            </div>
+        </div>
+        <div class="asc-grid">
+            <div class="asc-field">
+                <label class="asc-label">City / Location</label>
+                <input type="hidden" name="city" id="ascCityVal" value="{{ $oldCity }}">
+                <div class="ksd-wrap">
+                    <button type="button" class="ksd-trigger {{ $oldCity ? 'ksd-has-value' : '' }}" id="ascCityTrigger">
+                        <span class="ksd-trigger-text {{ $oldCity ? '' : 'placeholder' }}" id="ascCityLabel">Select location…</span>
+                        <svg class="ksd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="ksd-dropdown" id="ascCityDropdown">
+                        <div class="ksd-search-row"><input type="text" class="ksd-search" id="ascCitySearch" placeholder="Type to search…" autocomplete="off"></div>
+                        <div class="ksd-list" id="ascCityList">
+                            <div class="ksd-item {{ !$oldCity ? 'ksd-selected':'' }}" data-value="" data-label="Select location…" data-search="">— No Location —</div>
+                            @foreach($locations->whereNull('parent_id') as $parentLoc)
+                                <div class="ksd-group-label" data-group="{{ $parentLoc->id }}">{{ strtoupper($parentLoc->name) }}</div>
+                                <div class="ksd-item ksd-indent {{ $oldCity===$parentLoc->name ? 'ksd-selected':'' }}"
+                                     data-value="{{ $parentLoc->name }}"
+                                     data-label="{{ $parentLoc->name }} (All)"
+                                     data-search="{{ strtolower($parentLoc->name) }}"
+                                     data-group="{{ $parentLoc->id }}">📍 {{ $parentLoc->name }} (All)</div>
+                                @foreach($locations->where('parent_id',$parentLoc->id) as $loc)
+                                <div class="ksd-item ksd-indent {{ $oldCity===$loc->name ? 'ksd-selected':'' }}"
+                                     data-value="{{ $loc->name }}"
+                                     data-label="{{ $parentLoc->name }} — {{ $loc->name }}"
+                                     data-search="{{ strtolower($parentLoc->name.' '.$loc->name) }}"
+                                     data-group="{{ $parentLoc->id }}">{{ $loc->name }}</div>
+                                @endforeach
+                            @endforeach
+                            <div class="ksd-empty" id="ascCityEmpty" class="hidden">No locations match</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="asc-field">
+                <label class="asc-label">Address</label>
+                <input name="address" class="asc-input" value="{{ old('address') }}" placeholder="Full address…">
+            </div>
+        </div>
+    </div>
+
+    {{-- Description --}}
+    <div class="asc-card">
+        <div class="asc-card-header">
+            <div class="asc-card-icon slate">📄</div>
+            <div>
+                <p class="asc-card-title">Description</p>
+                <p class="asc-card-sub">What this store sells</p>
+            </div>
+        </div>
+        <div class="asc-field">
+            <textarea name="description" class="asc-textarea" placeholder="Brief description of what this store sells…">{{ old('description') }}</textarea>
+        </div>
+    </div>
+
+    {{-- Categories --}}
+    <div class="asc-card">
+        <div class="asc-card-header">
+            <div class="asc-card-icon purple">📂</div>
+            <div>
+                <p class="asc-card-title">Store Categories</p>
+                <p class="asc-card-sub">Select all that apply</p>
+            </div>
+        </div>
+        @php $selectedCats = old('categories', []); @endphp
+        @include('admin.partials.category-picker')
+    </div>
+
+</div>
+
+{{-- ── RIGHT SIDEBAR ──────────────────────────────────── --}}
+<div>
+
+    {{-- Publish --}}
+    <div class="asc-card">
+        <div class="asc-card-header">
+            <div class="asc-card-icon green">🚀</div>
+            <div>
+                <p class="asc-card-title">Publish</p>
+                <p class="asc-card-sub">Save store to marketplace</p>
+            </div>
+        </div>
+        <button type="submit" class="asc-publish-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+            Create Store
+        </button>
+        <a href="/admin/stores" class="asc-cancel-btn">Cancel</a>
+    </div>
+
+    {{-- Status --}}
+    <div class="asc-card">
+        <div class="asc-card-header">
+            <div class="asc-card-icon slate">⚙️</div>
+            <div>
+                <p class="asc-card-title">Status</p>
+                <p class="asc-card-sub">Visibility on marketplace</p>
+            </div>
+        </div>
+        <div class="asc-field">
+            <input type="hidden" name="status" id="ascStatusVal" value="{{ $oldStatus }}">
+            <div class="ksd-wrap">
+                <button type="button" class="ksd-trigger ksd-has-value" id="ascStatusTrigger">
+                    <span class="ksd-trigger-text" id="ascStatusLabel">{{ $oldStatus==='approved' ? '✅ Approved' : '⏳ Pending' }}</span>
+                    <svg class="ksd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                <div class="ksd-dropdown" id="ascStatusDropdown">
+                    <div class="ksd-list">
+                        <div class="ksd-item {{ $oldStatus==='approved' ? 'ksd-selected':'' }}" data-value="approved" data-label="✅ Approved">✅ Approved</div>
+                        <div class="ksd-item {{ $oldStatus==='pending' ? 'ksd-selected':'' }}" data-value="pending" data-label="⏳ Pending">⏳ Pending</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Boost --}}
+    <div class="asc-card">
+        <div class="asc-card-header">
+            <div class="asc-card-icon amber">⭐</div>
+            <div>
+                <p class="asc-card-title">Boost</p>
+                <p class="asc-card-sub">Visibility options</p>
+            </div>
+        </div>
+        <div class="asc-checks">
+            <label class="asc-check">
+                <input type="checkbox" name="is_featured" value="1" @checked(old('is_featured'))>
+                ⭐ Featured Store
+            </label>
+        </div>
+    </div>
+
+</div>
 </div>
 </form>
-</section>
+@endsection
 
-<script>
-function normLK(v, plus) {
-    var d = v.replace(/\D/g, '');
-    if (!d) return '';
-    if (d.charAt(0) === '0') d = '94' + d.slice(1);
-    if (d.slice(0, 2) !== '94') d = '94' + d;
-    return (plus ? '+' : '') + d;
-}
-var phoneInput = document.querySelector('[name="phone"]');
-if (phoneInput) phoneInput.addEventListener('blur', function(){ this.value = normLK(this.value, true); });
-var waInput = document.getElementById('whatsappInput');
-if (waInput) waInput.addEventListener('blur', function(){ if (!document.getElementById('whatsappSame').checked) this.value = normLK(this.value, false); });
-
-var waSame = document.getElementById('whatsappSame');
-if (waSame) {
-    function toggleWaSame() {
-        var wa = document.getElementById('whatsappInput');
-        if (waSame.checked) {
-            wa.value = phoneInput ? phoneInput.value : '';
-            wa.disabled = true;
-            wa.style.opacity = '0.5';
-        } else {
-            wa.disabled = false;
-            wa.style.opacity = '1';
-        }
-    }
-    waSame.addEventListener('change', toggleWaSame);
-    if (waSame.checked) toggleWaSame();
-}
-
-document.querySelectorAll('.k-cat-main input[type="checkbox"]').forEach(function(cb) {
-    cb.addEventListener('change', function() {
-        var lbl = this.closest('.k-cat-main');
-        lbl.style.background = this.checked ? '#e8f5e9' : '#f8fafc';
-        lbl.style.borderColor = this.checked ? '#1b5e20' : '#e5e8ef';
-    });
-});
-var catSearch = document.getElementById('catSearch');
-if (catSearch) {
-    catSearch.addEventListener('input', function() {
-        var q = this.value.toLowerCase().trim();
-        var groups = document.querySelectorAll('.k-cat-group');
-        var found = 0;
-        groups.forEach(function(g) {
-            var match = !q || g.getAttribute('data-name').indexOf(q) !== -1;
-            g.style.display = match ? '' : 'none';
-            if (match) found++;
+@push('scripts')
+<script nonce="{{ $cspNonce ?? '' }}">
+// ── Media upload zones ─────────────────────────────────────────────────────
+function makeZone(zoneId, inputId, rmClass){
+    var zone=document.getElementById(zoneId), input=document.getElementById(inputId);
+    if(!zone||!input) return;
+    zone.addEventListener('click',function(){ if(!zone.querySelector('img')) input.click(); });
+    zone.addEventListener('dragover',function(e){e.preventDefault();zone.style.borderColor='#1b5e20';zone.style.background='#f0fdf4';});
+    zone.addEventListener('dragleave',function(){zone.style.borderColor='';zone.style.background='';});
+    zone.addEventListener('drop',function(e){e.preventDefault();zone.style.borderColor='';zone.style.background='';if(e.dataTransfer.files[0]) setPreview(e.dataTransfer.files[0]);});
+    input.addEventListener('change',function(){if(this.files[0]) setPreview(this.files[0]);});
+    function setPreview(file){
+        var oldImg=zone.querySelector('img'), oldRm=zone.querySelector('.asc-zone-rm');
+        if(oldImg)oldImg.remove(); if(oldRm)oldRm.remove();
+        zone.querySelector('.asc-zone-icon').style.display='none';
+        zone.querySelector('.asc-zone-label').style.display='none';
+        var img=document.createElement('img'); img.className='asc-zone-preview'; img.src=URL.createObjectURL(file); zone.appendChild(img);
+        var rm=document.createElement('button'); rm.type='button'; rm.className='asc-zone-rm'; rm.textContent='×';
+        rm.addEventListener('click',function(e){
+            e.stopPropagation(); img.remove(); rm.remove();
+            input.value='';
+            zone.querySelector('.asc-zone-icon').style.display=''; zone.querySelector('.asc-zone-label').style.display='';
         });
-        document.getElementById('catNoResults').style.display = found ? 'none' : 'block';
+        zone.appendChild(rm);
+    }
+}
+makeZone('ascLogoZone','ascLogoInput');
+makeZone('ascBannerZone','ascBannerInput');
+
+// ── ksd helper ─────────────────────────────────────────────────────────────
+function makeKsd(triggerId, dropdownId, searchId, listId, emptyId, hiddenId, labelId, groups){
+    var trigger=document.getElementById(triggerId), dropdown=document.getElementById(dropdownId);
+    var hidden=document.getElementById(hiddenId), label=document.getElementById(labelId);
+    var emptyEl=emptyId?document.getElementById(emptyId):null;
+    var open=false;
+    var searchEl=searchId?document.getElementById(searchId):null;
+    var list=document.getElementById(listId);
+    var items=list.querySelectorAll('.ksd-item');
+    var grps=list.querySelectorAll('.ksd-group-label');
+    function openD(){ dropdown.style.display='block'; trigger.classList.add('ksd-open'); if(searchEl){searchEl.value='';filterItems('');searchEl.focus();} open=true; }
+    function closeD(){ dropdown.style.display='none'; trigger.classList.remove('ksd-open'); open=false; }
+    trigger.addEventListener('click',function(e){ e.stopPropagation(); open?closeD():openD(); });
+    document.addEventListener('click',function(e){ if(open&&!trigger.contains(e.target)&&!dropdown.contains(e.target)) closeD(); });
+    if(searchEl) searchEl.addEventListener('input',function(){ filterItems(this.value.toLowerCase()); });
+    items.forEach(function(item){
+        item.addEventListener('click',function(){
+            var val=this.dataset.value, lbl=this.dataset.label||this.textContent.trim();
+            hidden.value=val; label.textContent=lbl; label.classList.toggle('placeholder',!val); trigger.classList.toggle('ksd-has-value',!!val);
+            items.forEach(function(i){i.classList.remove('ksd-selected');}); this.classList.add('ksd-selected'); closeD();
+        });
     });
+    function filterItems(q){
+        var vis={};
+        items.forEach(function(i){ var m=!q||(i.dataset.search||'').indexOf(q)!==-1||(i.dataset.label||'').toLowerCase().indexOf(q)!==-1; i.style.display=m?'':'none'; if(m&&i.dataset.group)vis[i.dataset.group]=true; });
+        grps.forEach(function(g){ g.style.display=(!q||vis[g.dataset.group])?'':'none'; });
+        if(emptyEl) emptyEl.style.display=Array.from(items).some(function(i){return i.style.display!=='none';})?'none':'';
+    }
+    var cur=hidden.value;
+    if(cur){ var pre=Array.from(items).find(function(i){return i.dataset.value===cur;}); if(pre){label.textContent=pre.dataset.label||pre.textContent.trim();label.classList.remove('placeholder');trigger.classList.add('ksd-has-value');} }
+}
+
+makeKsd('ascUserTrigger','ascUserDropdown','ascUserSearch','ascUserList','ascUserEmpty','ascUserVal','ascUserLabel');
+makeKsd('ascCityTrigger','ascCityDropdown','ascCitySearch','ascCityList','ascCityEmpty','ascCityVal','ascCityLabel');
+
+// Status (no search)
+(function(){
+    var trigger=document.getElementById('ascStatusTrigger'), dropdown=document.getElementById('ascStatusDropdown');
+    var hidden=document.getElementById('ascStatusVal'), label=document.getElementById('ascStatusLabel');
+    var items=dropdown.querySelectorAll('.ksd-item'), open=false;
+    function openD(){ dropdown.style.display='block'; trigger.classList.add('ksd-open'); open=true; }
+    function closeD(){ dropdown.style.display='none'; trigger.classList.remove('ksd-open'); open=false; }
+    trigger.addEventListener('click',function(e){ e.stopPropagation(); open?closeD():openD(); });
+    document.addEventListener('click',function(e){ if(open&&!trigger.contains(e.target)&&!dropdown.contains(e.target)) closeD(); });
+    items.forEach(function(item){
+        item.addEventListener('click',function(){
+            hidden.value=this.dataset.value; label.textContent=this.dataset.label||this.textContent.trim();
+            items.forEach(function(i){i.classList.remove('ksd-selected');}); this.classList.add('ksd-selected'); closeD();
+        });
+    });
+})();
+
+// ── Phone normalise ────────────────────────────────────────────────────────
+function normLK(v,plus){ var d=v.replace(/\D/g,''); if(!d)return ''; if(d.charAt(0)==='0')d='94'+d.slice(1); if(d.slice(0,2)!=='94')d='94'+d; return (plus?'+':'')+d; }
+var phoneInput=document.getElementById('ascPhone');
+if(phoneInput) phoneInput.addEventListener('blur',function(){this.value=normLK(this.value,true);});
+var waInput=document.getElementById('whatsappInput');
+if(waInput) waInput.addEventListener('blur',function(){if(!document.getElementById('whatsappSame').checked)this.value=normLK(this.value,false);});
+
+// ── WhatsApp same as phone ─────────────────────────────────────────────────
+var waSame=document.getElementById('whatsappSame');
+if(waSame){
+    function toggleWaSame(){
+        if(waSame.checked){waInput.value=phoneInput?phoneInput.value:'';waInput.disabled=true;}
+        else{waInput.disabled=false;}
+    }
+    waSame.addEventListener('change',toggleWaSame);
+    if(phoneInput) phoneInput.addEventListener('input',function(){if(waSame.checked)waInput.value=this.value;});
+    if(waSame.checked) toggleWaSame();
 }
 </script>
-@endsection
+@endpush

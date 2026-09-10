@@ -13,14 +13,14 @@
     <div class="ka-field ka-span-2">
         <label>Banner Image</label>
         @if($banner->image)
-            <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
-                <img src="{{ asset('storage/'.$banner->image) }}" alt="{{ $banner->title }}" style="width:140px;height:auto;border-radius:10px;border:1.5px solid var(--ka-border,#E5E8EF)">
-                <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#D32F2F;cursor:pointer">
+            <div class="flex-row-14-mb10">
+                <img class="thumb-140-auto" src="{{ asset('storage/'.$banner->image) }}" alt="{{ $banner->title }}">
+                <label class="text-del-action">
                     <input type="checkbox" name="remove_image" value="1"> Remove current image
                 </label>
             </div>
         @else
-            <p style="font-size:13px;color:#667085;margin-bottom:8px">No image uploaded yet.</p>
+            <p class="hint-text">No image uploaded yet.</p>
         @endif
         <input type="file" name="image" accept="image/jpeg,image/png,image/webp">
         <small>JPG/PNG/WEBP, max 3MB. Uploading a new image replaces the current one.</small>

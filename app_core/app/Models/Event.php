@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Event extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'title', 'slug', 'description', 'event_date', 'starts_at', 'ends_at',
         'location', 'venue', 'price', 'event_type', 'capacity',
-        'organizer_name', 'user_id', 'category_id', 'store_id',
-        'status', 'admin_note', 'is_free', 'is_featured',
+        'organizer_name', 'organizer_phone', 'organizer_email', 'poster_type',
+        'user_id', 'category_id', 'store_id',
+        'status', 'admin_note', 'is_free',
     ];
 
     protected $casts = [

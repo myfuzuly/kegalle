@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Listing;
 use App\Models\ListingImage;
@@ -10,6 +11,9 @@ use App\Models\Location;
 use App\Models\Store;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Mail\ListingStatusMail;
+use Illuminate\Support\Facades\Mail;
+use App\Services\MobitelSmsService;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -21,33 +25,188 @@ class AdminListingController extends Controller
     {
         $listings = Listing::with(['user', 'store', 'category', 'locationModel', 'images'])
             ->where('type', '!=', 'classified')
-            ->where('status', 'approved')
-            ->when($request->type, fn ($q) => $q->where('type', $request->type))
+            ->when(
+                $request->status && $request->status !== '',
+                fn ($q) => $q->where('status', $request->status),
+                fn ($q) => $q->where('status', 'approved')
+            )
+            ->when($request->type && $request->type !== '', fn ($q) => $q->where('type', $request->type))
             ->when($request->q, fn ($q) => $q->where('title', 'like', '%'.$request->q.'%'))
             ->latest()->paginate(20)->withQueryString();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'total'      => $listings->total(),
+                'rows'       => view('admin.listings._rows', compact('listings'))->render(),
+                'pagination' => (string) $listings->links('vendor.pagination.ka-admin'),
+            ]);
+        }
 
         return view('admin.listings.index', compact('listings'));
     }
 
     public function classifieds(Request $request)
     {
-        $listings = Listing::with(['user', 'store', 'category', 'locationModel', 'images'])
+        $base = Listing::with(['user', 'store', 'category', 'locationModel', 'images'])
             ->where('type', 'classified')
-            ->where('status', 'approved')
-            ->when($request->q, fn ($q) => $q->where('title', 'like', '%'.$request->q.'%'))
+            ->when($request->q, fn ($q) => $q->where('title', 'like', '%'.$request->q.'%'));
+
+        $listings = (clone $base)
+            ->when(
+                $request->status && $request->status !== '',
+                fn ($q) => $q->where('status', $request->status),
+                fn ($q) => $q->whereIn('status', ['approved', 'pending'])
+            )
             ->latest()->paginate(20)->withQueryString();
 
-        return view('admin.classifieds.index', compact('listings'));
+        $dangerListings = (clone $base)
+            ->whereIn('status', ['rejected', 'suspended', 'expired'])
+            ->latest()->limit(100)->get();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'total'      => $listings->total(),
+                'rows'       => view('admin.classifieds._rows', compact('listings'))->render(),
+                'pagination' => (string) $listings->links('vendor.pagination.ka-admin'),
+            ]);
+        }
+
+        return view('admin.classifieds.index', compact('listings', 'dangerListings'));
+    }
+
+    public function createClassified()
+    {
+        $categories = Category::with('parent')->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
+        $locations  = Location::with('parent')->where('is_active', true)->orderBy('parent_id')->orderBy('name')->get();
+        $brands     = Brand::active()->orderBy('name')->get(['id', 'name']);
+
+        return view('admin.classifieds.create', compact('categories', 'locations', 'brands'));
+    }
+
+    public function storeClassified(Request $request)
+    {
+        $data = $request->validate([
+            'poster_name'      => 'required|string|max:120',
+            'poster_phone'     => 'required|string|max:30',
+            'poster_whatsapp'  => 'nullable|string|max:30',
+            'category_id'      => 'nullable|exists:categories,id',
+            'location_id'      => 'nullable|exists:locations,id',
+            'brand_id'         => 'nullable|exists:brands,id',
+            'title'            => 'required|string|max:180',
+            'price'            => 'nullable|numeric|min:0',
+            'location'         => 'nullable|string|max:180',
+            'description'      => 'nullable|string',
+            'description_si'   => 'nullable|string',
+            'description_ta'   => 'nullable|string',
+            'is_featured'      => 'nullable|boolean',
+            'is_top'           => 'nullable|boolean',
+            'images.*'         => 'nullable|image|mimes:jpeg,jpg,png,webp|max:4096',
+        ]);
+
+        $payload = [
+            'user_id'         => null,
+            'poster_name'     => $data['poster_name'],
+            'poster_phone'    => $data['poster_phone'],
+            'poster_whatsapp' => $data['poster_whatsapp'] ?? null,
+            'category_id'     => $data['category_id'] ?? null,
+            'title'           => $data['title'],
+            'slug'            => $this->uniqueSlug($data['title']),
+            'price'           => $data['price'] ?? 0,
+            'type'            => 'classified',
+            'status'          => 'approved',
+            'location'        => $data['location'] ?? null,
+            'description'     => $data['description'] ?? null,
+            'description_si'  => $data['description_si'] ?? null,
+            'description_ta'  => $data['description_ta'] ?? null,
+            'is_featured'     => $request->boolean('is_featured'),
+            'is_top'          => $request->boolean('is_top'),
+        ];
+
+        if (Schema::hasColumn('listings', 'location_id')) {
+            $payload['location_id'] = $data['location_id'] ?? null;
+        }
+        if (Schema::hasColumn('listings', 'created_by_admin_id')) {
+            $payload['created_by_admin_id'] = auth()->id();
+        }
+
+        $listing = Listing::create($payload);
+        $this->storeListingImages($request, $listing);
+        $this->saveClassifiedBrand($listing, $data['brand_id'] ?? null);
+        $this->saveCustomFields($request, $listing);
+
+        return redirect('/admin/classifieds')->with('success', 'Classified ad posted successfully.');
+    }
+
+    public function editClassified(Listing $listing)
+    {
+        $listing->load(['images', 'values.field']);
+        $categories = Category::with('parent')->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
+        $locations  = Location::with('parent')->where('is_active', true)->orderBy('parent_id')->orderBy('name')->get();
+        $currentBrandId = $listing->values->first(fn($v) => optional($v->field)->name === 'brand_id')?->value;
+
+        return view('admin.classifieds.edit', compact('listing', 'categories', 'locations', 'currentBrandId'));
+    }
+
+    public function updateClassified(Request $request, Listing $listing)
+    {
+        $data = $request->validate([
+            'poster_name'      => 'required|string|max:120',
+            'poster_phone'     => 'required|string|max:30',
+            'poster_whatsapp'  => 'nullable|string|max:30',
+            'category_id'      => 'nullable|exists:categories,id',
+            'location_id'      => 'nullable|exists:locations,id',
+            'title'            => 'required|string|max:180',
+            'price'            => 'nullable|numeric|min:0',
+            'location'         => 'nullable|string|max:180',
+            'description'      => 'nullable|string',
+            'description_si'   => 'nullable|string',
+            'description_ta'   => 'nullable|string',
+            'status'           => 'required|string|max:50',
+            'brand_id'         => 'nullable|exists:brands,id',
+            'is_featured'      => 'nullable|boolean',
+            'is_top'           => 'nullable|boolean',
+            'images.*'         => 'nullable|image|mimes:jpeg,jpg,png,webp|max:4096',
+        ]);
+
+        $payload = [
+            'poster_name'     => $data['poster_name'],
+            'poster_phone'    => $data['poster_phone'],
+            'poster_whatsapp' => $data['poster_whatsapp'] ?? null,
+            'category_id'     => $data['category_id'] ?? null,
+            'title'           => $data['title'],
+            'price'           => $data['price'] ?? 0,
+            'status'          => $data['status'],
+            'location'        => $data['location'] ?? null,
+            'description'     => $data['description'] ?? null,
+            'description_si'  => $data['description_si'] ?? null,
+            'description_ta'  => $data['description_ta'] ?? null,
+            'is_featured'     => $request->boolean('is_featured'),
+            'is_top'          => $request->boolean('is_top'),
+        ];
+
+        if (Schema::hasColumn('listings', 'location_id')) {
+            $payload['location_id'] = $data['location_id'] ?? null;
+        }
+
+        $listing->update($payload);
+        $this->deleteListingImages($request, $listing);
+        $this->storeListingImages($request, $listing);
+        $this->setPrimaryImage($request, $listing);
+        $this->saveClassifiedBrand($listing, $data['brand_id'] ?? null);
+        $this->saveCustomFields($request, $listing);
+
+        return redirect('/admin/classifieds')->with('success', 'Classified ad updated successfully.');
     }
 
     public function create()
     {
-        $users = User::orderBy('name')->get();
-        $stores = Store::orderBy('name')->get();
+        $users = cache()->remember('admin_users_dropdown', 120, fn () => User::orderBy('name')->limit(500)->get(['id', 'name', 'email']));
+        $stores = cache()->remember('admin_stores_dropdown', 120, fn () => Store::orderBy('name')->limit(500)->get(['id', 'name']));
         $categories = Category::with('parent')->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
         $locations = Location::with('parent')->where('is_active', true)->orderBy('parent_id')->orderBy('name')->get();
+        $brands = Brand::active()->orderBy('name')->get(['id', 'name']);
 
-        return view('admin.listings.create', compact('users', 'stores', 'categories', 'locations'));
+        return view('admin.listings.create', compact('users', 'stores', 'categories', 'locations', 'brands'));
     }
 
     public function store(Request $request)
@@ -70,8 +229,8 @@ class AdminListingController extends Controller
     public function edit(Listing $listing)
     {
         $listing->load(['images', 'values.field']);
-        $users = User::orderBy('name')->get();
-        $stores = Store::orderBy('name')->get();
+        $users = cache()->remember('admin_users_dropdown', 120, fn () => User::orderBy('name')->limit(500)->get(['id', 'name', 'email']));
+        $stores = cache()->remember('admin_stores_dropdown', 120, fn () => Store::orderBy('name')->limit(500)->get(['id', 'name']));
         $categories = Category::with('parent')->where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
         $locations = Location::with('parent')->where('is_active', true)->orderBy('parent_id')->orderBy('name')->get();
 
@@ -85,6 +244,7 @@ class AdminListingController extends Controller
         $listing->update($this->listingPayload($request, $data));
         $this->deleteListingImages($request, $listing);
         $this->storeListingImages($request, $listing);
+        $this->setPrimaryImage($request, $listing);
         $this->saveCustomFields($request, $listing);
         $this->saveVariants($request, $listing);
         $this->applyTitlePostfix($request, $listing);
@@ -95,12 +255,56 @@ class AdminListingController extends Controller
     public function approve(Listing $listing)
     {
         $listing->update(['status' => 'approved']);
+        $listing->load('user');
+
+        $email = optional($listing->user)->email;
+        if ($email) {
+            try { Mail::to($email)->queue(new ListingStatusMail($listing, true)); } catch (\Throwable $e) { \Log::warning('Approve mail failed: ' . $e->getMessage()); }
+        }
+
+        if ($listing->user_id) {
+            try {
+                app(\App\Services\WebPushService::class)->notifyUser(
+                    $listing->user_id,
+                    '✅ Listing approved!',
+                    '"' . \Str::limit($listing->title, 50) . '" is now live on kegalle.',
+                    url('/listings/' . $listing->slug)
+                );
+            } catch (\Throwable $e) {}
+        }
+
+        $phone = optional($listing->user)->phone;
+        if ($phone) {
+            try {
+                $title = \Str::limit($listing->title, 60);
+                app(MobitelSmsService::class)->send(
+                    $phone,
+                    "kegalle.com: Your ad \"{$title}\" has been approved and is now live. View: kegalle.com/listings/{$listing->slug}"
+                );
+            } catch (\Throwable $e) {}
+        }
+
         return back()->with('success', 'Listing approved.');
     }
 
     public function reject(Listing $listing)
     {
         $listing->update(['status' => 'rejected']);
+        $listing->load('user');
+        $email = optional($listing->user)->email;
+        if ($email) {
+            try { Mail::to($email)->queue(new ListingStatusMail($listing, false)); } catch (\Throwable $e) { \Log::warning('Reject mail failed: ' . $e->getMessage()); }
+        }
+        if ($listing->user_id) {
+            try {
+                app(\App\Services\WebPushService::class)->notifyUser(
+                    $listing->user_id,
+                    'Listing not approved',
+                    '"' . \Str::limit($listing->title, 50) . '" needs changes before it can go live.',
+                    url('/dashboard/listings')
+                );
+            } catch (\Throwable $e) {}
+        }
         return back()->with('success', 'Listing rejected.');
     }
 
@@ -134,7 +338,7 @@ class AdminListingController extends Controller
     private function validateListingImages(Request $request): void
     {
         $request->validate([
-            'images.*' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'images.*' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:4096'],
         ]);
     }
 
@@ -163,7 +367,8 @@ class AdminListingController extends Controller
                 $row['sort_order'] = $nextSort++;
             }
             if (in_array('is_primary', $cols)) {
-                $row['is_primary'] = ! $hasExisting && $index === 0;
+                $newPrimaryIdx = (int) $request->input('new_primary_index', 0);
+                $row['is_primary'] = ! $hasExisting && $index === $newPrimaryIdx;
             }
             ListingImage::create($row);
             $hasExisting = true;
@@ -282,10 +487,17 @@ class AdminListingController extends Controller
             $listing->update(['condition' => $request->input('cf_condition')]);
         }
 
+        $cfKeys = array_filter(array_keys($request->all()), fn($k) => str_starts_with($k, 'cf_'));
+        abort_if(count($cfKeys) > 30, 422, 'Too many custom fields submitted.');
+
+        $cfFieldNames = array_map(fn($k) => substr($k, 3), $cfKeys);
+        $fieldMap = \App\Models\CustomField::whereIn('name', $cfFieldNames)
+            ->get()->keyBy('name');
+
         foreach ($request->all() as $key => $value) {
             if (!str_starts_with($key, 'cf_')) continue;
             $fieldName = substr($key, 3);
-            $field = \App\Models\CustomField::where('name', $fieldName)->first();
+            $field = $fieldMap->get($fieldName);
             if (!$field) continue;
             $storeValue = is_array($value) ? implode(',', $value) : $value;
             if ($storeValue === '' || $storeValue === null) {
@@ -297,5 +509,86 @@ class AdminListingController extends Controller
                 ['value' => $storeValue]
             );
         }
+    }
+
+    private function saveClassifiedBrand(Listing $listing, ?string $brandId): void
+    {
+        $field = \App\Models\CustomField::where('name', 'brand_id')->first();
+        if (!$field) return;
+        if ($brandId) {
+            \App\Models\ListingFieldValue::updateOrCreate(
+                ['listing_id' => $listing->id, 'custom_field_id' => $field->id],
+                ['value' => $brandId]
+            );
+        } else {
+            \App\Models\ListingFieldValue::where('listing_id', $listing->id)
+                ->where('custom_field_id', $field->id)->delete();
+        }
+    }
+
+    private function setPrimaryImage(Request $request, Listing $listing): void
+    {
+        if (! Schema::hasColumn('listing_images', 'is_primary')) return;
+        $primaryId = (int) $request->input('primary_image_id');
+        if (! $primaryId) return;
+
+        ListingImage::where('listing_id', $listing->id)->update(['is_primary' => false]);
+        ListingImage::where('id', $primaryId)->where('listing_id', $listing->id)->update(['is_primary' => true]);
+    }
+
+    public function bulkApprove(Request $request)
+    {
+        $ids = $request->validate(['ids' => 'required|array', 'ids.*' => 'integer'])['ids'];
+        $count = Listing::whereIn('id', $ids)->whereNotIn('status', ['approved'])->update(['status' => 'approved']);
+        return response()->json(['approved' => $count]);
+    }
+
+    public function exportCsv(Request $request)
+    {
+        $filename = 'listings-' . now()->format('Y-m-d') . '.csv';
+        $headers  = [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ];
+
+        $callback = function () use ($request) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['ID', 'Title', 'Type', 'Status', 'Price', 'Category', 'Location', 'Seller', 'Store', 'Created']);
+            Listing::with(['category:id,name', 'locationModel:id,name', 'user:id,name,email', 'store:id,name'])
+                ->when($request->status, fn ($q) => $q->where('status', $request->status))
+                ->when($request->type,   fn ($q) => $q->where('type',   $request->type))
+                ->when($request->q,      fn ($q) => $q->where('title',  'like', '%'.$request->q.'%'))
+                ->orderByDesc('id')
+                ->chunk(500, function ($listings) use ($handle) {
+                    foreach ($listings as $l) {
+                        fputcsv($handle, [
+                            $l->id,
+                            $l->title,
+                            $l->type,
+                            $l->status,
+                            $l->price ?? 0,
+                            optional($l->category)->name,
+                            optional($l->locationModel)->name ?? $l->location,
+                            optional($l->user)->name,
+                            optional($l->store)->name,
+                            $l->created_at?->format('Y-m-d'),
+                        ]);
+                    }
+                });
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    private function uniqueSlug(string $title): string
+    {
+        $base = Str::slug($title);
+        $slug = $base;
+        $i    = 1;
+        while (Listing::where('slug', $slug)->exists()) {
+            $slug = $base . '-' . $i++;
+        }
+        return $slug;
     }
 }

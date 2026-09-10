@@ -274,7 +274,7 @@
 </section>
 @endif
 
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 (function(){
     var el = document.getElementById('kedCountdown');
     if(!el) return;

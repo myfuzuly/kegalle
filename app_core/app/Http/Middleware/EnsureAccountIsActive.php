@@ -11,12 +11,9 @@ class EnsureAccountIsActive
     {
         $user = auth()->user();
 
-        if ($user && $user->status === 'inactive') {
-            return redirect('/account-pending');
-        }
-
-        if ($user && $user->status === 'suspended') {
-            return redirect('/account-suspended');
+        if ($user && in_array($user->status, ['inactive', 'suspended', 'banned'])) {
+            $route = $user->status === 'inactive' ? '/account-pending' : '/account-suspended';
+            return redirect($route);
         }
 
         return $next($request);

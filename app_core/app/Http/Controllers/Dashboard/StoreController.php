@@ -8,6 +8,8 @@ use App\Models\Favorite;
 use App\Models\Listing;
 use App\Models\Category;
 use App\Models\Store;
+use App\Http\Requests\DashboardStoreRequest;
+use App\Services\StoreService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
@@ -15,6 +17,8 @@ use Illuminate\Support\Str;
 
 class StoreController extends Controller
 {
+    public function __construct(private readonly StoreService $storeService) {}
+
     public function index()
     {
         $stores = Store::query()
@@ -30,10 +34,10 @@ class StoreController extends Controller
     {
         $storeLimit = (int) (auth()->user()->store_limit ?? 1);
         if (! in_array(auth()->user()->role, ['admin', 'super_admin']) && Store::where('user_id', auth()->id())->count() >= $storeLimit) {
-            return redirect()->route('dashboard.stores.index')->with('success', "You have reached your store limit ({$storeLimit}). Contact admin to increase it.");
+            return redirect()->route('dashboard.stores.index')->with('error', "You have reached your store limit ({$storeLimit}). Contact the administrator to increase your limit and manage multiple stores from a single dashboard.");
         }
         $locations = \App\Models\Location::where('is_active', 1)->orderBy('sort_order')->orderBy('name')->get();
-        $categories = Category::whereNull('parent_id')->where('is_active', 1)->orderBy('sort_order')->orderBy('name')->with('children')->get();
+        $categories = Category::whereNull('parent_id')->where('is_active', 1)->orderBy('sort_order')->orderBy('name')->with('children.children')->get();
         return view('dashboard.stores.form', [
             'store' => new Store,
             'mode' => 'create',
@@ -42,55 +46,19 @@ class StoreController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(DashboardStoreRequest $request)
     {
         $storeLimit = (int) (auth()->user()->store_limit ?? 1);
         if (! in_array(auth()->user()->role, ['admin', 'super_admin']) && Store::where('user_id', auth()->id())->count() >= $storeLimit) {
-            return redirect()->route('dashboard.stores.index')->with('success', "You have reached your store limit ({$storeLimit}). Contact admin to increase it.");
+            return redirect()->route('dashboard.stores.index')->with('error', "You have reached your store limit ({$storeLimit}). Contact the administrator to increase your limit and manage multiple stores from a single dashboard.");
         }
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:190'],
-            'description' => ['nullable', 'string'],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'email' => ['nullable', 'email', 'max:190'],
-            'whatsapp' => ['nullable', 'string', 'max:50'],
-            'address' => ['nullable', 'string', 'max:255'],
-            'city' => ['nullable', 'string', 'max:120'],
-            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
-            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
-            'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-            'banner' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
-            'whatsapp_same' => ['nullable'],
-            'categories' => ['nullable', 'array'],
-            'categories.*' => ['integer', 'exists:categories,id'],
-        ]);
+        $user = auth()->user();
+        $store = $this->storeService->create($request, $request->validated(), $user);
 
-        if ($request->has('whatsapp_same') && ! empty($data['phone'])) {
-            $data['whatsapp'] = $data['phone'];
-        }
-        unset($data['logo'], $data['banner'], $data['whatsapp_same'], $data['categories']);
-        $data = self::normalizePhones($data);
-
-        $data['user_id'] = auth()->id();
-        $data['slug'] = $this->uniqueSlug($data['name']);
-        $data['status'] = 'pending';
-
-        if ($request->hasFile('logo')) {
-            $ext = strtolower($request->file('logo')->getClientOriginalExtension()) ?: 'jpg';
-            $data['logo'] = $request->file('logo')->storeAs('stores', \Illuminate\Support\Str::slug($data['name']) . '-logo-in-kegalle.' . $ext, 'public');
-            $data['logo'] = \App\Helpers\ImageHelper::finalize($data['logo'], false, 500);
-        }
-        if ($request->hasFile('banner')) {
-            $ext = strtolower($request->file('banner')->getClientOriginalExtension()) ?: 'jpg';
-            $data['banner'] = $request->file('banner')->storeAs('stores', \Illuminate\Support\Str::slug($data['name']) . '-banner-in-kegalle.' . $ext, 'public');
-            $data['banner'] = \App\Helpers\ImageHelper::finalize($data['banner'], false, 1600);
-        }
-
-        $store = Store::create($data);
-
-        if ($request->has('categories')) {
-            $store->categories()->sync($request->input('categories', []));
+        if ($user->role === 'user') {
+            $user->role = 'seller';
+            $user->save();
         }
 
         return redirect()
@@ -104,17 +72,19 @@ class StoreController extends Controller
 
         $products = Listing::query()
             ->where('store_id', $store->id)
+            ->with(['images', 'category:id,name,slug'])
             ->latest()
             ->take(8)
             ->get();
 
+        $agg = Listing::where('store_id', $store->id)
+            ->selectRaw("COUNT(*) as products, SUM(status='approved') as approved, SUM(status='pending') as pending" . (Schema::hasColumn('listings', 'views') ? ', SUM(views) as views' : ', 0 as views'))
+            ->first();
         $stats = [
-            'products' => Listing::where('store_id', $store->id)->count(),
-            'approved' => Listing::where('store_id', $store->id)->where('status', 'approved')->count(),
-            'pending' => Listing::where('store_id', $store->id)->where('status', 'pending')->count(),
-            'views' => Schema::hasColumn('listings', 'views')
-                ? Listing::where('store_id', $store->id)->sum('views')
-                : 0,
+            'products' => (int) $agg->products,
+            'approved' => (int) $agg->approved,
+            'pending'  => (int) $agg->pending,
+            'views'    => (int) $agg->views,
         ];
 
         return view('dashboard.stores.show', compact('store', 'products', 'stats'));
@@ -124,7 +94,7 @@ class StoreController extends Controller
     {
         $this->authorizeStore($store);
         $locations = \App\Models\Location::where('is_active', 1)->orderBy('sort_order')->orderBy('name')->get();
-        $categories = Category::whereNull('parent_id')->where('is_active', 1)->orderBy('sort_order')->orderBy('name')->with('children')->get();
+        $categories = Category::whereNull('parent_id')->where('is_active', 1)->orderBy('sort_order')->orderBy('name')->with('children.children')->get();
 
         return view('dashboard.stores.form', [
             'store' => $store,
@@ -134,66 +104,11 @@ class StoreController extends Controller
         ]);
     }
 
-    public function update(Request $request, Store $store)
+    public function update(DashboardStoreRequest $request, Store $store)
     {
         $this->authorizeStore($store);
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:190'],
-            'description' => ['nullable', 'string'],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'email' => ['nullable', 'email', 'max:190'],
-            'whatsapp' => ['nullable', 'string', 'max:50'],
-            'address' => ['nullable', 'string', 'max:255'],
-            'city' => ['nullable', 'string', 'max:120'],
-            'latitude' => ['nullable', 'numeric', 'between:-90,90'],
-            'longitude' => ['nullable', 'numeric', 'between:-180,180'],
-            'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
-            'banner' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
-            'remove_logo' => ['nullable', 'boolean'],
-            'remove_banner' => ['nullable', 'boolean'],
-            'whatsapp_same' => ['nullable'],
-            'categories' => ['nullable', 'array'],
-            'categories.*' => ['integer', 'exists:categories,id'],
-        ]);
-
-        if ($request->has('whatsapp_same') && ! empty($data['phone'])) {
-            $data['whatsapp'] = $data['phone'];
-        }
-        unset($data['logo'], $data['banner'], $data['remove_logo'], $data['remove_banner'], $data['whatsapp_same'], $data['categories']);
-        $data = self::normalizePhones($data);
-
-        if ($store->name !== $data['name']) {
-            $data['slug'] = $this->uniqueSlug($data['name'], $store->id);
-        }
-
-        $storeSlug = \Illuminate\Support\Str::slug($data['name'] ?? $store->name);
-        if ($request->hasFile('logo')) {
-            if ($store->logo) {
-                Storage::disk('public')->delete($store->logo);
-            }
-            $ext = strtolower($request->file('logo')->getClientOriginalExtension()) ?: 'jpg';
-            $data['logo'] = $request->file('logo')->storeAs('stores', $storeSlug . '-logo-in-kegalle.' . $ext, 'public');
-            $data['logo'] = \App\Helpers\ImageHelper::finalize($data['logo'], false, 500);
-        } elseif ($request->boolean('remove_logo') && $store->logo) {
-            Storage::disk('public')->delete($store->logo);
-            $data['logo'] = null;
-        }
-
-        if ($request->hasFile('banner')) {
-            if ($store->banner) {
-                Storage::disk('public')->delete($store->banner);
-            }
-            $ext = strtolower($request->file('banner')->getClientOriginalExtension()) ?: 'jpg';
-            $data['banner'] = $request->file('banner')->storeAs('stores', $storeSlug . '-banner-in-kegalle.' . $ext, 'public');
-            $data['banner'] = \App\Helpers\ImageHelper::finalize($data['banner'], false, 1600);
-        } elseif ($request->boolean('remove_banner') && $store->banner) {
-            Storage::disk('public')->delete($store->banner);
-            $data['banner'] = null;
-        }
-
-        $store->update($data);
-        $store->categories()->sync($request->input('categories', []));
+        $this->storeService->update($request, $request->validated(), $store);
 
         return redirect()
             ->route('dashboard.stores.show', $store)
@@ -204,13 +119,15 @@ class StoreController extends Controller
     {
         $this->authorizeStore($store);
 
+        $agg = Listing::where('store_id', $store->id)
+            ->selectRaw("COUNT(*) as total, SUM(status='approved') as active, SUM(views) as views")
+            ->first();
+
         $listingIds = Listing::where('store_id', $store->id)->pluck('id');
 
-        $totalListings = $listingIds->count();
-        $activeListings = Listing::where('store_id', $store->id)->where('status', 'approved')->count();
-        $totalViews = Schema::hasColumn('listings', 'views')
-            ? Listing::where('store_id', $store->id)->sum('views')
-            : 0;
+        $totalListings  = (int) $agg->total;
+        $activeListings = (int) $agg->active;
+        $totalViews     = (int) $agg->views;
         $totalFavorites = $listingIds->isNotEmpty()
             ? Favorite::whereIn('listing_id', $listingIds)->count()
             : 0;
@@ -236,10 +153,14 @@ class StoreController extends Controller
             }
         }
 
+        $statusCounts = Listing::where('store_id', $store->id)
+            ->selectRaw('status, count(*) as total')
+            ->groupBy('status')
+            ->pluck('total', 'status');
         $statusBreakdown = [
-            'approved' => Listing::where('store_id', $store->id)->where('status', 'approved')->count(),
-            'pending'  => Listing::where('store_id', $store->id)->where('status', 'pending')->count(),
-            'rejected' => Listing::where('store_id', $store->id)->where('status', 'rejected')->count(),
+            'approved' => $statusCounts['approved'] ?? 0,
+            'pending'  => $statusCounts['pending']  ?? 0,
+            'rejected' => $statusCounts['rejected'] ?? 0,
         ];
 
         $recentActivity = Listing::where('store_id', $store->id)
@@ -264,7 +185,40 @@ class StoreController extends Controller
     {
         $this->authorizeStore($store);
 
-        return view('dashboard.stores.reviews', compact('store'));
+        $reviews = \App\Models\Review::where('store_id', $store->id)
+            ->with('user')
+            ->latest()
+            ->paginate(20);
+
+        $reviewAgg = \App\Models\Review::where('store_id', $store->id)
+            ->selectRaw("COUNT(*) as total, SUM(status='approved') as approved, SUM(status='pending') as pending, AVG(CASE WHEN status='approved' THEN rating END) as avg_rating")
+            ->first();
+        $stats = [
+            'total'    => (int) $reviewAgg->total,
+            'approved' => (int) $reviewAgg->approved,
+            'pending'  => (int) $reviewAgg->pending,
+            'avg'      => round((float) $reviewAgg->avg_rating, 1),
+        ];
+
+        return view('dashboard.stores.reviews', compact('store', 'reviews', 'stats'));
+    }
+
+    public function replyReview(Request $request, Store $store, \App\Models\Review $review)
+    {
+        $this->authorizeStore($store);
+
+        abort_if((int) $review->store_id !== (int) $store->id, 403);
+
+        $data = $request->validate([
+            'reply' => 'required|string|min:2|max:1000',
+        ]);
+
+        $review->update([
+            'reply'      => $data['reply'],
+            'replied_at' => now(),
+        ]);
+
+        return back()->with('success', 'Your reply has been posted.');
     }
 
     /**
@@ -272,17 +226,11 @@ class StoreController extends Controller
      */
     public static function normalizePhones(array $data): array
     {
-        if (!empty($data['phone'])) {
-            $digits = preg_replace('/\D/', '', $data['phone']);
-            if (str_starts_with($digits, '0')) $digits = '94' . substr($digits, 1);
-            if (!str_starts_with($digits, '94')) $digits = '94' . $digits;
-            $data['phone'] = '+' . $digits;
+        if (! empty($data['phone'])) {
+            $data['phone'] = StoreService::normalizePhone($data['phone']);
         }
-        if (!empty($data['whatsapp'])) {
-            $digits = preg_replace('/\D/', '', $data['whatsapp']);
-            if (str_starts_with($digits, '0')) $digits = '94' . substr($digits, 1);
-            if (!str_starts_with($digits, '94')) $digits = '94' . $digits;
-            $data['whatsapp'] = $digits;
+        if (! empty($data['whatsapp'])) {
+            $data['whatsapp'] = StoreService::normalizeWhatsapp($data['whatsapp']);
         }
         return $data;
     }
@@ -290,22 +238,5 @@ class StoreController extends Controller
     private function authorizeStore(Store $store): void
     {
         abort_if((int) $store->user_id !== (int) auth()->id(), 403);
-    }
-
-    private function uniqueSlug(string $name, ?int $ignoreId = null): string
-    {
-        $base = Str::slug($name);
-        $slug = $base;
-        $i = 1;
-
-        while (
-            Store::where('slug', $slug)
-                ->when($ignoreId, fn ($q) => $q->where('id', '!=', $ignoreId))
-                ->exists()
-        ) {
-            $slug = $base.'-'.$i++;
-        }
-
-        return $slug;
     }
 }

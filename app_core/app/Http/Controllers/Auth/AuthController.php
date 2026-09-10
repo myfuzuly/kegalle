@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -24,7 +25,10 @@ class AuthController extends Controller
     {
         $locations = Location::query()
             ->where('is_active', 1)
+            ->whereNull('parent_id')
+            ->orderBy('sort_order')
             ->orderBy('name')
+            ->with(['children' => fn($q) => $q->where('is_active', 1)->orderBy('name')])
             ->get();
 
         return view('auth.register', compact('locations'));
@@ -37,15 +41,29 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
+        // Per-account lockout: block after 10 failures for 15 minutes
+        $accountKey = 'login-fail:' . $request->email;
+        if (RateLimiter::tooManyAttempts($accountKey, 10)) {
+            $seconds = RateLimiter::availableIn($accountKey);
+            return back()->withInput($request->only('email'))
+                ->withErrors(['email' => 'Too many failed login attempts. Try again in ' . ceil($seconds / 60) . ' minutes.']);
+        }
+
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
+            RateLimiter::clear($accountKey);
             $request->session()->regenerate();
 
-            if (! auth()->user()->email_verified_at) {
-                return redirect('/email/verify-notice');
+            $user = Auth::user();
+            $isFirst = is_null($user->last_login_at);
+            $user->forceFill(['last_login_at' => now()])->save();
+            if ($isFirst) {
+                session()->flash('first_login', true);
             }
 
             return redirect()->intended('/dashboard');
         }
+
+        RateLimiter::hit($accountKey, 900); // 15-minute window
 
         return back()
             ->withInput($request->only('email'))
@@ -58,6 +76,29 @@ class AuthController extends Controller
             return back()->withInput($request->only('email'))->withErrors(['email' => 'Invalid login details.']);
         }
 
+        // reCAPTCHA v3 verification
+        $siteSecret = config('services.recaptcha.secret_key');
+        if ($siteSecret) {
+            $token = $request->input('g-recaptcha-response', '');
+            $verified = false;
+            if ($token) {
+                $ch = curl_init('https://www.google.com/recaptcha/api/siteverify');
+                curl_setopt_array($ch, [
+                    CURLOPT_POST           => true,
+                    CURLOPT_POSTFIELDS     => http_build_query(['secret' => $siteSecret, 'response' => $token, 'remoteip' => $request->ip()]),
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_TIMEOUT        => 10,
+                ]);
+                $result = json_decode(curl_exec($ch), true);
+                curl_close($ch);
+                $verified = ($result['success'] ?? false) && ($result['score'] ?? 0) >= 0.5;
+            }
+            if (!$verified) {
+                return back()->withInput($request->only('email', 'name', 'phone', 'location_id', 'account_type'))
+                    ->withErrors(['email' => 'Security check failed. Please try again.']);
+            }
+        }
+
         $data = $request->validate([
             'account_type' => ['required', 'in:user,store'],
             'store_name' => ['nullable', 'string', 'max:190'],
@@ -68,22 +109,25 @@ class AuthController extends Controller
             'password' => ['required', 'confirmed', 'min:8'],
         ]);
 
-        $token = Str::random(64);
+        $plainToken = Str::random(64);
+        $token = hash('sha256', $plainToken);
 
         $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'phone' => $data['phone'],
-            'location_id' => $data['location_id'],
+            'name'         => $data['name'],
+            'email'        => $data['email'],
+            'phone'        => \App\Services\StoreService::normalizePhone($data['phone']),
+            'location_id'  => $data['location_id'],
             'account_type' => $data['account_type'],
-            'role' => 'user',
-            'status' => 'inactive',
-            'verification_token' => $token,
-            'password' => Hash::make($data['password']),
+            'password'     => Hash::make($data['password']),
         ]);
+        $user->forceFill([
+            'role'               => 'user',
+            'status'             => 'active',
+            'verification_token' => $token,
+        ])->save();
 
         try {
-            Mail::to($user->email)->send(new VerifyAccountMail($user));
+            Mail::to($user->email)->queue(new VerifyAccountMail($user, $plainToken));
         } catch (\Throwable $e) {
             \Log::error('Verification email failed: '.$e->getMessage());
         }
@@ -92,9 +136,8 @@ class AuthController extends Controller
             session(['pending_store_name' => $data['store_name']]);
         }
 
-        Auth::login($user);
-
-        return redirect('/email/verify-notice');
+        return redirect('/email/verify-notice')
+            ->with('success', 'Account created! Check your email and click the verification link to activate your account.');
     }
 
     public function verifyNotice()
@@ -104,12 +147,12 @@ class AuthController extends Controller
 
     public function verifyEmail(string $token)
     {
-        $user = User::where('verification_token', $token)->firstOrFail();
+        $user = User::where('verification_token', hash('sha256', $token))->firstOrFail();
 
-        $user->update([
+        $user->forceFill([
             'email_verified_at' => now(),
             'verification_token' => null,
-        ]);
+        ])->save();
 
         Auth::login($user);
 
@@ -132,12 +175,11 @@ class AuthController extends Controller
             return redirect('/dashboard');
         }
 
-        $user->update([
-            'verification_token' => Str::random(64),
-        ]);
+        $plainToken = Str::random(64);
+        $user->update(['verification_token' => hash('sha256', $plainToken)]);
 
         try {
-            Mail::to($user->email)->send(new VerifyAccountMail($user));
+            Mail::to($user->email)->queue(new VerifyAccountMail($user, $plainToken));
         } catch (\Throwable $e) {
             \Log::error('Resend verification email failed: '.$e->getMessage());
             return back()->with('success', 'There was an issue sending the email. Please try again later.');
@@ -158,7 +200,7 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (! $user) {
-            return back()->withErrors(['email' => 'No account found with that email address.']);
+            return redirect('/forgot-password')->with('success', 'If an account exists with that email, a reset link has been sent.');
         }
 
         $token = Str::random(64);
@@ -173,7 +215,7 @@ class AuthController extends Controller
         $resetUrl = url('/reset-password/'.$token.'?email='.urlencode($request->email));
 
         try {
-            Mail::to($request->email)->send(new \App\Mail\PasswordResetMail($resetUrl));
+            Mail::to($request->email)->queue(new \App\Mail\PasswordResetMail($resetUrl));
         } catch (\Throwable $e) {
             \Log::error('Password reset email failed: '.$e->getMessage());
             return back()->withErrors(['email' => 'Failed to send reset email. Please try again later.']);
@@ -206,7 +248,7 @@ class AuthController extends Controller
             return back()->withErrors(['email' => 'Invalid or expired reset link.']);
         }
 
-        if (now()->diffInMinutes($record->created_at) > 60) {
+        if (now()->diffInMinutes(\Carbon\Carbon::parse($record->created_at)) > 60) {
             DB::table('password_reset_tokens')->where('email', $request->email)->delete();
             return back()->withErrors(['email' => 'Reset link has expired. Please request a new one.']);
         }

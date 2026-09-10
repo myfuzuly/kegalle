@@ -1,0 +1,10 @@
+/* ─── Frontend CSS entry point ───────────────────────────────────────────────
+   Vite bundles, minifies, and fingerprints this file.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+@import './kegalle-frontend.css';
+@import './kegalle-mobile-ux.css';
+@import './kegalle-landing.css';
+@import './kegalle-services.css';
+@import './kegalle-premium-ui.css';
+@import './kegalle-ui-responsive-v1.css';

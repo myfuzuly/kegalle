@@ -1,12 +1,12 @@
 <?php
 // Check error log for listing update errors
-require '/home/kurulla/app_core/vendor/autoload.php';
-$app = require '/home/kurulla/app_core/bootstrap/app.php';
+require '/home/kegalle/app_core/vendor/autoload.php';
+$app = require '/home/kegalle/app_core/bootstrap/app.php';
 $app->make('Illuminate\Contracts\Http\Kernel')->handle(
     Illuminate\Http\Request::capture()
 );
 
-$logPath = '/home/kurulla/app_core/storage/logs/laravel.log';
+$logPath = '/home/kegalle/app_core/storage/logs/laravel.log';
 if (!file_exists($logPath)) { die('No log file.'); }
 
 $content = file_get_contents($logPath);

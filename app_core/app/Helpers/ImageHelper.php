@@ -33,7 +33,7 @@ class ImageHelper
         return $image ?: null;
     }
 
-    public static function addWatermark(string $absolutePath, string $text = 'Kegalle.com'): bool
+    public static function addWatermark(string $absolutePath, string $text = 'KEGALLE.COM'): bool
     {
         $image = self::loadImage($absolutePath);
         if (!$image) {
@@ -43,73 +43,130 @@ class ImageHelper
         $w = imagesx($image);
         $h = imagesy($image);
 
-        $fontSize = max(12, (int) ($w * 0.03));
+        imagealphablending($image, true);
 
-        $fontFile = null;
-        $possibleFonts = [
-            '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
-            '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf',
-            '/usr/share/fonts/truetype/freefont/FreeSansBold.ttf',
-        ];
-        foreach ($possibleFonts as $f) {
-            if (file_exists($f)) {
-                $fontFile = $f;
-                break;
+        $docRoot = rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/');
+        $wmFile = $docRoot . '/images/watermark2.png';
+        if (file_exists($wmFile)) {
+            $wm   = @imagecreatefrompng($wmFile);
+            if ($wm) {
+                $wmW  = imagesx($wm);
+                $wmH  = imagesy($wm);
+                // Scale watermark to 35% of the base image width
+                $dstW = (int) round($w * 0.35);
+                $dstH = (int) round($wmH * ($dstW / $wmW));
+                $dstX = (int) (($w - $dstW) / 2);
+                $dstY = (int) (($h - $dstH) / 2);
+                $scaled = imagecreatetruecolor($dstW, $dstH);
+                imagealphablending($scaled, false);
+                imagesavealpha($scaled, true);
+                imagecopyresampled($scaled, $wm, 0, 0, 0, 0, $dstW, $dstH, $wmW, $wmH);
+                imagedestroy($wm);
+                imagealphablending($image, true);
+                imagecopy($image, $scaled, $dstX, $dstY, 0, 0, $dstW, $dstH);
+                imagedestroy($scaled);
             }
-        }
-
-        if ($fontFile) {
-            $bbox = imagettfbbox($fontSize, 0, $fontFile, $text);
-            $textW = abs($bbox[2] - $bbox[0]);
-            $textH = abs($bbox[7] - $bbox[1]);
-
-            $padX = (int) ($fontSize * 0.8);
-            $padY = (int) ($fontSize * 0.5);
-            $margin = (int) ($fontSize * 0.6);
-
-            $bgX1 = $w - $textW - $padX * 2 - $margin;
-            $bgY1 = $h - $textH - $padY * 2 - $margin;
-            $bgX2 = $w - $margin;
-            $bgY2 = $h - $margin;
-
-            $bgColor = imagecolorallocatealpha($image, 0, 0, 0, 60);
-            imagefilledrectangle($image, $bgX1, $bgY1, $bgX2, $bgY2, $bgColor);
-
-            $white = imagecolorallocate($image, 255, 255, 255);
-            $textX = $bgX1 + $padX;
-            $textY = $bgY2 - $padY;
-            imagettftext($image, $fontSize, 0, $textX, $textY, $white, $fontFile, $text);
         } else {
-            $builtinFontSize = ($w > 600) ? 5 : (($w > 300) ? 4 : 3);
-            $font = $builtinFontSize;
-            $charW = imagefontwidth($font);
-            $charH = imagefontheight($font);
-            $textW = $charW * strlen($text);
-
-            $padX = 8;
-            $padY = 4;
-            $margin = 8;
-
-            $bgX1 = $w - $textW - $padX * 2 - $margin;
-            $bgY1 = $h - $charH - $padY * 2 - $margin;
-            $bgX2 = $w - $margin;
-            $bgY2 = $h - $margin;
-
-            $bgColor = imagecolorallocatealpha($image, 0, 0, 0, 60);
-            imagefilledrectangle($image, $bgX1, $bgY1, $bgX2, $bgY2, $bgColor);
-
-            $white = imagecolorallocate($image, 255, 255, 255);
-            imagestring($image, $font, $bgX1 + $padX, $bgY1 + $padY, $text, $white);
+            // Fallback: text watermark
+            $fontFile = null;
+            foreach ([
+                '/usr/share/fonts/google-droid/DroidSans-Bold.ttf',
+                '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
+                '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf',
+                '/usr/share/fonts/truetype/freefont/FreeSansBold.ttf',
+            ] as $f) {
+                if (file_exists($f)) { $fontFile = $f; break; }
+            }
+            if ($fontFile) {
+                $fontSize = max(18, (int) round($w * 0.048));
+                $bbox  = imagettfbbox($fontSize, 0, $fontFile, $text);
+                $textW = abs($bbox[2] - $bbox[0]);
+                $textH = abs($bbox[7] - $bbox[1]);
+                $x     = (int) (($w - $textW) / 2);
+                $y     = (int) (($h + $textH) / 2);
+                $shadow = imagecolorallocatealpha($image, 0, 0, 0, 70);
+                imagettftext($image, $fontSize, 0, $x + 2, $y + 2, $shadow, $fontFile, $text);
+                $white = imagecolorallocatealpha($image, 255, 255, 255, 64);
+                imagettftext($image, $fontSize, 0, $x, $y, $white, $fontFile, $text);
+            }
         }
 
         $ext = strtolower(pathinfo($absolutePath, PATHINFO_EXTENSION));
         $result = match ($ext) {
             'jpg', 'jpeg' => imagejpeg($image, $absolutePath, 90),
-            'png' => imagepng($image, $absolutePath, 8),
-            'webp' => imagewebp($image, $absolutePath, 80),
-            default => false,
+            'png'         => imagepng($image, $absolutePath, 8),
+            'webp'        => imagewebp($image, $absolutePath, 80),
+            default       => false,
         };
+        imagedestroy($image);
+        return $result;
+    }
 
+    public static function addBannerWatermark(string $absolutePath, string $text = 'kegalle.com'): bool
+    {
+        $image = self::loadImage($absolutePath);
+        if (!$image) {
+            return false;
+        }
+
+        $w      = imagesx($image);
+        $h      = imagesy($image);
+        $margin = max(8, (int) round($w * 0.012));
+
+        imagealphablending($image, true);
+
+        $docRoot = rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/');
+        $wmFile = $docRoot . '/images/watermark2.png';
+        if (file_exists($wmFile)) {
+            $wm = @imagecreatefrompng($wmFile);
+            if ($wm) {
+                $wmW  = imagesx($wm);
+                $wmH  = imagesy($wm);
+                // Scale watermark to 20% of base image width, bottom-right
+                $dstW = (int) round($w * 0.20);
+                $dstH = (int) round($wmH * ($dstW / $wmW));
+                $dstX = $w - $dstW - $margin;
+                $dstY = $h - $dstH - $margin;
+                $scaled = imagecreatetruecolor($dstW, $dstH);
+                imagealphablending($scaled, false);
+                imagesavealpha($scaled, true);
+                imagecopyresampled($scaled, $wm, 0, 0, 0, 0, $dstW, $dstH, $wmW, $wmH);
+                imagedestroy($wm);
+                imagealphablending($image, true);
+                imagecopy($image, $scaled, $dstX, $dstY, 0, 0, $dstW, $dstH);
+                imagedestroy($scaled);
+            }
+        } else {
+            // Fallback: text watermark
+            $fontFile = null;
+            foreach ([
+                '/usr/share/fonts/google-droid/DroidSans-Bold.ttf',
+                '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
+                '/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf',
+                '/usr/share/fonts/truetype/freefont/FreeSansBold.ttf',
+            ] as $f) {
+                if (file_exists($f)) { $fontFile = $f; break; }
+            }
+            if ($fontFile) {
+                $fontSize = max(11, (int) round($w * 0.018));
+                $bbox  = imagettfbbox($fontSize, 0, $fontFile, $text);
+                $textW = abs($bbox[2] - $bbox[0]);
+                $x     = $w - $textW - $margin;
+                $y     = $h - $margin;
+                $shadow = imagecolorallocatealpha($image, 0, 0, 0, 90);
+                imagettftext($image, $fontSize, 0, $x + 1, $y + 1, $shadow, $fontFile, $text);
+                $white = imagecolorallocatealpha($image, 255, 255, 255, 55);
+                imagettftext($image, $fontSize, 0, $x, $y, $white, $fontFile, $text);
+            }
+        }
+
+        $ext = strtolower(pathinfo($absolutePath, PATHINFO_EXTENSION));
+        $result = match ($ext) {
+            'jpg', 'jpeg' => imagejpeg($image, $absolutePath, 90),
+            'png'         => imagepng($image, $absolutePath, 8),
+            'webp'        => imagewebp($image, $absolutePath, 80),
+            default       => false,
+        };
         imagedestroy($image);
         return $result;
     }
@@ -168,10 +225,56 @@ class ImageHelper
     }
 
     /**
+     * Crop image to a fixed aspect ratio at the given vertical offset (0–100%).
+     * Used for store banners so the user-dragged position is baked in.
+     */
+    public static function cropToAspect(string $absolutePath, int $targetW, int $targetH, int $posYPct = 50): bool
+    {
+        $image = self::loadImage($absolutePath);
+        if (!$image) return false;
+
+        $srcW = imagesx($image);
+        $srcH = imagesy($image);
+
+        // Determine crop box that fills targetW×targetH from the source
+        $srcAspect = $srcW / $srcH;
+        $tgtAspect = $targetW / $targetH;
+
+        if ($srcAspect > $tgtAspect) {
+            // Source is wider — crop width
+            $cropH = $srcH;
+            $cropW = (int) round($srcH * $tgtAspect);
+            $cropX = (int) round(($srcW - $cropW) / 2);
+            $cropY = 0;
+        } else {
+            // Source is taller — crop height at posYPct
+            $cropW = $srcW;
+            $cropH = (int) round($srcW / $tgtAspect);
+            $cropX = 0;
+            $maxY  = $srcH - $cropH;
+            $cropY = (int) round($maxY * $posYPct / 100);
+        }
+
+        $out = imagecreatetruecolor($targetW, $targetH);
+        imagecopyresampled($out, $image, 0, 0, $cropX, $cropY, $targetW, $targetH, $cropW, $cropH);
+        imagedestroy($image);
+
+        $ext = strtolower(pathinfo($absolutePath, PATHINFO_EXTENSION));
+        $result = match ($ext) {
+            'jpg', 'jpeg' => imagejpeg($out, $absolutePath, 90),
+            'png'         => imagepng($out, $absolutePath, 8),
+            'webp'        => imagewebp($out, $absolutePath, 85),
+            default       => false,
+        };
+        imagedestroy($out);
+        return (bool) $result;
+    }
+
+    /**
      * Watermark + convert an uploaded image to WebP, delete the original,
      * and return the relative path that should be stored in the database.
      */
-    public static function finalize(string $relativePath, bool $watermark = true, int $maxDim = 1400): string
+    public static function finalize(string $relativePath, bool|string $watermark = true, int $maxDim = 1400): string
     {
         $absolutePath = storage_path('app/public/' . $relativePath);
         if (!file_exists($absolutePath)) {
@@ -180,7 +283,9 @@ class ImageHelper
 
         self::resizeDown($absolutePath, $maxDim);
 
-        if ($watermark) {
+        if ($watermark === 'banner') {
+            self::addBannerWatermark($absolutePath);
+        } elseif ($watermark) {
             self::addWatermark($absolutePath);
         }
 

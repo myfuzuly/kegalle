@@ -10,7 +10,9 @@ class BlogController extends Controller
     public function index()
     {
         $posts = Post::published()->latest('published_at')->paginate(7);
-        $popular = Post::published()->latest('published_at')->take(4)->get();
+        $popular = cache()->remember('blog_popular_posts', 600, fn() =>
+            Post::published()->latest('published_at')->take(4)->get()
+        );
 
         return view('frontend.blog.index', compact('posts', 'popular'));
     }

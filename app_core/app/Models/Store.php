@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Store extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'user_id',
         'name',
@@ -22,16 +24,12 @@ class Store extends Model
         'longitude',
         'opening_hours',
         'status',
-        'is_featured',
-        'is_verified',
-        'membership_plan_id',
-        'membership_expires_at',
     ];
 
     protected $casts = [
-        'opening_hours' => 'array',
-        'is_featured' => 'boolean',
-        'is_verified' => 'boolean',
+        'opening_hours'         => 'array',
+        'is_featured'           => 'boolean',
+        'is_verified'           => 'boolean',
         'membership_expires_at' => 'datetime',
     ];
 
@@ -71,9 +69,9 @@ class Store extends Model
         $avgRating = $this->average_rating;
         $reviewsCount = $this->approved_reviews_count ?? $this->approvedReviews()->count();
 
-        if ($listingsCount >= 100 && $avgRating >= 4.5 && $reviewsCount >= 20) return 'platinum';
-        if ($listingsCount >= 50 && $avgRating >= 4.0 && $reviewsCount >= 10) return 'gold';
-        if ($listingsCount >= 10 && $avgRating >= 3.0 && $reviewsCount >= 3) return 'silver';
+        if ($listingsCount >= 20 && $avgRating >= 4.5 && $reviewsCount >= 10) return 'platinum';
+        if ($listingsCount >= 10 && $avgRating >= 4.0 && $reviewsCount >= 5)  return 'gold';
+        if ($listingsCount >= 3  && $avgRating >= 3.0 && $reviewsCount >= 2)  return 'silver';
         return 'bronze';
     }
 
@@ -83,7 +81,7 @@ class Store extends Model
             'platinum' => '💎 Platinum Seller',
             'gold' => '🥇 Gold Seller',
             'silver' => '🥈 Silver Seller',
-            default => '🥉 New Seller',
+            default => null,
         };
     }
 
@@ -95,6 +93,21 @@ class Store extends Model
             'silver' => '#6b7280',
             default => '#b45309',
         };
+    }
+
+    /**
+     * "kegalle Verified" badge:
+     * owner has verified phone + ≥3 approved reviews + store ≥30 days old
+     */
+    public function getIsKurulaVerifiedAttribute(): bool
+    {
+        if ($this->is_verified) return true; // admin can force-grant
+
+        $ownerVerified = (bool) optional($this->user)->phone_verified_at;
+        $enoughReviews = $this->approvedReviews()->count() >= 3;
+        $oldEnough     = $this->created_at && $this->created_at->diffInDays(now()) >= 30;
+
+        return $ownerVerified && $enoughReviews && $oldEnough;
     }
 
     public function scopeApproved($query)

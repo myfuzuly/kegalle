@@ -83,7 +83,7 @@
                     <div class="kem-listing-body">
                         <div class="kem-listing-cat">{{ $ev->category->name ?? 'General' }}</div>
                         <h3 class="kem-listing-title"><a href="/events/{{ $ev->slug }}">{{ $ev->title }}</a></h3>
-                        <p class="kem-listing-desc">{{ \Illuminate\Support\Str::limit($ev->description, 120) }}</p>
+                        <p class="kem-listing-desc">{{ \Illuminate\Support\Str::limit(strip_tags($ev->description ?? ''), 120) }}</p>
                         <div class="kem-listing-meta">
                             <span>📍 {{ $ev->venue }}, {{ $ev->location }}</span>
                             <span>🕐 {{ $evTime }}</span>

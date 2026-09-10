@@ -10,7 +10,7 @@
     <p>Hello {{ $user->name }},</p>
     <p>Please verify your email address to activate your Kegalle marketplace account.</p>
     <p>
-        <a href="{{ url('/email/verify/'.$user->verification_token) }}"
+        <a href="{{ $verifyUrl }}"
            style="display:inline-block;background:#00A76F;color:#fff;padding:14px 22px;border-radius:12px;text-decoration:none;font-weight:bold;">
             Verify Email
         </a>

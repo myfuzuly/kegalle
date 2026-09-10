@@ -13,6 +13,7 @@ return new class extends Migration
                 $table->id();
                 $table->foreignId('user_id')->constrained()->cascadeOnDelete();
                 $table->foreignId('listing_id')->constrained()->cascadeOnDelete();
+                $table->decimal('price_at_save', 12, 2)->nullable();
                 $table->timestamps();
 
                 $table->unique(['user_id', 'listing_id']);

@@ -37,9 +37,9 @@
     <div class="ka-field ka-span-2">
         <label>Image (optional)</label>
         @if($item->image)
-            <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
-                <img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->name }}" style="width:80px;height:60px;border-radius:10px;object-fit:cover;border:1.5px solid var(--ka-border,#E5E8EF)">
-                <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#D32F2F;cursor:pointer">
+            <div class="flex-row-14-mb10">
+                <img class="thumb-80x60" src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->name }}">
+                <label class="text-del-action">
                     <input type="checkbox" name="remove_image" value="1"> Remove image
                 </label>
             </div>
@@ -51,7 +51,7 @@
         <label>Sort Order</label>
         <input name="sort_order" type="number" value="{{ old('sort_order', $item->sort_order) }}">
     </div>
-    <div class="ka-field" style="display:flex;align-items:flex-end">
+    <div class="ka-field flex-end">
         <label class="ka-check"><input type="checkbox" name="is_active" value="1" @checked($item->is_active)> Active</label>
     </div>
 </div>

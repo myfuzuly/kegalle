@@ -42,7 +42,7 @@
         <label>Sort Order</label>
         <input name="sort_order" type="number" value="{{ old('sort_order', 0) }}">
     </div>
-    <div class="ka-field" style="display:flex;align-items:flex-end">
+    <div class="ka-field flex-end">
         <label class="ka-check"><input type="checkbox" name="is_active" value="1" checked> Active</label>
     </div>
 </div>

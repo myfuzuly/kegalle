@@ -11,14 +11,18 @@ class EventController extends Controller
 {
     public function index(Request $request)
     {
-        $categories = Category::where('is_active', 1)->withCount('listings')->take(9)->get();
+        $categories = cache()->remember('events_sidebar_categories', 600, fn() =>
+            Category::where('is_active', 1)->withCount('listings')->take(9)->get()
+        );
 
-        $hasEventsTable = true;
-        try {
-            \Illuminate\Support\Facades\DB::select('SELECT 1 FROM events LIMIT 1');
-        } catch (\Throwable $e) {
-            $hasEventsTable = false;
-        }
+        $hasEventsTable = cache()->remember('events_table_exists', 3600, function () {
+            try {
+                \Illuminate\Support\Facades\DB::select('SELECT 1 FROM events LIMIT 1');
+                return true;
+            } catch (\Throwable $e) {
+                return false;
+            }
+        });
 
         $events = collect();
         $featuredEvents = collect();
@@ -64,7 +68,9 @@ class EventController extends Controller
             };
 
             $events = $query->paginate(8)->withQueryString();
-            $featuredEvents = Event::upcoming()->featured()->with(['category'])->orderBy('event_date')->take(4)->get();
+            $featuredEvents = cache()->remember('events_featured', 300, fn() =>
+                Event::upcoming()->featured()->with(['category'])->orderBy('event_date')->take(4)->get()
+            );
             $useRealEvents = $events->total() > 0;
         }
 

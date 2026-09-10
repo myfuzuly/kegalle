@@ -11,118 +11,140 @@
     $rest = $featured ? $posts->skip(1) : collect();
 @endphp
 
-<section class="blog-hero">
-    <div class="blog-hero-inner">
-        <h1>Kegalle Marketplace Blog</h1>
-        <p>Tips, guides and local insights to help you buy, sell and discover more.</p>
-        <form class="blog-hero-search" action="/blog" method="GET">
-            <input type="text" name="q" placeholder="Search articles, tips, guides...">
-            <button type="submit">Search</button>
+{{-- ── Hero ─────────────────────────────────────────────────────────────────── --}}
+<div class="bl-hero">
+    <div class="bl-hero-overlay"></div>
+    <div class="bl-hero-inner">
+        <div class="bl-hero-badge">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Kegalle Marketplace
+        </div>
+        <h1 class="bl-hero-title">The Kegalle Blog</h1>
+        <p class="bl-hero-sub">Tips, guides and local insights to help you buy, sell and discover more in Kegalle.</p>
+        <form class="bl-hero-search" action="/blog" method="GET">
+            <input type="text" name="q" placeholder="Search articles, tips, guides..." value="{{ request('q') }}" class="bl-hero-input">
+            <button type="submit" class="bl-hero-search-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                Search
+            </button>
         </form>
     </div>
-</section>
+</div>
 
-<div class="container k-content-section">
-    <div class="k-breadcrumb"><a href="/">Home</a><span class="sep">›</span><span class="current">Blog</span></div>
+{{-- ── Stats bar ─────────────────────────────────────────────────────────────── --}}
+<div class="bl-stats-bar">
+    <div class="bl-stat"><span class="bl-stat-n">{{ $posts->total() }}</span><span class="bl-stat-l">Articles</span></div>
+    <div class="bl-stat-div"></div>
+    <div class="bl-stat"><span class="bl-stat-n">Free</span><span class="bl-stat-l">To Read</span></div>
+    <div class="bl-stat-div"></div>
+    <div class="bl-stat"><span class="bl-stat-n">Local</span><span class="bl-stat-l">Insights</span></div>
+    <div class="bl-stat-div"></div>
+    <div class="bl-stat"><span class="bl-stat-n">Weekly</span><span class="bl-stat-l">Updates</span></div>
+</div>
 
-    <div class="k-layout-sidebar-right k-layout-gap">
-        <!-- Main content -->
-        <div>
+{{-- ── Content ───────────────────────────────────────────────────────────────── --}}
+<div class="bl-wrap">
+    <div class="bl-breadcrumb"><a href="/">Home</a><span>›</span><span>Blog</span></div>
+
+    <div class="bl-layout">
+        {{-- Main column --}}
+        <div class="bl-main">
             @if($featured)
-                <div class="k-section">
-                    <div class="k-section-header"><h2 class="k-section-title">Featured Article</h2></div>
-                    <a href="/blog/{{ $featured->slug }}" class="blog-featured-card k-card-link">
-                        @if($featured->image)
-                            <div class="blog-featured-img" style="background-image:url('{{ asset('storage/'.ltrim($featured->image,'/')) }}');background-size:cover;background-position:center"></div>
-                        @else
-                            <div class="blog-featured-img">📰</div>
-                        @endif
-                        <div class="blog-featured-body">
-                            <div class="blog-featured-title">{{ $featured->title }}</div>
-                            <div class="blog-featured-excerpt">{{ $featured->excerpt ?? \Illuminate\Support\Str::limit(strip_tags($featured->body ?? ''), 220) }}</div>
-                            <div class="k-blog-meta-row">
-                                <div class="blog-author">
-                                    <div class="blog-author-avatar">K</div>
-                                    <div>
-                                        <div class="blog-author-name">Kegalle Team</div>
-                                        <div class="blog-author-date">{{ optional($featured->published_at)->format('M d, Y') }}</div>
-                                    </div>
+            <div class="bl-section">
+                <div class="bl-section-head">
+                    <h2 class="bl-section-title">Featured Article</h2>
+                </div>
+                <a href="/blog/{{ $featured->slug }}" class="bl-featured">
+                    @if($featured->image)
+                        <div class="bl-featured-img" style="background-image:url('{{ asset('storage/'.ltrim($featured->image,'/')) }}')"></div>
+                    @else
+                        <div class="bl-featured-img bl-featured-img--fallback" style="background:linear-gradient(135deg,#1b5e20,#2e7d32)">
+                            <span class="bl-featured-img-title">{{ Str::limit($featured->title, 60) }}</span>
+                        </div>
+                    @endif
+                    <div class="bl-featured-body">
+                        <h3 class="bl-featured-title">{{ $featured->title }}</h3>
+                        <p class="bl-featured-excerpt">{{ $featured->excerpt ?? Str::limit(strip_tags($featured->body ?? ''), 200) }}</p>
+                        <div class="bl-featured-meta">
+                            <div class="bl-author">
+                                <div class="bl-author-av">K</div>
+                                <div>
+                                    <div class="bl-author-name">Kegalle Team</div>
+                                    <div class="bl-author-date">{{ optional($featured->published_at)->format('M d, Y') }}</div>
                                 </div>
                             </div>
-                            <span class="k-btn k-btn-primary k-btn-sm mt-14">Read Article →</span>
+                            <span class="bl-read-btn">Read Article <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/></svg></span>
                         </div>
-                    </a>
-                </div>
+                    </div>
+                </a>
+            </div>
             @endif
 
-            <div class="k-section">
-                <div class="k-section-header">
-                    <h2 class="k-section-title">Latest Articles</h2>
-                    <span class="k-text-tertiary k-text-sm">{{ $posts->total() }} articles</span>
+            <div class="bl-section">
+                <div class="bl-section-head">
+                    <h2 class="bl-section-title">Latest Articles</h2>
+                    <span class="bl-section-count">{{ $posts->total() }} articles</span>
                 </div>
                 @if($rest->count())
-                    <div class="k-grid-3">
+                    <div class="bl-grid">
                         @foreach($rest as $post)
                             @php $g = $gradients[$loop->index % count($gradients)]; @endphp
-                            <a href="/blog/{{ $post->slug }}" class="blog-grid-card k-card-link">
+                            <a href="/blog/{{ $post->slug }}" class="bl-card">
                                 @if($post->image)
-                                    <div class="blog-grid-img" style="background-image:url('{{ asset('storage/'.ltrim($post->image,'/')) }}');background-size:cover;background-position:center"></div>
+                                    <div class="bl-card-img" style="background-image:url('{{ asset('storage/'.ltrim($post->image,'/')) }}')"></div>
                                 @else
-                                    <div class="blog-grid-img" style="background:{{ $g }}">📰</div>
+                                    <div class="bl-card-img bl-card-img--fallback" style="background:{{ $g }}">
+                                        <span>{{ Str::limit($post->title, 48) }}</span>
+                                    </div>
                                 @endif
-                                <div class="blog-grid-body">
-                                    <div class="blog-grid-title">{{ $post->title }}</div>
-                                    <div class="blog-grid-excerpt">{{ $post->excerpt ?? \Illuminate\Support\Str::limit(strip_tags($post->body ?? ''), 110) }}</div>
-                                    <div class="blog-grid-footer">
-                                        <span class="k-text-muted k-text-xs">{{ optional($post->published_at)->format('M d, Y') }}</span>
+                                <div class="bl-card-body">
+                                    <h3 class="bl-card-title">{{ $post->title }}</h3>
+                                    <p class="bl-card-excerpt">{{ $post->excerpt ?? Str::limit(strip_tags($post->body ?? ''), 100) }}</p>
+                                    <div class="bl-card-footer">
+                                        <span class="bl-card-date">{{ optional($post->published_at)->format('M d, Y') }}</span>
+                                        <span class="bl-card-cta">Read <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/></svg></span>
                                     </div>
                                 </div>
                             </a>
                         @endforeach
                     </div>
                 @elseif(!$featured)
-                    <div class="k-blog-empty-state">
-                        <h3 class="k-blog-empty-title">No articles yet</h3>
-                        <p class="k-text-secondary">Check back soon for tips, guides and local insights.</p>
+                    <div class="bl-empty">
+                        <div class="bl-empty-icon">📝</div>
+                        <h3 class="bl-empty-title">No articles yet</h3>
+                        <p class="bl-empty-sub">Check back soon for tips, guides and local insights.</p>
                     </div>
                 @endif
             </div>
 
-            {{ $posts->links('vendor.pagination.k-theme') }}
+            <div class="bl-pagination">
+                {{ $posts->links('vendor.pagination.k-theme') }}
+            </div>
         </div>
 
-        <!-- Sidebar -->
-        <div>
-            @if($popular->count())
-                <div class="k-card k-card-body mb-16 k-blog-sidebar-card">
-                    <h3 class="k-sidebar-heading">Popular Articles</h3>
-                    <div>
-                        @foreach($popular as $pop)
-                            @php $g = $gradients[$loop->index % count($gradients)]; @endphp
-                            <a href="/blog/{{ $pop->slug }}" class="blog-popular-card k-card-link">
-                                <div class="blog-popular-img" style="background:{{ $g }}">📰</div>
-                                <div><div class="blog-popular-title">{{ $pop->title }}</div><div class="blog-popular-date">{{ optional($pop->published_at)->format('M d, Y') }}</div></div>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
+        {{-- Sidebar --}}
+        <div class="bl-sidebar">
+            @if($popular->count() && $posts->total() >= 4)
+            <div class="bl-sidebar-card">
+                <h3 class="bl-sidebar-title">Popular Articles</h3>
+                @foreach($popular as $pop)
+                    @php $g = $gradients[$loop->index % count($gradients)]; @endphp
+                    <a href="/blog/{{ $pop->slug }}" class="bl-popular">
+                        <div class="bl-popular-img" style="background:{{ $g }}">📰</div>
+                        <div class="bl-popular-body">
+                            <div class="bl-popular-title">{{ $pop->title }}</div>
+                            <div class="bl-popular-date">{{ optional($pop->published_at)->format('M d, Y') }}</div>
+                        </div>
+                    </a>
+                @endforeach
+            </div>
             @endif
 
-            <div class="mb-16">
+            <div class="bl-sidebar-ad">
                 @include('frontend.partials.ad-banner', ['location' => 'blog_sidebar', 'style' => 'box'])
-            </div>
-
-            <div class="k-newsletter-cta">
-                <div class="k-newsletter-icon">📬</div>
-                <h3 class="k-newsletter-title">Stay Updated</h3>
-                <p class="k-newsletter-desc">Get the latest articles and marketplace updates in your inbox.</p>
-                <form method="POST" action="#">
-                    @csrf
-                    <input type="email" name="email" placeholder="Your email address" class="k-newsletter-input">
-                    <button type="submit" class="k-btn k-btn-primary w-full k-btn-center k-newsletter-btn">Subscribe Free</button>
-                </form>
             </div>
         </div>
     </div>
 </div>
+
 @endsection

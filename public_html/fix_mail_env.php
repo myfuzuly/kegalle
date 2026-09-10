@@ -37,7 +37,7 @@ $app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
 
 try {
     \Illuminate\Support\Facades\Mail::raw('Contact form delivery test after password fix.', function ($m) {
-        $m->to(config('mail.from.address'))->subject('Kurulla mail test — password fix');
+        $m->to(config('mail.from.address'))->subject('kegalle mail test — password fix');
     });
     echo '<b>TEST SEND: SUCCESS</b>';
 } catch (\Throwable $e) {

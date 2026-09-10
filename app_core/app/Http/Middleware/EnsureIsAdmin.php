@@ -17,11 +17,17 @@ class EnsureIsAdmin
         }
 
         // Map /admin/{section}/... to a permission key
-        $section = $request->segment(2); // null on /admin itself
+        $section    = $request->segment(2); // null on /admin itself
         $permission = $section === null ? 'dashboard' : $section;
 
-        // Only enforce known permission keys (unknown sub-paths inherit their parent section)
-        if (array_key_exists($permission, Role::PERMISSIONS) && ! $user->hasPermission($permission)) {
+        // Enforce known sections; for unknown sub-paths try the parent (segment 2) then deny
+        if (! array_key_exists($permission, Role::PERMISSIONS)) {
+            // e.g. /admin/listing-fields/fields/42 → segment(2) is already checked above
+            // Fall back: allow super_admin through, restrict others
+            if ($user->role !== 'super_admin') {
+                abort(403, 'Your role does not include access to this section.');
+            }
+        } elseif (! $user->hasPermission($permission)) {
             abort(403, 'Your role does not include access to this section.');
         }
 

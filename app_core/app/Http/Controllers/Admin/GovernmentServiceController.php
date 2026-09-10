@@ -43,7 +43,9 @@ class GovernmentServiceController extends Controller
         ];
 
         if ($request->hasFile('image')) {
-            $payload['image'] = $request->file('image')->store('government-services', 'public');
+            $payload['image'] = \App\Helpers\ImageHelper::finalize(
+                $request->file('image')->store('government-services', 'public')
+            );
         }
 
         GovernmentService::create($payload);
@@ -80,7 +82,9 @@ class GovernmentServiceController extends Controller
             if ($governmentService->image) {
                 Storage::disk('public')->delete($governmentService->image);
             }
-            $payload['image'] = $request->file('image')->store('government-services', 'public');
+            $payload['image'] = \App\Helpers\ImageHelper::finalize(
+                $request->file('image')->store('government-services', 'public')
+            );
         } elseif ($request->boolean('remove_image') && $governmentService->image) {
             Storage::disk('public')->delete($governmentService->image);
             $payload['image'] = null;
@@ -115,16 +119,16 @@ class GovernmentServiceController extends Controller
             'title' => 'required|string|max:120',
             'description' => 'nullable|string|max:500',
             'icon' => 'nullable|string|max:10',
-            'icon_bg_start' => 'nullable|string|max:9',
-            'icon_bg_end' => 'nullable|string|max:9',
+            'icon_bg_start' => ['nullable', 'string', 'max:9', 'regex:/^#[0-9a-fA-F]{3,8}$/'],
+            'icon_bg_end' => ['nullable', 'string', 'max:9', 'regex:/^#[0-9a-fA-F]{3,8}$/'],
             'content' => 'nullable|string|max:10000',
             'phone' => 'nullable|string|max:100',
             'email' => 'nullable|string|max:190',
             'address' => 'nullable|string|max:500',
-            'map_url' => 'nullable|string|max:500',
+            'map_url' => ['nullable','string','max:500','regex:/^https:\/\/www\.google\.com\/maps\/embed/'],
             'sort_order' => 'nullable|integer',
             'is_active' => 'nullable|boolean',
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:3072'],
             'remove_image' => 'nullable|boolean',
         ]);
     }

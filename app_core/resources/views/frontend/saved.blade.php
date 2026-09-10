@@ -3,26 +3,8 @@
 @section('title', 'Saved Listings · Kegalle Marketplace')
 @section('meta_description', 'View your saved listings on Kegalle Marketplace. Browse your favorites and find them easily later.')
 
-@push('styles')
-<style>
-.k-saved-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:8px; }
-.k-saved-count { font-size:14px; color:var(--k-text-muted); font-weight:500; }
-.k-clear-all-btn { background:none; border:1px solid var(--k-border); color:var(--k-text-muted); padding:8px 16px; border-radius:var(--k-radius); cursor:pointer; font-size:13px; font-weight:600; transition:all .2s; }
-.k-clear-all-btn:hover { border-color:var(--k-red); color:var(--k-red); }
-.k-saved-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
-@media(max-width:900px) { .k-saved-grid { grid-template-columns:repeat(2,1fr); } }
-@media(max-width:560px) { .k-saved-grid { grid-template-columns:1fr; } }
-.k-saved-loading { text-align:center; padding:60px 20px; color:var(--k-text-muted); font-size:15px; }
-.k-saved-loading .k-spinner { display:inline-block; width:32px; height:32px; border:3px solid var(--k-border); border-top-color:var(--k-primary); border-radius:50%; animation:k-spin .7s linear infinite; margin-bottom:12px; }
-@keyframes k-spin { to { transform:rotate(360deg); } }
-.k-saved-card-remove { position:absolute; top:8px; right:8px; background:rgba(255,255,255,.92); border:none; border-radius:50%; width:32px; height:32px; cursor:pointer; font-size:16px; line-height:32px; text-align:center; z-index:2; box-shadow:0 1px 4px rgba(0,0,0,.12); transition:background .2s; }
-.k-saved-card-remove:hover { background:var(--k-red-light); color:var(--k-red); }
-.k-saved-card-wrap { position:relative; }
-</style>
-@endpush
-
 @section('content')
-<div class="container" style="padding-top:12px;padding-bottom:40px">
+<div class="container k-page-pad">
     <div class="k-breadcrumb">
         <a href="/">Home</a><span>›</span>
         <span class="current">Saved Listings</span>
@@ -31,10 +13,10 @@
     <div class="k-content-section">
         <div class="k-saved-header">
             <div>
-                <h1 class="k-page-title" style="margin-bottom:4px">Saved Listings</h1>
+                <h1 class="k-page-title k-page-title-mb">Saved Listings</h1>
                 <p class="k-page-subtitle k-saved-count" id="savedCount"></p>
             </div>
-            <button class="k-clear-all-btn" id="clearAllBtn" style="display:none" onclick="clearAllSaved()">✕ Clear All</button>
+            <button class="k-clear-all-btn" id="clearAllBtn" style="display:none">✕ Clear All</button>
         </div>
 
         <div id="savedContent">
@@ -45,9 +27,9 @@
         </div>
 
         <div class="k-empty-state-box" id="emptyState" style="display:none">
-            <div style="font-size:48px;margin-bottom:12px">🤍</div>
+            <div class="k-empty-state-icon">🤍</div>
             <h2 class="k-empty-state-heading">No saved listings yet</h2>
-            <p style="color:var(--k-text-muted);margin:8px 0 20px;max-width:400px">Browse and tap the heart / save icon on any listing to save it for later.</p>
+            <p class="k-empty-state-desc">Browse and tap the heart / save icon on any listing to save it for later.</p>
             <a href="/listings" class="k-btn k-btn-primary">Browse Listings</a>
         </div>
     </div>
@@ -55,7 +37,7 @@
 @endsection
 
 @push('scripts')
-<script>
+<script nonce="{{ $cspNonce ?? '' }}">
 (function() {
     var saved = JSON.parse(localStorage.getItem('k_saved') || '[]');
     var contentEl = document.getElementById('savedContent');
@@ -111,7 +93,7 @@
         var price = l.price > 0 ? 'LKR ' + Number(l.price).toLocaleString() : 'Contact Seller';
 
         return '<div class="k-saved-card-wrap">' +
-            '<button class="k-saved-card-remove" onclick="removeSaved(\'' + l.id + '\', this)" title="Remove">✕</button>' +
+            '<button class="k-saved-card-remove" data-remove-id="' + l.id + '" title="Remove">✕</button>' +
             '<a class="k-listing-card" href="/listings/' + esc(l.slug) + '">' +
                 '<div class="k-listing-img">' + imgHtml +
                     '<div class="k-listing-badge"><span class="k-tag ' + tagClass + '">' + tagLabel + '</span></div>' +
@@ -144,6 +126,13 @@
         countEl.textContent = remaining + ' saved listing' + (remaining === 1 ? '' : 's');
         if (!remaining) showEmpty();
     };
+
+    // Wire up clear-all and remove buttons via addEventListener (no inline onclick)
+    clearBtn.addEventListener('click', function(){ clearAllSaved(); });
+    document.addEventListener('click', function(e){
+        var btn=e.target.closest('[data-remove-id]');
+        if(btn) removeSaved(btn.dataset.removeId, btn);
+    });
 
     window.clearAllSaved = function() {
         localStorage.removeItem('k_saved');

@@ -14,7 +14,7 @@
 @forelse($items as $item)
 <tr>
     <td>{{ $item->id }}</td>
-    <td><b>{{ $item->name }}</b>@if($item->description)<br><small style="color:#667085">{{ \Illuminate\Support\Str::limit($item->description, 50) }}</small>@endif</td>
+    <td><b>{{ $item->name }}</b>@if($item->description)<br><small class="text-gray">{{ \Illuminate\Support\Str::limit($item->description, 50) }}</small>@endif</td>
     <td><small>{{ $item->phone ?: '—' }}</small></td>
     <td><small>{{ \Illuminate\Support\Str::limit($item->address, 40) ?: '—' }}</small></td>
     <td>{{ $item->sort_order }}</td>

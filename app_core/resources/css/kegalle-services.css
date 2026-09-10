@@ -1,0 +1,62 @@
+/* Kegalle Services Pages — extracted from services/index.blade.php */
+/* ── Services Index — Premium UI ─────────────────────────── */
+.svc-hero{background:linear-gradient(135deg,#1b4332 0%,#2d6a4f 60%,#1b5e20 100%);padding:52px 0 44px;position:relative;overflow:hidden}
+.svc-hero::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+.svc-hero-inner{max-width:780px;margin:0 auto;padding:0 20px;text-align:center;position:relative}
+.svc-hero-eyebrow{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);color:#a7f3d0;font-size:12px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:16px}
+.svc-hero h1{font-size:clamp(24px,4vw,40px);font-weight:800;color:#fff;margin:0 0 10px;letter-spacing:-.5px;line-height:1.15}
+.svc-hero p{font-size:15px;color:rgba(255,255,255,.72);margin:0 0 28px;max-width:520px;margin-left:auto;margin-right:auto}
+.svc-hero-search{display:flex;gap:0;max-width:560px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.18)}
+.svc-hero-search input{flex:1;border:none;outline:none;padding:14px 18px;font-size:14px;background:transparent;color:#111}
+.svc-hero-search select{border:none;border-left:1.5px solid #e5e7eb;outline:none;padding:14px 12px;font-size:13px;background:transparent;color:#374151;cursor:pointer}
+.svc-hero-search button{background:#1b5e20;color:#fff;border:none;padding:14px 22px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .15s}
+.svc-hero-search button:hover{background:#145218}
+.svc-hero-stats{display:flex;gap:28px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+.svc-hero-stat{color:rgba(255,255,255,.75);font-size:13px;display:flex;align-items:center;gap:6px}
+.svc-hero-stat strong{color:#fff;font-weight:700}
+
+/* ── Body layout ─────────────────────────────────────────── */
+.svc-body{max-width:1200px;margin:0 auto;padding:32px 20px 64px}
+.svc-top-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.svc-count{font-size:14px;color:var(--k-text-muted)}
+.svc-count strong{color:var(--k-text);font-weight:700}
+
+/* ── Type pill filters ───────────────────────────────────── */
+.svc-pill-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:24px;scrollbar-width:none}
+.svc-pill-row::-webkit-scrollbar{display:none}
+.svc-pill{display:inline-flex;align-items:center;gap:5px;padding:7px 16px;border-radius:24px;border:1.5px solid var(--k-border);background:var(--k-surface);color:var(--k-text-muted);font-size:13px;font-weight:500;white-space:nowrap;cursor:pointer;text-decoration:none;transition:all .15s}
+.svc-pill:hover{border-color:#1b5e20;color:#1b5e20;background:#f0fdf4}
+.svc-pill.active{background:#1b5e20;border-color:#1b5e20;color:#fff}
+.svc-pill-icon{font-size:14px}
+
+/* ── Service cards ───────────────────────────────────────── */
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:22px}
+.svc-card{display:flex;flex-direction:column;border-radius:16px;overflow:hidden;border:1.5px solid var(--k-border);background:var(--k-surface);text-decoration:none;color:inherit;transition:box-shadow .2s,transform .2s,border-color .2s}
+.svc-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.1);transform:translateY(-3px);border-color:#86efac}
+.svc-card-img{height:190px;position:relative;overflow:hidden;background:linear-gradient(135deg,#f0fdf4,#dcfce7)}
+.svc-card-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s}
+.svc-card:hover .svc-card-img img{transform:scale(1.04)}
+.svc-card-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px}
+.svc-type-badge{position:absolute;top:10px;left:10px;background:rgba(27,94,32,.9);color:#fff;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;backdrop-filter:blur(4px)}
+.svc-exp-badge{position:absolute;top:10px;right:10px;background:rgba(255,255,255,.9);color:#15803d;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;backdrop-filter:blur(4px)}
+.svc-card-body{padding:16px 18px;display:flex;flex-direction:column;flex:1}
+.svc-card-title{font-weight:700;font-size:15px;color:var(--k-text);line-height:1.35;margin-bottom:8px}
+.svc-card-loc{font-size:12px;color:var(--k-text-muted);margin-bottom:10px;display:flex;align-items:center;gap:4px}
+.svc-card-footer{margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--k-border)}
+.svc-price{font-weight:800;font-size:16px;color:#1b5e20}
+.svc-price-free{font-weight:700;font-size:13px;color:#0369a1}
+.svc-price-neg{font-size:13px;color:var(--k-text-muted)}
+.svc-provider{display:flex;align-items:center;gap:7px}
+.svc-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#1b5e20,#2d9948);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.svc-provider-name{font-size:12px;color:var(--k-text-muted);font-weight:500}
+
+/* ── Post CTA strip ──────────────────────────────────────── */
+.svc-post-strip{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #bbf7d0;border-radius:16px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:28px;flex-wrap:wrap}
+.svc-post-strip-text h3{margin:0 0 4px;font-size:17px;font-weight:700;color:#14532d}
+.svc-post-strip-text p{margin:0;font-size:13px;color:#166534}
+
+/* ── Empty state ─────────────────────────────────────────── */
+.svc-empty{text-align:center;padding:80px 20px}
+.svc-empty-icon{font-size:56px;margin-bottom:16px}
+.svc-empty h3{font-size:18px;font-weight:700;color:var(--k-text);margin:0 0 8px}
+.svc-empty p{font-size:14px;color:var(--k-text-muted);margin:0 0 24px}

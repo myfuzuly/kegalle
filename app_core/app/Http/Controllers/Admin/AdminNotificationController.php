@@ -27,7 +27,16 @@ class AdminNotificationController extends Controller
         $notification->update(['is_read' => true]);
 
         if ($notification->link) {
-            return redirect($notification->link);
+            $link = $notification->link;
+            $scheme = parse_url($link, PHP_URL_SCHEME);
+            if ($scheme !== null && !in_array($scheme, ['http', 'https'])) {
+                return back();
+            }
+            $host = parse_url($link, PHP_URL_HOST);
+            if ($host && $host !== parse_url(config('app.url'), PHP_URL_HOST)) {
+                return back();
+            }
+            return redirect($link);
         }
 
         return back();

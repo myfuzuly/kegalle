@@ -11,17 +11,17 @@
 
 @section('content')
 <section class="sa-card">
-    <div style="display:flex;flex-direction:column;gap:14px;max-width:720px">
+    <div class="flex-col-g14-mw720">
         @forelse($thread->messages as $message)
-            <div style="display:flex;flex-direction:column;align-items:{{ $message->sender_id === $thread->buyer_id ? 'flex-start' : 'flex-end' }}">
-                <div style="background:{{ $message->sender_id === $thread->buyer_id ? '#F1F5F9' : '#E8F5E9' }};border-radius:14px;padding:10px 14px;max-width:80%">
-                    <div style="font-size:12px;font-weight:700;margin-bottom:4px;color:#667085">{{ $message->sender->name ?? 'Unknown' }}</div>
-                    <div style="font-size:14px;color:#101828">{{ $message->message }}</div>
+            <div class="chat-msg-row {{ $message->sender_id === $thread->buyer_id ? 'chat-msg-row--buyer' : 'chat-msg-row--seller' }}">
+                <div class="chat-bubble {{ $message->sender_id === $thread->buyer_id ? 'chat-bubble-received' : 'chat-bubble-sent' }}">
+                    <div class="fs12-fw7-gray">{{ $message->sender->name ?? 'Unknown' }}</div>
+                    <div class="fs14-dark">{{ $message->message }}</div>
                 </div>
-                <small style="color:#98a2b3;margin-top:4px">{{ $message->created_at?->format('M d, Y · h:i A') }}</small>
+                <small class="muted2-mt4">{{ $message->created_at?->format('M d, Y · h:i A') }}</small>
             </div>
         @empty
-            <p style="color:#667085">No messages in this conversation yet.</p>
+            <p class="text-gray">No messages in this conversation yet.</p>
         @endforelse
     </div>
 </section>

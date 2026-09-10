@@ -1,5 +1,7 @@
 @php
-    $banner = \App\Models\AdBanner::activeForLocation($location)->first();
+    $banner = cache()->remember('ad_banner_' . ($location ?? 'global'), 300, fn() =>
+        \App\Models\AdBanner::activeForLocation($location)->first()
+    );
 @endphp
 @if($banner)
     <a href="{{ route('ads.click', $banner) }}" target="_blank" rel="sponsored noopener" class="k-ad-dynamic k-ad-dynamic-{{ $style ?? 'box' }}" title="{{ $banner->title }}">
@@ -20,9 +22,12 @@
         </div>
     @else
         <div class="k-ad-placeholder">
-            <div class="k-ad-placeholder-title">Premium Ad Space</div>
-            <div class="k-ad-placeholder-sub">Your ad could be here</div>
-            <a href="/dashboard/membership" class="k-btn k-btn-sm k-btn-gold">Advertise Here</a>
+            <div class="k-ad-placeholder-icon">📢</div>
+            <div>
+                <div class="k-ad-placeholder-title">Advertise Here</div>
+                <div class="k-ad-placeholder-sub">Reach local buyers in Kegalle</div>
+            </div>
+            <a href="/dashboard/membership" class="k-btn k-btn-sm k-btn-gold">Get Started</a>
         </div>
     @endif
 @endif

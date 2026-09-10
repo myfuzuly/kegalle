@@ -4,20 +4,23 @@
 @section('heading','Explore in Kegalle — Section Management')
 @section('subheading','Manage the homepage cards under "Explore in Kegalle – culture, nature, history and more"')
 @section('actions')<a href="/admin/explore-items/create" class="ka-btn ka-btn-primary">+ Add Explore Card</a>@endsection
+@push('styles')
+
+@endpush
 @section('content')
 <section class="sa-card">
-<div class="sa-head"><div><p>Super Admin</p><h1>Explore in Kegalle</h1></div></div>
-<div class="sa-table-wrap"><table class="sa-table"><thead><tr><th>Card</th><th>Title</th><th>Description</th><th>Sort</th><th>Status</th><th>Action</th></tr></thead><tbody>
+<div class="sa-card-head"><h2>Explore in Kegalle</h2></div>
+<div class="sa-table-wrap"><table class="sa-table sa-table-explore-items"><thead><tr><th>Card</th><th>Title</th><th>Description</th><th>Sort</th><th>Status</th><th>Action</th></tr></thead><tbody>
 @forelse($items as $item)
 <tr>
-    <td>
+    <td class="w64-pr0">
         @if($item->image)
-            <img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->title }}" style="width:54px;height:40px;border-radius:8px;object-fit:cover">
+            <img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->title }}" class="thumb-sm">
         @else
-            <span style="width:54px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,{{ $item->gradient_start }},{{ $item->gradient_end }})">{{ $item->icon }}</span>
+            <span style="width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,{{ $item->gradient_start }},{{ $item->gradient_end }})">{{ $item->icon }}</span>
         @endif
     </td>
-    <td><b>{{ $item->title }}</b><br><small style="color:#667085">/explore/{{ $item->slug }}</small></td>
+    <td class="max-w-200"><b class="text-truncate text-truncate-190">{{ $item->title }}</b><small class="text-gray">{{ $item->sub_items_count }} items</small></td>
     <td><small>{{ \Illuminate\Support\Str::limit($item->description ?: $item->items, 60) }}</small></td>
     <td>{{ $item->sort_order }}</td>
     <td><span class="sa-status {{ $item->is_active ? 'active' : 'suspended' }}">{{ $item->is_active ? 'Active' : 'Inactive' }}</span></td>

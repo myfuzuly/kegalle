@@ -3,4 +3,4 @@ Allow: /
 Disallow: /dashboard
 Disallow: /admin
 
-Sitemap: https://kurulla.com/sitemap.xml
+Sitemap: https://kegalle.com/sitemap.xml

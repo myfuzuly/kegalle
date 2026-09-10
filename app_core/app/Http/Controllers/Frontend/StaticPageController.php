@@ -12,14 +12,15 @@ class StaticPageController extends Controller
     public function contactSubmit(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:150',
-            'email' => 'required|email|max:180',
+            'name'    => 'required|string|max:150',
+            'email'   => 'required|email|max:180',
+            'subject' => 'required|string|max:100',
             'message' => 'required|string|max:2000',
         ]);
 
         try {
-            Mail::to('support@kurulla.com')
-                ->send(new ContactMessageMail($data['name'], $data['email'], $data['message']));
+            Mail::to('support@kegalle.com')
+                ->queue(new ContactMessageMail($data['name'], $data['email'], '[' . $data['subject'] . '] ' . $data['message']));
         } catch (\Throwable $e) {
             return back()->withInput()->with('success', 'Sorry, we could not send your message right now. Please try again later or contact us via WhatsApp.');
         }

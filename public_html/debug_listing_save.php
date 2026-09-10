@@ -3,8 +3,8 @@
 $lockFile = __DIR__ . '/debug_listing_save.lock';
 if (file_exists($lockFile)) { die('Already run.'); }
 
-require '/home/kurulla/app_core/vendor/autoload.php';
-$app = require '/home/kurulla/app_core/bootstrap/app.php';
+require '/home/kegalle/app_core/vendor/autoload.php';
+$app = require '/home/kegalle/app_core/bootstrap/app.php';
 $app->make('Illuminate\Contracts\Http\Kernel')->handle(
     Illuminate\Http\Request::capture()
 );
@@ -74,7 +74,7 @@ if ($listing) {
 
 // Check Laravel error log for recent listing update errors
 echo "<h3>Recent Error Log (last 30 lines)</h3>";
-$logPath = '/home/kurulla/app_core/storage/logs/laravel.log';
+$logPath = '/home/kegalle/app_core/storage/logs/laravel.log';
 if (file_exists($logPath)) {
     $lines = file($logPath);
     $last = array_slice($lines, -30);

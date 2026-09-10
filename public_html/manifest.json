@@ -1,0 +1,82 @@
+{
+  "name": "kegalle – Kegalle Marketplace",
+  "short_name": "kegalle",
+  "description": "Buy, sell and discover locally in Kegalle, Sri Lanka. Post ads, browse stores and find deals near you.",
+  "start_url": "/?utm_source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f9fafb",
+  "theme_color": "#1B5E20",
+  "lang": "si",
+  "dir": "ltr",
+  "categories": ["shopping", "business", "lifestyle"],
+  "icons": [
+    { "src": "/images/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/images/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/images/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/images/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Post an Ad",
+      "short_name": "Post Ad",
+      "description": "Post a new classified ad",
+      "url": "/dashboard/listings/create?utm_source=pwa_shortcut",
+      "icons": [{ "src": "/images/shortcut-post.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "My Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your dashboard",
+      "url": "/dashboard?utm_source=pwa_shortcut",
+      "icons": [{ "src": "/images/shortcut-dashboard.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Browse Stores",
+      "short_name": "Stores",
+      "description": "Discover local stores in Kegalle",
+      "url": "/stores?utm_source=pwa_shortcut",
+      "icons": [{ "src": "/images/shortcut-stores.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Hot Deals",
+      "short_name": "Deals",
+      "description": "View latest deals and offers",
+      "url": "/deals?utm_source=pwa_shortcut",
+      "icons": [{ "src": "/images/shortcut-deals.png", "sizes": "96x96" }]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/images/screenshot-home.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Kegalle Marketplace Home"
+    },
+    {
+      "src": "/images/screenshot-listings.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Browse Listings"
+    },
+    {
+      "src": "/images/screenshot-store.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Store Page"
+    },
+    {
+      "src": "/images/screenshot-dashboard.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "User Dashboard"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

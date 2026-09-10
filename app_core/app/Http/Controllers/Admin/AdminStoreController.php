@@ -13,26 +13,41 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Services\MobitelSmsService;
 
 class AdminStoreController extends Controller
 {
     public function index(Request $request)
     {
-        $stores = Store::with('user')->withCount('listings')
-            ->whereIn('status', ['approved', 'active', 'published'])
+        $stores = Store::with(['user', 'user.stores'])->withCount('listings')
+            ->whereIn('status', ['approved', 'active', 'published', 'pending', 'rejected', 'suspended'])
             ->when($request->featured === '1', fn ($q) => $q->where('is_featured', 1))
             ->when($request->featured === '0', fn ($q) => $q->where('is_featured', 0))
-            ->when($request->q, fn ($q) => $q->where('name', 'like', '%'.$request->q.'%'))
+            ->when($request->status && $request->status !== '', fn ($q) => $q->where('status', $request->status))
+            ->when($request->q, fn ($q) => $q->where(function ($q2) use ($request) {
+                $q2->where('name', 'like', '%'.$request->q.'%')
+                   ->orWhere('phone', 'like', '%'.$request->q.'%')
+                   ->orWhere('email', 'like', '%'.$request->q.'%')
+                   ->orWhereHas('user', fn ($u) => $u->where('name', 'like', '%'.$request->q.'%'));
+            }))
             ->latest()->paginate(20)->withQueryString();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'total' => $stores->total(),
+                'rows'  => view('admin.stores._rows', compact('stores'))->render(),
+                'pagination' => (string) $stores->links('vendor.pagination.ka-admin'),
+            ]);
+        }
 
         return view('admin.stores.index', compact('stores'));
     }
 
     public function create()
     {
-        $users = User::orderBy('name')->get();
+        $users = User::orderBy('name')->limit(500)->get();
         $locations = Location::where('is_active', 1)->orderBy('sort_order')->orderBy('name')->get();
-        $categories = Category::whereNull('parent_id')->where('is_active', 1)->orderBy('sort_order')->orderBy('name')->with('children')->get();
+        $categories = Category::whereNull('parent_id')->where('is_active', 1)->orderBy('sort_order')->orderBy('name')->with('children.children')->get();
         return view('admin.stores.create', compact('users', 'locations', 'categories'));
     }
 
@@ -45,18 +60,20 @@ class AdminStoreController extends Controller
         }
         unset($data['logo'], $data['banner'], $data['whatsapp_same'], $data['categories']);
         $data = \App\Http\Controllers\Dashboard\StoreController::normalizePhones($data);
-        $data['slug'] = Str::slug($data['name'] . '-' . uniqid());
+        $data['slug'] = $this->uniqueStoreSlug($data['name']);
         $data['is_featured'] = $request->boolean('is_featured');
 
         $storeSlug = Str::slug($data['name']);
         if ($request->hasFile('logo')) {
             $ext = strtolower($request->file('logo')->getClientOriginalExtension()) ?: 'jpg';
-            $data['logo'] = $request->file('logo')->storeAs('stores', $storeSlug . '-logo-in-kegalle.' . $ext, 'public');
+            $data['logo'] = $request->file('logo')->storeAs('stores', $storeSlug . '-logo-' . time() . '.' . $ext, 'public');
             $data['logo'] = \App\Helpers\ImageHelper::finalize($data['logo'], false, 500);
         }
         if ($request->hasFile('banner')) {
             $ext = strtolower($request->file('banner')->getClientOriginalExtension()) ?: 'jpg';
-            $data['banner'] = $request->file('banner')->storeAs('stores', $storeSlug . '-banner-in-kegalle.' . $ext, 'public');
+            $data['banner'] = $request->file('banner')->storeAs('stores', $storeSlug . '-banner-' . time() . '.' . $ext, 'public');
+            $posY = (int) $request->input('banner_position_y', 50);
+            \App\Helpers\ImageHelper::cropToAspect(storage_path('app/public/' . $data['banner']), 820, 312, $posY);
             $data['banner'] = \App\Helpers\ImageHelper::finalize($data['banner'], false, 1600);
         }
 
@@ -70,9 +87,10 @@ class AdminStoreController extends Controller
 
     public function edit(Store $store)
     {
-        $users = User::orderBy('name')->get();
+        $store->load('user.stores');
+        $users = User::orderBy('name')->limit(500)->get();
         $locations = Location::where('is_active', 1)->orderBy('sort_order')->orderBy('name')->get();
-        $categories = Category::whereNull('parent_id')->where('is_active', 1)->orderBy('sort_order')->orderBy('name')->with('children')->get();
+        $categories = Category::whereNull('parent_id')->where('is_active', 1)->orderBy('sort_order')->orderBy('name')->with('children.children')->get();
         return view('admin.stores.edit', compact('store', 'users', 'locations', 'categories'));
     }
 
@@ -83,7 +101,7 @@ class AdminStoreController extends Controller
         if ($request->has('whatsapp_same') && ! empty($data['phone'])) {
             $data['whatsapp'] = $data['phone'];
         }
-        unset($data['logo'], $data['banner'], $data['remove_logo'], $data['remove_banner'], $data['whatsapp_same'], $data['categories']);
+        unset($data['logo'], $data['banner'], $data['remove_logo'], $data['remove_banner'], $data['whatsapp_same'], $data['categories'], $data['user_id']);
         $data = \App\Http\Controllers\Dashboard\StoreController::normalizePhones($data);
 
         $storeSlug = Str::slug($data['name'] ?? $store->name);
@@ -92,7 +110,7 @@ class AdminStoreController extends Controller
                 Storage::disk('public')->delete($store->logo);
             }
             $ext = strtolower($request->file('logo')->getClientOriginalExtension()) ?: 'jpg';
-            $data['logo'] = $request->file('logo')->storeAs('stores', $storeSlug . '-logo-in-kegalle.' . $ext, 'public');
+            $data['logo'] = $request->file('logo')->storeAs('stores', $storeSlug . '-logo-' . time() . '.' . $ext, 'public');
             $data['logo'] = \App\Helpers\ImageHelper::finalize($data['logo'], false, 500);
         } elseif ($request->boolean('remove_logo') && $store->logo) {
             Storage::disk('public')->delete($store->logo);
@@ -104,7 +122,9 @@ class AdminStoreController extends Controller
                 Storage::disk('public')->delete($store->banner);
             }
             $ext = strtolower($request->file('banner')->getClientOriginalExtension()) ?: 'jpg';
-            $data['banner'] = $request->file('banner')->storeAs('stores', $storeSlug . '-banner-in-kegalle.' . $ext, 'public');
+            $data['banner'] = $request->file('banner')->storeAs('stores', $storeSlug . '-banner-' . time() . '.' . $ext, 'public');
+            $posY = (int) $request->input('banner_position_y', 50);
+            \App\Helpers\ImageHelper::cropToAspect(storage_path('app/public/' . $data['banner']), 820, 312, $posY);
             $data['banner'] = \App\Helpers\ImageHelper::finalize($data['banner'], false, 1600);
         } elseif ($request->boolean('remove_banner') && $store->banner) {
             Storage::disk('public')->delete($store->banner);
@@ -120,6 +140,27 @@ class AdminStoreController extends Controller
     public function approve(Store $store)
     {
         $store->update(['status' => 'approved']);
+        $store->load('user');
+
+        if ($store->user_id) {
+            \App\Models\UserNotification::send(
+                $store->user_id,
+                'store_approved',
+                'Your store has been approved!',
+                "Your store \"{$store->name}\" is now live on kegalle.com.",
+                '/dashboard/stores/' . $store->id,
+                $store->id,
+            );
+        }
+
+        $phone = optional($store->user)->phone;
+        if ($phone) {
+            app(MobitelSmsService::class)->send(
+                $phone,
+                "kegalle.com: Your store \"{$store->name}\" has been approved and is now live. Manage it at kegalle.com/dashboard/stores/{$store->id}"
+            );
+        }
+
         return back()->with('success', 'Store approved.');
     }
 
@@ -170,16 +211,29 @@ class AdminStoreController extends Controller
 
     public function destroy(Store $store)
     {
-        $listingCount = $store->listings()->count();
-        if ($listingCount > 0) {
-            return back()->with('success', "Store \"{$store->name}\" still has {$listingCount} listing(s). Delete or transfer them first.");
-        }
+        // Cascade delete all listings
+        $store->listings()->delete();
 
         if ($store->logo) Storage::disk('public')->delete($store->logo);
         if ($store->banner) Storage::disk('public')->delete($store->banner);
         $name = $store->name;
         $store->delete();
 
-        return back()->with('success', "Store \"{$name}\" permanently deleted.");
+        return redirect('/admin/stores')->with('success', "Store \"{$name}\" and all its listings deleted permanently.");
+    }
+
+    private function uniqueStoreSlug(string $name, ?int $ignoreId = null): string
+    {
+        $base = Str::slug($name);
+        $slug = $base;
+        $i = 2;
+        while (
+            Store::where('slug', $slug)
+                ->when($ignoreId, fn($q) => $q->where('id', '!=', $ignoreId))
+                ->exists()
+        ) {
+            $slug = $base . '-' . $i++;
+        }
+        return $slug;
     }
 }

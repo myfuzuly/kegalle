@@ -1,463 +1,317 @@
 <?php
 /**
- * One-time setup: category-specific listing fields, brands, models, subcategories.
- * DELETE THIS FILE after running.
+ * Category-specific listing fields + blog slug fix
+ * One-time guarded setup script — auto-locks after first run
  */
-$lockFile = __DIR__ . '/setup_category_fields.lock';
-if (file_exists($lockFile)) { die('Already executed. Delete .lock file to re-run.'); }
-
-require __DIR__ . '/../app_core/vendor/autoload.php';
-$app = require __DIR__ . '/../app_core/bootstrap/app.php';
-$app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
-
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Str;
-
-echo "<pre>";
-
-// ── 1. Create brands & brand_models tables ──────────────────────
-if (!Schema::hasTable('brands')) {
-    Schema::create('brands', function (Blueprint $t) {
-        $t->id();
-        $t->string('category_group', 50);
-        $t->string('name');
-        $t->string('slug');
-        $t->integer('sort_order')->default(0);
-        $t->boolean('is_active')->default(true);
-        $t->timestamps();
-        $t->index('category_group');
-    });
-    echo "✓ Created brands table\n";
+$lock = __DIR__.'/.setup_catfields.lock';
+if (file_exists($lock)) {
+    echo '<p style="font-family:monospace">Already ran on '.file_get_contents($lock).'. Delete .setup_catfields.lock to re-run.</p>';
+    exit;
 }
 
-if (!Schema::hasTable('brand_models')) {
-    Schema::create('brand_models', function (Blueprint $t) {
-        $t->id();
-        $t->foreignId('brand_id')->constrained()->cascadeOnDelete();
-        $t->string('name');
-        $t->string('slug');
-        $t->integer('sort_order')->default(0);
-        $t->boolean('is_active')->default(true);
-        $t->timestamps();
-    });
-    echo "✓ Created brand_models table\n";
-}
+set_time_limit(120);
+error_reporting(E_ERROR);
 
-// ── 2. Create subcategories ─────────────────────────────────────
-$parentMap = [];
-$cats = DB::table('categories')->whereNull('parent_id')->get();
-foreach ($cats as $c) { $parentMap[strtolower($c->name)] = $c->id; }
-
-$subcategories = [
-    'electronics' => [
-        'Mobile Phones' => '📱', 'Mobile Accessories' => '🔌', 'Mobile Spare Parts' => '🔧',
-        'Smart Products' => '⌚', 'Computers, Laptops & Tablets' => '💻', 'Computer Accessories' => '🖱️',
-        'TV' => '📺', 'TV Accessories' => '🔌', 'Camera' => '📷',
-        'Audio & Mp3' => '🎧', 'Electronic Home Appliances' => '🏠', 'Video Games & Other Electronics' => '🎮',
-        'Aircon & Fittings' => '❄️',
-    ],
-    'vehicles' => [
-        'Cars' => '🚗', 'Bikes' => '🏍️', 'Three Wheelers' => '🛺',
-        'Vans' => '🚐', 'Buses' => '🚌', 'Lorries' => '🚛',
-        'Heavy Duty' => '🚜', 'Tractor' => '🚜', 'Boats' => '⛵',
-        'Bicycle' => '🚲', 'Auto Parts & Accessories' => '🔩',
-        'Auto Services & Rentals' => '🔧', 'Maintenance & Repair' => '🛠️',
-    ],
-    'property' => [
-        'Land' => '🏞️', 'Commercial Property' => '🏢', 'House' => '🏠', 'Apartment' => '🏢',
-    ],
-    'home & garden' => [
-        'Furniture' => '🪑', 'Bathrooms' => '🚿', 'Garden' => '🌳',
-        'Décor' => '🖼️', 'Kitchen Items' => '🍳', 'Other Items' => '📦',
-    ],
-];
-
-// Create Animals & Pets parent if not exists
-if (!isset($parentMap['animals & pets'])) {
-    $pid = DB::table('categories')->insertGetId([
-        'parent_id' => null, 'name' => 'Animals & Pets', 'slug' => 'animals-pets',
-        'type' => 'both', 'icon' => '🐾', 'sort_order' => 10, 'is_active' => true,
-        'created_at' => now(), 'updated_at' => now(),
-    ]);
-    $parentMap['animals & pets'] = $pid;
-    echo "✓ Created parent category: Animals & Pets\n";
-}
-
-$subcategories['animals & pets'] = [
-    'Pets' => '🐕', 'Farm Animals' => '🐄', 'Pet Food' => '🦴',
-    'Animal Accessories' => '🎾', 'Veterinary Services' => '🏥', 'Other' => '📦',
-];
-
-$subCatIds = [];
-foreach ($subcategories as $parentName => $subs) {
-    $parentId = $parentMap[$parentName] ?? null;
-    if (!$parentId) { echo "⚠ Parent '$parentName' not found, skipping\n"; continue; }
-    $order = 1;
-    foreach ($subs as $name => $icon) {
-        $slug = Str::slug($name);
-        $existing = DB::table('categories')->where('slug', $slug)->first();
-        if ($existing) {
-            $subCatIds[$slug] = $existing->id;
-            if ($existing->parent_id != $parentId) {
-                DB::table('categories')->where('id', $existing->id)->update(['parent_id' => $parentId]);
-            }
-        } else {
-            $id = DB::table('categories')->insertGetId([
-                'parent_id' => $parentId, 'name' => $name, 'slug' => $slug,
-                'type' => 'both', 'icon' => $icon, 'sort_order' => $order,
-                'is_active' => true, 'created_at' => now(), 'updated_at' => now(),
-            ]);
-            $subCatIds[$slug] = $id;
+function parseEnv($path) {
+    $vars = [];
+    if (!file_exists($path)) return $vars;
+    foreach (file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
+        $line = trim($line);
+        if ($line === '' || $line[0] === '#') continue;
+        $eq = strpos($line, '=');
+        if ($eq === false) continue;
+        $k = trim(substr($line, 0, $eq));
+        $v = trim(substr($line, $eq + 1));
+        if (strlen($v) >= 2 && (($v[0] === '"' && $v[-1] === '"') || ($v[0] === "'" && $v[-1] === "'"))) {
+            $v = substr($v, 1, -1);
         }
-        $order++;
+        $vars[$k] = $v;
     }
-    echo "✓ Created subcategories for: $parentName\n";
+    return $vars;
 }
 
-// ── 3. Create custom field groups ───────────────────────────────
-$groups = [
-    'general' => 'General', 'mobile' => 'Mobile Specifications',
-    'electronics' => 'Electronics', 'vehicle' => 'Vehicle Details',
-    'property' => 'Property Details', 'home' => 'Home & Garden', 'animals' => 'Animals & Pets',
-];
-$groupIds = [];
-foreach ($groups as $slug => $name) {
-    $existing = DB::table('custom_field_groups')->where('slug', $slug)->first();
-    if ($existing) { $groupIds[$slug] = $existing->id; continue; }
-    $groupIds[$slug] = DB::table('custom_field_groups')->insertGetId([
-        'name' => $name, 'slug' => $slug, 'sort_order' => 0,
-        'created_at' => now(), 'updated_at' => now(),
-    ]);
+$env  = parseEnv(dirname(__DIR__).'/app_core/.env');
+$host = $env['DB_HOST'] ?? '127.0.0.1';
+$port = $env['DB_PORT'] ?? '3306';
+$db   = $env['DB_DATABASE'] ?? '';
+$user = $env['DB_USERNAME'] ?? '';
+$pass = $env['DB_PASSWORD'] ?? '';
+
+try {
+    $pdo = new PDO(
+        "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4",
+        $user, $pass,
+        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+         PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4"]
+    );
+} catch (Exception $e) {
+    die('<p style="color:red;font-family:monospace">DB connect failed: '.htmlspecialchars($e->getMessage()).'</p>');
 }
-echo "✓ Created custom field groups\n";
 
-// ── 4. Create custom fields ────────────────────────────────────
-$fields = [
-    // General
-    ['group' => 'general', 'label' => 'Condition', 'name' => 'condition', 'type' => 'select',
-     'options' => ['Brand New', 'Used', 'Refurbished', 'Other']],
-    ['group' => 'general', 'label' => 'Item Type', 'name' => 'item_type', 'type' => 'select', 'options' => null],
-    ['group' => 'general', 'label' => 'Brand', 'name' => 'brand_id', 'type' => 'brand_select', 'options' => null],
-    ['group' => 'general', 'label' => 'Model', 'name' => 'model_id', 'type' => 'model_select', 'options' => null],
+$log = [];
+function logOk($m)   { global $log; $log[] = ['ok',   $m]; }
+function logInfo($m)  { global $log; $log[] = ['info', $m]; }
 
-    // Mobile specific
-    ['group' => 'mobile', 'label' => 'Features', 'name' => 'features', 'type' => 'checkbox_group',
-     'options' => ['USB Type-B Port', 'USB Type-C Port', 'Fast Charging', 'Flash Charging',
-                   'Expandable Memory', 'Bluetooth', 'Wifi', 'GPS', 'Fingerprint Sensor', 'Infrared Port']],
-    ['group' => 'mobile', 'label' => 'RAM', 'name' => 'ram', 'type' => 'select',
-     'options' => ['1GB', '2GB', '3GB', '4GB', '6GB', '8GB', '12GB', '16GB']],
-    ['group' => 'mobile', 'label' => 'Storage', 'name' => 'memory', 'type' => 'select',
-     'options' => ['8GB', '16GB', '32GB', '64GB', '128GB', '256GB', '512GB', '1TB']],
-    ['group' => 'mobile', 'label' => 'Camera', 'name' => 'camera', 'type' => 'text', 'options' => null,
-     'placeholder' => 'e.g. 50MP + 12MP'],
-    ['group' => 'mobile', 'label' => 'Screen Size', 'name' => 'screen_size', 'type' => 'text', 'options' => null,
-     'placeholder' => 'e.g. 6.7 inches'],
-    ['group' => 'mobile', 'label' => 'Battery', 'name' => 'battery', 'type' => 'text', 'options' => null,
-     'placeholder' => 'e.g. 5000mAh'],
-    ['group' => 'mobile', 'label' => 'Processor', 'name' => 'processor', 'type' => 'text', 'options' => null,
-     'placeholder' => 'e.g. Snapdragon 8 Gen 3'],
-    ['group' => 'mobile', 'label' => 'Network', 'name' => 'network', 'type' => 'select',
-     'options' => ['2G', '3G', '4G LTE', '5G']],
-    ['group' => 'mobile', 'label' => 'SIM Support', 'name' => 'sim_support', 'type' => 'select',
-     'options' => ['Single SIM', 'Dual SIM', 'Triple SIM', 'eSIM', 'Dual SIM + eSIM']],
+// ── 1. Create brands table ────────────────────────────────────
+$pdo->exec("CREATE TABLE IF NOT EXISTS `brands` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `category_group` varchar(60) DEFAULT NULL,
+  `name` varchar(120) NOT NULL,
+  `slug` varchar(120) DEFAULT NULL,
+  `sort_order` int NOT NULL DEFAULT 0,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`), KEY `brands_group` (`category_group`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+logOk("brands table ready");
 
-    // Electronics - TV
-    ['group' => 'electronics', 'label' => 'Screen Type', 'name' => 'screen_type', 'type' => 'select',
-     'options' => ['LED', 'OLED', 'QLED', 'LCD', 'Plasma', 'AMOLED', 'Mini LED']],
-    ['group' => 'electronics', 'label' => 'Screen Size', 'name' => 'tv_screen_size', 'type' => 'select',
-     'options' => ['24"', '32"', '40"', '43"', '50"', '55"', '65"', '75"', '85"']],
+// ── 2. Create brand_models table ─────────────────────────────
+$pdo->exec("CREATE TABLE IF NOT EXISTS `brand_models` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `brand_id` int unsigned NOT NULL,
+  `name` varchar(120) NOT NULL,
+  `slug` varchar(120) DEFAULT NULL,
+  `sort_order` int NOT NULL DEFAULT 0,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`), KEY `bm_brand` (`brand_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
+logOk("brand_models table ready");
 
-    // Vehicle specific
-    ['group' => 'vehicle', 'label' => 'Vehicle Type', 'name' => 'vehicle_type', 'type' => 'select',
-     'options' => ['Car', 'Van', 'SUV', 'Jeep', 'Pickup', 'Bike', 'Scooter', 'Three Wheeler',
-                   'Bus', 'Lorry', 'Tipper', 'Tractor', 'Boat']],
-    ['group' => 'vehicle', 'label' => 'Year of Manufacture', 'name' => 'year', 'type' => 'select',
-     'options' => array_map('strval', range(date('Y'), 1990, -1))],
-    ['group' => 'vehicle', 'label' => 'Mileage (km)', 'name' => 'mileage', 'type' => 'number', 'options' => null,
-     'placeholder' => 'e.g. 85000'],
-    ['group' => 'vehicle', 'label' => 'Engine Capacity (cc)', 'name' => 'engine_capacity', 'type' => 'text',
-     'options' => null, 'placeholder' => 'e.g. 1500cc'],
-    ['group' => 'vehicle', 'label' => 'Fuel Type', 'name' => 'fuel_type', 'type' => 'select',
-     'options' => ['Petrol', 'Diesel', 'Hybrid', 'Electric', 'CNG', 'LPG']],
-    ['group' => 'vehicle', 'label' => 'Transmission', 'name' => 'transmission', 'type' => 'select',
-     'options' => ['Manual', 'Automatic', 'Tiptronic', 'CVT']],
-
-    // Property specific
-    ['group' => 'property', 'label' => 'Property Type', 'name' => 'property_type', 'type' => 'select',
-     'options' => ['For Sale', 'For Rent', 'Lease']],
-    ['group' => 'property', 'label' => 'Address', 'name' => 'address', 'type' => 'text', 'options' => null,
-     'placeholder' => 'Enter property address'],
-    ['group' => 'property', 'label' => 'Size', 'name' => 'size', 'type' => 'text', 'options' => null,
-     'placeholder' => 'e.g. 20'],
-    ['group' => 'property', 'label' => 'Size Unit', 'name' => 'size_unit', 'type' => 'select',
-     'options' => ['Perches', 'Acres', 'Sq ft', 'Sq m']],
-    ['group' => 'property', 'label' => 'Ownership Type', 'name' => 'ownership_type', 'type' => 'select',
-     'options' => ['Freehold', 'Leasehold', 'Government Lease']],
-    ['group' => 'property', 'label' => 'Bedrooms', 'name' => 'bedrooms', 'type' => 'select',
-     'options' => ['1', '2', '3', '4', '5', '6', '7', '8+']],
-    ['group' => 'property', 'label' => 'Bathrooms', 'name' => 'bathrooms', 'type' => 'select',
-     'options' => ['1', '2', '3', '4', '5+']],
-    ['group' => 'property', 'label' => 'House Size (sq ft)', 'name' => 'house_size', 'type' => 'text',
-     'options' => null, 'placeholder' => 'e.g. 1500'],
-
-    // Home & Garden
-    ['group' => 'home', 'label' => 'Type', 'name' => 'home_type', 'type' => 'select', 'options' => null],
-
-    // Animals
-    ['group' => 'animals', 'label' => 'Type', 'name' => 'animal_type', 'type' => 'select', 'options' => null],
-];
-
-$fieldIds = [];
-foreach ($fields as $f) {
-    $existing = DB::table('custom_fields')->where('name', $f['name'])->first();
-    if ($existing) { $fieldIds[$f['name']] = $existing->id; continue; }
-    $fieldIds[$f['name']] = DB::table('custom_fields')->insertGetId([
-        'group_id' => $groupIds[$f['group']] ?? null,
-        'label' => $f['label'], 'name' => $f['name'], 'type' => $f['type'],
-        'options' => $f['options'] ? json_encode($f['options']) : null,
-        'placeholder' => $f['placeholder'] ?? null,
-        'is_required' => false, 'is_searchable' => true, 'sort_order' => 0,
-        'created_at' => now(), 'updated_at' => now(),
-    ]);
-}
-echo "✓ Created custom fields\n";
-
-// ── 5. Link fields to subcategories ─────────────────────────────
-$catFieldMap = [
-    // Mobile Phones - full spec
-    'mobile-phones' => ['condition','brand_id','model_id','features','ram','memory','camera','screen_size','battery','processor','network','sim_support'],
-    // Mobile Accessories, Spare Parts, Smart Products
-    'mobile-accessories' => ['condition','item_type','brand_id','model_id'],
-    'mobile-spare-parts' => ['condition','item_type','brand_id','model_id'],
-    'smart-products' => ['condition','item_type','brand_id','model_id'],
-    // Computers
-    'computers-laptops-tablets' => ['condition','item_type','brand_id','model_id'],
-    'computer-accessories' => ['condition','item_type','brand_id','model_id'],
-    // TV
-    'tv' => ['condition','brand_id','item_type','screen_type','tv_screen_size','model_id'],
-    'tv-accessories' => ['condition','brand_id','item_type','model_id'],
-    // Camera, Audio, Appliances, Games, Aircon
-    'camera' => ['condition','item_type','brand_id','model_id'],
-    'audio-mp3' => ['condition','brand_id','item_type','model_id'],
-    'electronic-home-appliances' => ['condition','brand_id','item_type','model_id'],
-    'video-games-other-electronics' => ['condition','brand_id','item_type','model_id'],
-    'aircon-fittings' => ['condition','brand_id','item_type','model_id'],
-    // Vehicles
-    'cars' => ['vehicle_type','condition','brand_id','model_id','year','mileage','engine_capacity','fuel_type','transmission'],
-    'bikes' => ['vehicle_type','condition','brand_id','model_id','year','mileage','engine_capacity','fuel_type','transmission'],
-    'three-wheelers' => ['vehicle_type','condition','brand_id','model_id','year','mileage','engine_capacity','fuel_type','transmission'],
-    'vans' => ['vehicle_type','condition','brand_id','model_id','year','mileage','engine_capacity','fuel_type','transmission'],
-    'buses' => ['vehicle_type','condition','brand_id','model_id','year','mileage','engine_capacity','fuel_type','transmission'],
-    'lorries' => ['vehicle_type','condition','brand_id','model_id','year','mileage','engine_capacity','fuel_type','transmission'],
-    'heavy-duty' => ['vehicle_type','condition','brand_id','model_id','year','mileage','engine_capacity','fuel_type','transmission'],
-    'tractor' => ['vehicle_type','condition','brand_id','model_id','year','mileage','engine_capacity','fuel_type','transmission'],
-    'boats' => ['vehicle_type','condition','brand_id','model_id','year','mileage','engine_capacity','fuel_type','transmission'],
-    'bicycle' => ['vehicle_type','condition','brand_id','model_id'],
-    'auto-parts-accessories' => ['item_type'],
-    'auto-services-rentals' => ['item_type'],
-    'maintenance-repair' => ['item_type'],
-    // Property
-    'land' => ['property_type','address','size','size_unit','ownership_type'],
-    'commercial-property' => ['property_type','address','size','size_unit','ownership_type'],
-    'house' => ['property_type','address','bedrooms','bathrooms','size','size_unit','house_size'],
-    'apartment' => ['property_type','address','bedrooms','bathrooms','size','size_unit','house_size'],
-    // Home & Garden
-    'furniture' => ['home_type','condition','brand_id','model_id'],
-    'bathrooms' => ['home_type','condition','brand_id','model_id'],
-    'garden' => ['home_type','condition','brand_id','model_id'],
-    'decor' => ['home_type','condition','brand_id','model_id'],
-    'kitchen-items' => ['home_type','condition','brand_id','model_id'],
-    'other-items' => ['home_type','condition','brand_id','model_id'],
-    // Animals
-    'pets' => ['animal_type'],
-    'farm-animals' => ['animal_type'],
-    'pet-food' => ['animal_type','brand_id'],
-    'animal-accessories' => ['animal_type','brand_id'],
-    'veterinary-services' => ['animal_type'],
-    'other' => ['animal_type'],
-];
-
-// Determine brand category_group per subcategory
-$brandGroupMap = [
-    'mobile-phones' => 'mobile', 'mobile-accessories' => 'mobile', 'mobile-spare-parts' => 'mobile', 'smart-products' => 'mobile',
-    'computers-laptops-tablets' => 'computer', 'computer-accessories' => 'computer',
-    'tv' => 'tv', 'tv-accessories' => 'tv',
-    'camera' => 'camera',
-    'audio-mp3' => 'electronics', 'electronic-home-appliances' => 'electronics',
-    'video-games-other-electronics' => 'electronics', 'aircon-fittings' => 'electronics',
-    'cars' => 'vehicle', 'bikes' => 'vehicle_bike', 'three-wheelers' => 'vehicle',
-    'vans' => 'vehicle', 'buses' => 'vehicle', 'lorries' => 'vehicle',
-    'heavy-duty' => 'vehicle', 'tractor' => 'vehicle', 'boats' => 'vehicle_boat',
-    'bicycle' => 'vehicle_bicycle',
-    'furniture' => 'furniture', 'bathrooms' => 'home', 'garden' => 'home',
-    'decor' => 'home', 'kitchen-items' => 'home', 'other-items' => 'home',
-    'pet-food' => 'pet', 'animal-accessories' => 'pet',
-];
-
-DB::table('category_custom_field')->truncate();
-
-foreach ($catFieldMap as $catSlug => $fieldNames) {
-    $catId = $subCatIds[$catSlug] ?? DB::table('categories')->where('slug', $catSlug)->value('id');
-    if (!$catId) { echo "⚠ Subcategory '$catSlug' not found\n"; continue; }
-    $order = 1;
-    foreach ($fieldNames as $fn) {
-        $fid = $fieldIds[$fn] ?? null;
-        if (!$fid) { echo "⚠ Field '$fn' not found\n"; continue; }
-        DB::table('category_custom_field')->insert([
-            'category_id' => $catId, 'custom_field_id' => $fid,
-            'is_required' => in_array($fn, ['condition', 'brand_id']),
-            'show_in_filter' => in_array($fn, ['condition', 'brand_id', 'ram', 'memory', 'fuel_type', 'transmission', 'bedrooms']),
-            'show_in_list' => true, 'sort_order' => $order++,
-        ]);
+// ── 3. Seed brands ────────────────────────────────────────────
+$now = date('Y-m-d H:i:s');
+$brandCount = (int)$pdo->query("SELECT COUNT(*) FROM brands")->fetchColumn();
+if ($brandCount === 0) {
+    $brandData = [
+        ['mobile','Samsung'],['mobile','Apple'],['mobile','Xiaomi'],['mobile','OPPO'],
+        ['mobile','Vivo'],['mobile','Realme'],['mobile','OnePlus'],['mobile','Huawei'],
+        ['mobile','Nokia'],['mobile','Motorola'],['mobile','Honor'],['mobile','Tecno'],
+        ['mobile','Itel'],['mobile','Infinix'],
+        ['computer','HP'],['computer','Dell'],['computer','Lenovo'],['computer','Asus'],
+        ['computer','Acer'],['computer','Apple'],['computer','MSI'],['computer','Toshiba'],
+        ['tv','Samsung'],['tv','LG'],['tv','Sony'],['tv','TCL'],
+        ['tv','Hisense'],['tv','Panasonic'],['tv','Sharp'],['tv','Philips'],
+        ['camera','Canon'],['camera','Nikon'],['camera','Sony'],
+        ['camera','Fujifilm'],['camera','Olympus'],['camera','Panasonic'],
+        ['vehicle','Toyota'],['vehicle','Honda'],['vehicle','Nissan'],['vehicle','Suzuki'],
+        ['vehicle','Mitsubishi'],['vehicle','Mazda'],['vehicle','Hyundai'],['vehicle','Kia'],
+        ['vehicle','Ford'],['vehicle','Isuzu'],['vehicle','Perodua'],['vehicle','Tata'],
+        ['vehicle','BMW'],['vehicle','Mercedes-Benz'],
+        ['vehicle_bike','Honda'],['vehicle_bike','Yamaha'],['vehicle_bike','Suzuki'],
+        ['vehicle_bike','Bajaj'],['vehicle_bike','TVS'],['vehicle_bike','Hero'],
+        ['vehicle_bike','Royal Enfield'],
+        ['electronics','Samsung'],['electronics','LG'],['electronics','Sony'],
+        ['electronics','Philips'],['electronics','Panasonic'],
+        ['home','Samsung'],['home','LG'],['home','Singer'],['home','Panasonic'],
+        ['home','Philips'],['home','Abans'],['home','Sharp'],
+        ['furniture','IKEA'],['furniture','Ashley'],['furniture','Nilkamal'],
+        ['pet','Royal Canin'],['pet','Pedigree'],['pet','Whiskas'],['pet','Purina'],
+    ];
+    $ins = $pdo->prepare("INSERT INTO brands (category_group,name,slug,sort_order,is_active,created_at,updated_at) VALUES (?,?,?,0,1,?,?)");
+    foreach ($brandData as [$g, $n]) {
+        $sl = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $n));
+        $ins->execute([$g, $n, $sl, $now, $now]);
     }
-}
-echo "✓ Linked fields to subcategories\n";
+    logOk("Seeded ".count($brandData)." brands");
 
-// ── 6. Seed brands & models ────────────────────────────────────
-$brandData = [
-    'mobile' => [
-        'Samsung' => ['Galaxy S24 Ultra','Galaxy S24+','Galaxy S24','Galaxy S23','Galaxy A54','Galaxy A34','Galaxy A14','Galaxy M34','Galaxy Z Fold5','Galaxy Z Flip5'],
-        'Apple' => ['iPhone 15 Pro Max','iPhone 15 Pro','iPhone 15','iPhone 14','iPhone 13','iPhone SE'],
-        'Xiaomi' => ['Redmi Note 13 Pro','Redmi Note 13','Redmi 13C','POCO X6 Pro','POCO M6 Pro','Mi 14'],
-        'Huawei' => ['P60 Pro','Nova 11','Y90','Mate 60 Pro'],
-        'OPPO' => ['Reno 11','A98','A78','Find X7'],
-        'Vivo' => ['V30','Y27','Y17s','X100 Pro'],
-        'Realme' => ['12 Pro+','C67','Narzo 60','GT5 Pro'],
-        'OnePlus' => ['12','Nord CE 3','Nord N30','11R'],
-        'Nokia' => ['G42','C32','G22','XR21'],
-        'Sony' => ['Xperia 1 V','Xperia 5 V','Xperia 10 V'],
-        'Google' => ['Pixel 8 Pro','Pixel 8','Pixel 7a'],
-        'Motorola' => ['Edge 40 Pro','Moto G84','Moto G54'],
-        'Nothing' => ['Phone 2','Phone 1'],
-        'Tecno' => ['Spark 20 Pro','Camon 20','Pop 7 Pro'],
-        'Infinix' => ['Note 30 Pro','Hot 30','Smart 8'],
-    ],
-    'computer' => [
-        'Apple' => ['MacBook Air M2','MacBook Pro 14"','MacBook Pro 16"','iMac','Mac Mini','iPad Pro','iPad Air'],
-        'HP' => ['Pavilion','Envy','EliteBook','ProBook','Victus','Spectre'],
-        'Dell' => ['Inspiron','XPS','Latitude','Vostro','Alienware'],
-        'Lenovo' => ['ThinkPad','IdeaPad','Legion','Yoga','Tab P12'],
-        'Asus' => ['ZenBook','VivoBook','ROG Strix','TUF Gaming','ProArt'],
-        'Acer' => ['Aspire','Swift','Nitro','Predator'],
-        'MSI' => ['GF63','Katana','Raider','Creator'],
-        'Samsung' => ['Galaxy Book','Galaxy Tab S9'],
-        'Microsoft' => ['Surface Pro','Surface Laptop','Surface Go'],
-    ],
-    'tv' => [
-        'Samsung' => ['Crystal UHD','Neo QLED','OLED','The Frame','The Serif'],
-        'LG' => ['OLED C3','OLED B3','NanoCell','UHD','QNED'],
-        'Sony' => ['Bravia XR','Bravia X','OLED A80L'],
-        'TCL' => ['C Series','P Series','S Series'],
-        'Hisense' => ['U8K','A6K','U6K'],
-        'Panasonic' => ['OLED','LED','4K Ultra HD'],
-        'Philips' => ['OLED','Ambilight','PUS Series'],
-        'Abans' => ['LED TV','Smart TV'],
-        'Singer' => ['LED TV','Smart TV'],
-    ],
-    'camera' => [
-        'Canon' => ['EOS R5','EOS R6','EOS 90D','PowerShot'],
-        'Nikon' => ['Z8','Z6 III','D7500','Coolpix'],
-        'Sony' => ['Alpha A7 IV','Alpha A6700','ZV-E10','RX100'],
-        'Fujifilm' => ['X-T5','X-S20','X100V'],
-        'GoPro' => ['Hero 12','Hero 11','Max'],
-        'DJI' => ['Osmo Action 4','Pocket 3'],
-    ],
-    'electronics' => [
-        'Samsung' => [], 'LG' => [], 'Sony' => [], 'Philips' => [],
-        'Panasonic' => [], 'JBL' => [], 'Bose' => [], 'Harman Kardon' => [],
-        'Marshall' => [], 'Anker' => [], 'Baseus' => [], 'Singer' => [],
-        'Abans' => [], 'Midea' => [], 'Haier' => [],
-    ],
-    'vehicle' => [
-        'Toyota' => ['Vitz','Aqua','Prius','Corolla','Axio','Fielder','Premio','Allion','CHR','RAV4','Hilux','KDH','HiAce','Land Cruiser','Rush','Fortuner'],
-        'Suzuki' => ['WagonR','Alto','Swift','Celerio','Baleno','Ciaz','Vitara','Jimny','Every','Carry'],
-        'Honda' => ['Fit','Vezel','Grace','Civic','City','CRV','HRV','BRV','WRV'],
-        'Nissan' => ['March','Note','Leaf','X-Trail','Juke','Caravan','NV200'],
-        'Mitsubishi' => ['Lancer','Outlander','Montero','L200','Canter','Rosa'],
-        'Hyundai' => ['Tucson','Creta','i20','i10','Accent','Elantra','Staria'],
-        'KIA' => ['Sportage','Seltos','Picanto','Sorento','Carnival'],
-        'BMW' => ['3 Series','5 Series','X1','X3','X5'],
-        'Mercedes-Benz' => ['C-Class','E-Class','GLA','GLC','Sprinter'],
-        'Audi' => ['A3','A4','Q3','Q5'],
-        'Volkswagen' => ['Polo','Golf','Tiguan'],
-        'Ford' => ['Ranger','Everest','EcoSport'],
-        'Isuzu' => ['D-Max','Elf','Forward'],
-        'Tata' => ['LPT','Ace','Dimo Batta'],
-        'Mahindra' => ['Bolero','Scorpio','XUV700','Pik Up'],
-        'Perodua' => ['Axia','Myvi','Bezza'],
-        'Daihatsu' => ['Mira','Move','Hijet'],
-        'MG' => ['ZS','HS','MG5'],
-        'Chery' => ['Tiggo 4 Pro','Tiggo 7 Pro','Arrizo 5'],
-        'BYD' => ['Atto 3','Dolphin','Seal'],
-        'DFSK' => ['Glory 580','Mini Truck'],
-        'Bajaj' => ['RE','Pulsar','CT','Discover'],
-        'TVS' => ['Apache','Jupiter','Ntorq','XL100'],
-        'Yamaha' => ['FZ','R15','MT-15','NMAX','Aerox'],
-        'Hero' => ['Splendor','HF Deluxe','Glamour','Xpulse'],
-        'Demak' => ['Civic','DTM'],
-    ],
-    'vehicle_bike' => [
-        'Honda' => ['Dio','CB Hornet','Shine','Activa','PCX','CB350','Hornet 2.0'],
-        'Bajaj' => ['Pulsar','CT 125','Discover','Dominar','Avenger'],
-        'TVS' => ['Apache RTR','Jupiter','Ntorq','Raider','XL100'],
-        'Yamaha' => ['FZ','FZS','R15','MT-15','Ray ZR'],
-        'Suzuki' => ['Gixxer','Access','Burgman','V-Strom'],
-        'Hero' => ['Splendor','HF Deluxe','Glamour','Xpulse','Destini'],
-        'Royal Enfield' => ['Classic 350','Meteor 350','Hunter 350','Himalayan'],
-        'Demak' => ['Civic','DTM','Tryon'],
-    ],
-    'vehicle_bicycle' => [
-        'Giant' => [], 'Trek' => [], 'Specialized' => [],
-        'Scott' => [], 'Merida' => [], 'DSI' => [],
-        'Lumala' => [], 'Kenstar' => [],
-    ],
-    'vehicle_boat' => [
-        'Yamaha' => [], 'Honda' => [], 'Suzuki' => [], 'Mercury' => [],
-    ],
-    'furniture' => [
-        'IKEA' => [], 'Damro' => [], 'Arpico' => [], 'Moratuwa Furniture' => [],
-        'Singer' => [], 'Other' => [],
-    ],
-    'home' => [
-        'Singer' => [], 'Abans' => [], 'Philips' => [], 'LG' => [],
-        'Samsung' => [], 'Midea' => [], 'Other' => [],
-    ],
-    'pet' => [
-        'Royal Canin' => [], 'Pedigree' => [], 'Whiskas' => [],
-        'Purina' => [], 'Hills' => [], 'Other' => [],
-    ],
-];
-
-foreach ($brandData as $group => $brands) {
-    foreach ($brands as $brandName => $models) {
-        $bSlug = Str::slug($brandName);
-        $existing = DB::table('brands')->where('slug', $bSlug)->where('category_group', $group)->first();
-        if ($existing) {
-            $brandId = $existing->id;
-        } else {
-            $brandId = DB::table('brands')->insertGetId([
-                'category_group' => $group, 'name' => $brandName, 'slug' => $bSlug,
-                'sort_order' => 0, 'is_active' => true, 'created_at' => now(), 'updated_at' => now(),
-            ]);
-        }
-        foreach ($models as $i => $modelName) {
-            $mSlug = Str::slug($modelName);
-            if (DB::table('brand_models')->where('brand_id', $brandId)->where('slug', $mSlug)->exists()) continue;
-            DB::table('brand_models')->insert([
-                'brand_id' => $brandId, 'name' => $modelName, 'slug' => $mSlug,
-                'sort_order' => $i, 'is_active' => true, 'created_at' => now(), 'updated_at' => now(),
-            ]);
+    // Seed models for top brands
+    $brandIds = [];
+    foreach ($pdo->query("SELECT id,name,category_group FROM brands") as $b) {
+        $brandIds[$b['category_group'].':'.$b['name']] = (int)$b['id'];
+    }
+    $modelData = [
+        'mobile:Samsung'  => ['Galaxy S24 Ultra','Galaxy S24','Galaxy S23','Galaxy A54','Galaxy A34','Galaxy A14','Galaxy M34','Galaxy S22'],
+        'mobile:Apple'    => ['iPhone 15 Pro Max','iPhone 15 Pro','iPhone 15','iPhone 14 Pro Max','iPhone 14','iPhone 13','iPhone 12','iPhone 11','iPhone SE'],
+        'mobile:Xiaomi'   => ['Redmi Note 13 Pro','Redmi Note 13','Redmi Note 12','Redmi 12','POCO X6 Pro','POCO M6 Pro','13T Pro'],
+        'mobile:OPPO'     => ['Reno 11 Pro','Reno 10','A98','A78','A58','Find X7'],
+        'mobile:Vivo'     => ['V30 Pro','V30','V29','Y100','Y56','Y35'],
+        'mobile:Realme'   => ['GT 6','12 Pro+','12 Pro','Narzo 70 Pro','C67','C55'],
+        'mobile:OnePlus'  => ['12','12R','11','Nord 3','Nord CE 3 Lite'],
+        'mobile:Nokia'    => ['G42','G21','C32','C22','C12'],
+        'vehicle:Toyota'  => ['Aqua','Prius','Axio','Allion','Vitz','Corolla','Hilux','Land Cruiser','Rush','Raize','Camry','Premio','Belta','Fielder'],
+        'vehicle:Honda'   => ['Vezel','Fit','Grace','Civic','CR-V','Accord','Jazz','Freed'],
+        'vehicle:Nissan'  => ['Leaf','Note','Dayz','X-Trail','Sunny','Tiida','March','Serena'],
+        'vehicle:Suzuki'  => ['Alto','Swift','Baleno','Vitara','WagonR','Celerio','Dzire','Jimny'],
+        'vehicle:Mitsubishi'=> ['Outlander','ASX','Eclipse Cross','Lancer','Montero','L200'],
+        'vehicle:Hyundai' => ['i10','i20','Tucson','Creta','Elantra','Santa Fe'],
+        'vehicle_bike:Honda'  => ['CB 150R','CB 125R','Shine','Activa','CD 110 Dream','Hornet 2.0'],
+        'vehicle_bike:Yamaha' => ['FZ-S','FZS 25','R15 V4','MT-15','Ray ZR','Fascino'],
+        'vehicle_bike:Bajaj'  => ['Pulsar NS200','Pulsar 150','Avenger 220','Platina','CT 100'],
+        'vehicle_bike:TVS'    => ['Apache RTR 200 4V','Apache RTR 160 4V','Jupiter','XL 100','Ntorq 125'],
+        'computer:HP'     => ['Pavilion 15','Victus 16','EliteBook 840','ProBook 450','Spectre x360'],
+        'computer:Dell'   => ['Inspiron 15','XPS 15','Latitude 5540','Vostro 3520','G15 Gaming'],
+        'computer:Lenovo' => ['ThinkPad E15','IdeaPad Slim 5','Legion 5','Yoga 7','ThinkBook 14'],
+        'tv:Samsung'      => ['Crystal 4K UHD','Frame TV','Neo QLED','QLED Q80C','TU7000'],
+        'tv:LG'           => ['OLED C3','OLED B3','QNED90','UQ80','UQ75'],
+        'tv:Sony'         => ['Bravia XR A80L','X95L','X90L','X85L','X80L'],
+    ];
+    $ins2 = $pdo->prepare("INSERT INTO brand_models (brand_id,name,slug,sort_order,is_active,created_at,updated_at) VALUES (?,?,?,0,1,?,?)");
+    $mc = 0;
+    foreach ($modelData as $key => $names) {
+        if (!isset($brandIds[$key])) continue;
+        foreach ($names as $mn) {
+            $sl = strtolower(preg_replace('/[^a-zA-Z0-9]+/', '-', $mn));
+            $ins2->execute([$brandIds[$key], $mn, $sl, $now, $now]);
+            $mc++;
         }
     }
-    echo "✓ Seeded brands for: $group\n";
+    logOk("Seeded $mc brand models");
+} else {
+    logInfo("Brands already seeded ($brandCount rows) — skipping");
 }
 
-// Store brand group mapping as a JSON config for the JS to use
-$catBrandGroupJson = json_encode($brandGroupMap);
-// We'll store this in a config-like approach via the category_custom_field
+// ── 4. Get categories by slug ─────────────────────────────────
+$catBySlug = [];
+foreach ($pdo->query("SELECT id,slug FROM categories WHERE is_active=1") as $c) {
+    $catBySlug[$c['slug']] = (int)$c['id'];
+}
+logInfo("Found ".count($catBySlug)." active categories: ".implode(', ', array_keys($catBySlug)));
 
-file_put_contents($lockFile, date('Y-m-d H:i:s'));
-echo "\n✅ Setup complete! Delete this file and the .lock file.\n";
-echo "</pre>";
+// ── 5. Create / get custom fields ─────────────────────────────
+function gcf($pdo, $name, $label, $type, $opts, $ph='') {
+    $now = date('Y-m-d H:i:s');
+    $st = $pdo->prepare("SELECT id FROM custom_fields WHERE name=? LIMIT 1");
+    $st->execute([$name]);
+    if ($r = $st->fetch(PDO::FETCH_ASSOC)) return (int)$r['id'];
+    $pdo->prepare("INSERT INTO custom_fields (name,label,type,options,placeholder,is_required,is_searchable,sort_order,created_at,updated_at) VALUES (?,?,?,?,?,0,0,0,?,?)")
+        ->execute([$name, $label, $type, json_encode($opts), $ph, $now, $now]);
+    return (int)$pdo->lastInsertId();
+}
+
+function linkCF($pdo, $fid, $cid, $sort) {
+    $st = $pdo->prepare("SELECT 1 FROM category_custom_field WHERE category_id=? AND custom_field_id=?");
+    $st->execute([$cid, $fid]);
+    if ($st->fetchColumn()) return;
+    $pdo->prepare("INSERT INTO category_custom_field (category_id,custom_field_id,is_required,show_in_filter,show_in_list,sort_order) VALUES (?,?,0,0,1,?)")
+        ->execute([$cid, $fid, $sort]);
+}
+
+// Shared fields
+$FC = gcf($pdo,'condition','Condition','select',['Brand New','Like New','Good','Fair','For Parts'],'Select condition');
+$FB = gcf($pdo,'brand_id','Brand','brand_select',[],'Select brand');
+$FM = gcf($pdo,'model_id','Model','model_select',[],'Select model');
+$FRAM = gcf($pdo,'ram','RAM','select',['1 GB','2 GB','3 GB','4 GB','6 GB','8 GB','12 GB','16 GB','32 GB']);
+$FSTO = gcf($pdo,'storage','Storage','select',['8 GB','16 GB','32 GB','64 GB','128 GB','256 GB','512 GB','1 TB']);
+$FNET = gcf($pdo,'network','Network','select',['2G','3G','4G','5G']);
+$FSS  = gcf($pdo,'screen_size','Screen Size','text',[],'e.g. 6.7 inches');
+$FCAM = gcf($pdo,'camera','Camera','text',[],'e.g. 50MP + 12MP');
+$FBAT = gcf($pdo,'battery','Battery','text',[],'e.g. 5000 mAh');
+$FFEA = gcf($pdo,'features','Key Features','checkbox_group',
+    ['USB-C','Fast Charging','Wireless Charging','5G','Fingerprint','Face ID','NFC','Dual SIM','Water Resistant','AMOLED']);
+$FIT  = gcf($pdo,'item_type','Item Type','select',[],'Describe the item type');
+$FMAK = gcf($pdo,'make_id','Make','brand_select',[],'Select make');
+$FVM  = gcf($pdo,'vehicle_model_id','Model','model_select',[],'Select model');
+$FYR  = gcf($pdo,'year','Year','select', array_map('strval', range((int)date('Y'), 1990)));
+$FMI  = gcf($pdo,'mileage','Mileage (km)','number',[],'e.g. 45000');
+$FECC = gcf($pdo,'engine_cc','Engine (cc)','text',[],'e.g. 1500cc');
+$FFU  = gcf($pdo,'fuel_type','Fuel Type','select',['Petrol','Diesel','Hybrid','Electric','LPG']);
+$FTR  = gcf($pdo,'transmission','Transmission','select',['Automatic','Manual','CVT','Semi-Automatic']);
+$FBT  = gcf($pdo,'body_type','Body Type','select',['Sedan','Hatchback','SUV','Van','Pickup','Wagon','Coupe','Bus','Lorry','Truck']);
+$FCOL = gcf($pdo,'color','Color','text',[],'e.g. Silver');
+$FPT  = gcf($pdo,'property_type','Property Type','select',['For Sale','For Rent','Lease']);
+$FADR = gcf($pdo,'address','Full Address','text',[],'Street / Area');
+$FLSZ = gcf($pdo,'land_size','Size','text',[],'e.g. 20 perches');
+$FBED = gcf($pdo,'bedrooms','Bedrooms','select',['Studio','1','2','3','4','5','6+']);
+$FBTH = gcf($pdo,'bathrooms','Bathrooms','select',['1','2','3','4+']);
+$FOWN = gcf($pdo,'ownership','Ownership','select',['Deeds','Permit','Grant','UDA','Condominium']);
+
+// Map: category_slug => [fieldId, ...]
+$map = [
+    'mobile-phones'              => [$FC,$FB,$FM,$FRAM,$FSTO,$FNET,$FSS,$FCAM,$FBAT,$FFEA],
+    'smartphones'                => [$FC,$FB,$FM,$FRAM,$FSTO,$FNET,$FSS,$FCAM,$FBAT,$FFEA],
+    'feature-phones'             => [$FC,$FB,$FM,$FNET,$FBAT],
+    'tablets'                    => [$FC,$FB,$FM,$FRAM,$FSTO,$FSS],
+    'mobile-accessories'         => [$FC,$FB,$FIT],
+    'mobile-spare-parts'         => [$FC,$FB,$FIT],
+    'smart-watches'              => [$FC,$FB,$FM,$FNET],
+    'smart-products'             => [$FC,$FB,$FIT],
+    'computers-laptops-tablets'  => [$FC,$FB,$FM,$FRAM,$FSTO,$FSS],
+    'computers'                  => [$FC,$FB,$FM,$FRAM,$FSTO],
+    'laptops'                    => [$FC,$FB,$FM,$FRAM,$FSTO,$FSS],
+    'computer-accessories'       => [$FC,$FB,$FIT],
+    'tv'                         => [$FC,$FB,$FM,$FSS],
+    'tv-audio'                   => [$FC,$FB,$FM,$FSS],
+    'tv-accessories'             => [$FC,$FB,$FIT],
+    'audio-mp3'                  => [$FC,$FB,$FIT],
+    'camera'                     => [$FC,$FB,$FM],
+    'cameras'                    => [$FC,$FB,$FM],
+    'electronic-home-appliances' => [$FC,$FB,$FIT],
+    'video-games-other-electronics'=> [$FC,$FB,$FIT],
+    'aircon-fittings'            => [$FC,$FB,$FIT],
+    'electronics'                => [$FC,$FB,$FIT],
+    'networking'                 => [$FC,$FB,$FIT],
+    'gaming'                     => [$FC,$FB,$FIT],
+    'smart-home'                 => [$FC,$FB,$FIT],
+    'large-appliances'           => [$FC,$FB,$FIT],
+    'kitchen-appliances'         => [$FC,$FB,$FIT],
+    'small-appliances'           => [$FC,$FB,$FIT],
+    'home-appliances'            => [$FC,$FB,$FIT],
+    'cars'                       => [$FC,$FMAK,$FVM,$FYR,$FMI,$FFU,$FTR,$FBT,$FECC,$FCOL],
+    'suvs-jeeps'                 => [$FC,$FMAK,$FVM,$FYR,$FMI,$FFU,$FTR,$FECC,$FCOL],
+    'vans'                       => [$FC,$FMAK,$FVM,$FYR,$FMI,$FFU,$FTR,$FCOL],
+    'pickups'                    => [$FC,$FMAK,$FVM,$FYR,$FMI,$FFU,$FTR,$FCOL],
+    'buses'                      => [$FC,$FMAK,$FVM,$FYR,$FMI,$FFU,$FCOL],
+    'trucks-lorries'             => [$FC,$FMAK,$FVM,$FYR,$FMI,$FFU,$FCOL],
+    'lorries'                    => [$FC,$FMAK,$FVM,$FYR,$FMI,$FFU,$FCOL],
+    'three-wheelers'             => [$FC,$FMAK,$FVM,$FYR,$FMI,$FFU,$FCOL],
+    'tractors'                   => [$FC,$FMAK,$FVM,$FYR,$FMI,$FCOL],
+    'tractor'                    => [$FC,$FMAK,$FVM,$FYR,$FMI,$FCOL],
+    'heavy-machinery'            => [$FC,$FMAK,$FVM,$FYR,$FMI],
+    'electric-vehicles'          => [$FC,$FMAK,$FVM,$FYR,$FMI,$FTR,$FCOL],
+    'motorcycles'                => [$FC,$FMAK,$FVM,$FYR,$FMI,$FECC,$FCOL],
+    'bikes'                      => [$FC,$FMAK,$FVM,$FYR,$FMI,$FECC,$FCOL],
+    'bicycles'                   => [$FC,$FB,$FIT,$FCOL],
+    'bicycle'                    => [$FC,$FB,$FIT,$FCOL],
+    'boats-watercraft'           => [$FC,$FB,$FM,$FYR],
+    'boats'                      => [$FC,$FB,$FM,$FYR],
+    'land'                       => [$FPT,$FADR,$FLSZ,$FOWN],
+    'commercial-property'        => [$FPT,$FADR,$FLSZ,$FOWN],
+    'houses'                     => [$FPT,$FADR,$FBED,$FBTH,$FLSZ,$FOWN],
+    'house'                      => [$FPT,$FADR,$FBED,$FBTH,$FLSZ,$FOWN],
+    'apartments'                 => [$FPT,$FADR,$FBED,$FBTH,$FOWN],
+    'apartment'                  => [$FPT,$FADR,$FBED,$FBTH,$FOWN],
+    'furniture'                  => [$FC,$FB,$FIT,$FCOL],
+    'kitchen-items'              => [$FC,$FB,$FIT],
+    'kitchen-dining'             => [$FC,$FB,$FIT],
+    'bathrooms'                  => [$FC,$FB,$FIT],
+    'garden'                     => [$FC,$FB,$FIT],
+    'decor'                      => [$FC,$FIT,$FCOL],
+    'other-items'                => [$FC,$FIT],
+    'pet-food'                   => [$FB,$FIT],
+    'animal-accessories'         => [$FC,$FB,$FIT],
+];
+
+$linked = 0; $skipped = 0;
+foreach ($map as $slug => $fields) {
+    if (!isset($catBySlug[$slug])) { $skipped++; continue; }
+    $cid = $catBySlug[$slug];
+    foreach ($fields as $i => $fid) { linkCF($pdo, $fid, $cid, $i); $linked++; }
+}
+logOk("Linked $linked field-category pairs ($skipped category slugs not found in DB — OK)");
+
+// ── 6. Fix blog slug ──────────────────────────────────────────
+try {
+    $n = $pdo->exec("UPDATE posts SET slug=REPLACE(slug,'2025','2026'), updated_at=NOW() WHERE slug LIKE '%2025%'");
+    if ($n > 0) logOk("Fixed $n blog post slug(s): 2025 → 2026");
+    else logInfo("Blog: no 2025 slugs found (already correct or table not available)");
+} catch (Exception $e) {
+    logInfo("Blog slug: ".$e->getMessage());
+}
+
+// ── Done ──────────────────────────────────────────────────────
+file_put_contents($lock, date('c'));
+?><!DOCTYPE html>
+<html><head><title>Setup Complete</title>
+<style>body{font-family:monospace;max-width:700px;margin:40px auto;padding:20px;background:#f7f8fa}
+h2{color:#1B5E20}.ok{color:#2e7d32;margin:4px 0}.info{color:#666;margin:4px 0}.err{color:#c62828;margin:4px 0}</style>
+</head><body>
+<h2>✅ Setup Complete</h2>
+<?php foreach ($log as [$t, $m]): ?>
+<p class="<?= $t ?>">
+  <?= $t==='ok' ? '✓' : ($t==='err' ? '✗' : 'ℹ') ?> <?= htmlspecialchars($m) ?>
+</p>
+<?php endforeach; ?>
+<p style="margin-top:24px;color:#888;font-size:12px">Script locked. Delete <code>.setup_catfields.lock</code> from public_html to re-run.</p>
+</body></html>

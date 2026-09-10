@@ -1,0 +1,12 @@
+# User-uploaded assets — short cache so banner updates show within 1 hour
+<IfModule mod_expires.c>
+ExpiresActive On
+ExpiresByType image/webp "access plus 1 hour"
+ExpiresByType image/jpeg "access plus 1 hour"
+ExpiresByType image/png  "access plus 1 hour"
+</IfModule>
+<IfModule mod_headers.c>
+<FilesMatch "\.(webp|jpg|jpeg|png)$">
+Header set Cache-Control "max-age=3600, must-revalidate"
+</FilesMatch>
+</IfModule>

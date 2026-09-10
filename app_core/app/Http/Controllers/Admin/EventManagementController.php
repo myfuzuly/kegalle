@@ -33,6 +33,14 @@ class EventManagementController extends Controller
         $events = $query->paginate(20)->withQueryString();
         $pendingCount = Event::where('status', 'pending')->count();
 
+        if ($request->ajax()) {
+            return response()->json([
+                'total'      => $events->total(),
+                'rows'       => view('admin.events._rows', compact('events'))->render(),
+                'pagination' => (string) $events->links('vendor.pagination.ka-admin'),
+            ]);
+        }
+
         return view('admin.events.index', compact('events', 'pendingCount'));
     }
 
@@ -40,8 +48,8 @@ class EventManagementController extends Controller
     {
         $categories = Category::orderBy('name')->get();
         $locations = Location::where('is_active', true)->orderBy('name')->get();
-        $stores = Store::orderBy('name')->get();
-        $users = User::orderBy('name')->get();
+        $stores = Store::orderBy('name')->limit(500)->get();
+        $users = User::orderBy('name')->limit(500)->get();
 
         return view('admin.events.create', compact('categories', 'locations', 'stores', 'users'));
     }
@@ -57,7 +65,8 @@ class EventManagementController extends Controller
         $data = $request->only([
             'title', 'description', 'event_date', 'starts_at', 'ends_at',
             'location', 'venue', 'price', 'event_type', 'capacity',
-            'organizer_name', 'user_id', 'category_id', 'store_id', 'status', 'admin_note',
+            'organizer_name', 'organizer_phone', 'organizer_email', 'poster_type',
+            'user_id', 'category_id', 'store_id', 'status', 'admin_note',
         ]);
 
         $data['slug'] = Str::slug($request->title) . '-' . Str::random(5);
@@ -65,6 +74,12 @@ class EventManagementController extends Controller
         $data['is_featured'] = $request->boolean('is_featured');
         $data['price'] = $data['is_free'] ? 0 : ($data['price'] ?? 0);
         $data['status'] = $data['status'] ?? 'published';
+        $data['poster_type'] = $data['poster_type'] ?? 'user';
+        // If independent poster, clear user/store
+        if (($data['poster_type'] ?? '') === 'independent') {
+            $data['user_id'] = null;
+            $data['store_id'] = null;
+        }
 
         Event::create($data);
 
@@ -75,8 +90,8 @@ class EventManagementController extends Controller
     {
         $categories = Category::orderBy('name')->get();
         $locations = Location::where('is_active', true)->orderBy('name')->get();
-        $stores = Store::orderBy('name')->get();
-        $users = User::orderBy('name')->get();
+        $stores = Store::orderBy('name')->limit(500)->get();
+        $users = User::orderBy('name')->limit(500)->get();
 
         return view('admin.events.edit', compact('event', 'categories', 'locations', 'stores', 'users'));
     }
@@ -92,7 +107,8 @@ class EventManagementController extends Controller
         $data = $request->only([
             'title', 'description', 'event_date', 'starts_at', 'ends_at',
             'location', 'venue', 'price', 'event_type', 'capacity',
-            'organizer_name', 'user_id', 'category_id', 'store_id', 'status', 'admin_note',
+            'organizer_name', 'organizer_phone', 'organizer_email', 'poster_type',
+            'user_id', 'category_id', 'store_id', 'status', 'admin_note',
         ]);
 
         $data['slug'] = Str::slug($request->title) . '-' . Str::random(5);

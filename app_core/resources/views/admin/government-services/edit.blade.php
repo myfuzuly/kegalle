@@ -13,14 +13,14 @@
     <div class="ka-field ka-span-2">
         <label>Service Icon Image (optional)</label>
         @if($service->image)
-            <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px">
-                <img src="{{ asset('storage/'.$service->image) }}" alt="{{ $service->title }}" style="width:80px;height:80px;border-radius:12px;object-fit:cover;border:1.5px solid var(--ka-border,#E5E8EF)">
-                <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#D32F2F;cursor:pointer">
+            <div class="flex-row-14-mb10">
+                <img class="thumb-80" src="{{ asset('storage/'.$service->image) }}" alt="{{ $service->title }}">
+                <label class="text-del-action">
                     <input type="checkbox" name="remove_image" value="1"> Remove current image
                 </label>
             </div>
         @else
-            <p style="font-size:13px;color:#667085;margin-bottom:8px">No image set — using icon + gradient.</p>
+            <p class="hint-text">No image set — using icon + gradient.</p>
         @endif
         <input type="file" name="image" accept="image/jpeg,image/png,image/webp">
         <small>JPG/PNG/WEBP, max 3MB. Uploading replaces the current image.</small>
@@ -50,7 +50,7 @@
         <input type="color" name="icon_bg_end" value="{{ old('icon_bg_end', $service->icon_bg_end) }}">
     </div>
 
-    <div class="ka-field ka-span-2" style="border-top:1px solid #E5E8EF;padding-top:18px;margin-top:4px">
+    <div class="ka-field ka-span-2 bt-pt18-mt4">
         <label>Full Page Content (HTML supported)</label>
         <textarea name="content" rows="8">{{ old('content', $service->content) }}</textarea>
         <small>This content is shown on the individual service page.</small>

@@ -1,0 +1,250 @@
+/* ============================================================
+   KEGALLE MARKETPLACE — PREMIUM UI DESIGN SYSTEM v1
+   Applied on top of existing styles for premium polish
+   ============================================================ */
+
+/* Google Fonts loaded via <link> in app.blade.php head for performance */
+
+/* --- Design Tokens (Light Theme) --- */
+:root {
+    /* Premium palette */
+  --kp-primary: #1b5e20;
+    /* deep forest green — brand */
+  --kp-primary-dark: #145217;
+    --kp-primary-light: #e8f5e9;
+    --kp-gold: #b7950b;
+    /* accent gold */
+  --kp-gold-light: #fef9e7;
+    --kp-navy: #0f172a;
+    /* deep text */
+  --kp-text: #1e293b;
+    --kp-muted: #64748b;
+    --kp-border: #e2e8f0;
+    --kp-surface: #ffffff;
+    --kp-bg: #f8fafc;
+    --kp-shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+    --kp-shadow: 0 4px 16px rgba(0,0,0,.10), 0 2px 6px rgba(0,0,0,.06);
+    --kp-shadow-lg: 0 8px 32px rgba(0,0,0,.14), 0 4px 12px rgba(0,0,0,.08);
+    --kp-radius-sm: 6px;
+    --kp-radius: 12px;
+    --kp-radius-lg: 20px;
+    --kp-font: 'Inter', system-ui, -apple-system, sans-serif;
+    --kp-font-display: 'Playfair Display', Georgia, serif;
+    --kp-transition: 0.25s cubic-bezier(.4,0,.2,1);
+}
+
+/* Dark theme token overrides are merged into kegalle-ui-responsive-v1.css */
+
+/* --- Base Typography --- */
+body {
+    font-family: var(--kp-font);
+    color: var(--kp-text);
+    background: var(--kp-bg);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--kp-font);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--kp-navy);
+    letter-spacing: -0.02em;
+}
+
+/* --- Navbar premium refinement --- */
+.k-navbar {
+    background: var(--kp-surface);
+    box-shadow: var(--kp-shadow-sm);
+    border-bottom: 1px solid var(--kp-border);
+    transition: box-shadow var(--kp-transition);
+}
+
+.k-navbar-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+/* Search bar enhancement */
+.k-search-input {
+    font-family: var(--kp-font);
+    font-size: 14px;
+    transition: box-shadow var(--kp-transition);
+}
+
+.k-search-wrap:focus-within {
+    box-shadow: 0 0 0 3px rgba(27,94,32,.18);
+}
+
+/* --- Subnav polish --- */
+.k-subnav {
+    background: var(--kp-primary);
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+
+.k-subnav-link {
+    font-family: var(--kp-font);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .01em;
+    transition: color var(--kp-transition), background var(--kp-transition);
+}
+
+/* --- Premium Button system --- */
+.k-btn {
+    font-family: var(--kp-font);
+    font-weight: 600;
+    letter-spacing: .01em;
+    border-radius: 48px;
+    transition: all var(--kp-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.k-btn-primary {
+    background: var(--kp-primary);
+    box-shadow: 0 2px 8px rgba(27,94,32,.30);
+}
+.k-btn-primary:hover {
+    background: var(--kp-primary-dark);
+    box-shadow: 0 4px 16px rgba(27,94,32,.40);
+    transform: translateY(-1px);
+}
+.k-btn-primary:active{transform:translateY(0)}
+
+.k-btn-outline {
+    border: 2px solid var(--kp-primary);
+    color: var(--kp-primary);
+    background: transparent;
+}
+.k-btn-outline:hover {
+    background: var(--kp-primary-light);
+    box-shadow: 0 2px 12px rgba(27,94,32,.18);
+    transform: translateY(-1px);
+}
+
+/* Gold premium accent button */
+.k-btn-premium {
+    background: linear-gradient(135deg, #b7950b 0%, #d4ac0d 50%, #b7950b 100%);
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 2px 10px rgba(183,149,11,.35);
+}
+.k-btn-premium:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 18px rgba(183,149,11,.45);
+}
+
+/* --- Card system polish --- */
+.k-listing-card,
+.k-card {
+    border-radius: var(--kp-radius);
+    box-shadow: var(--kp-shadow-sm);
+    border: 1px solid var(--kp-border);
+    background: var(--kp-surface);
+    transition: transform var(--kp-transition), box-shadow var(--kp-transition);
+    overflow: hidden;
+}
+.k-listing-card:hover,
+.k-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--kp-shadow);
+}
+
+/* Store card */
+.khfs-card {
+    border-radius: var(--kp-radius);
+    box-shadow: var(--kp-shadow-sm);
+    border: 1px solid var(--kp-border);
+    transition: transform var(--kp-transition), box-shadow var(--kp-transition);
+}
+.khfs-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--kp-shadow-lg);
+}
+
+/* .k-section-header, .k-section-title, .k-section-link — defined in kegalle-ui-responsive-v1.css (higher cascade priority) */
+
+/* --- Hero premium polish --- */
+.home-hero-photo {
+    background: linear-gradient(135deg, #0a2e12 0%, #1b5e20 60%, #2e7d32 100%);
+}
+
+.hs-overlay {
+    background: linear-gradient(180deg, rgba(0,0,0,.25) 0%, rgba(0,0,0,.55) 100%);
+}
+
+/* Hero text card with glass morphism */
+.hero-text-card h1 {
+    font-size: clamp(28px, 4.5vw, 48px);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1.08;
+}
+
+/* --- Animations for page elements --- */
+@keyframes kFadeSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.k-section {
+    animation: kFadeSlideUp .4s ease both;
+}
+.k-section:nth-child(2){animation-delay:.05s}
+.k-section:nth-child(3){animation-delay:.10s}
+.k-section:nth-child(4){animation-delay:.15s}
+
+@media (prefers-reduced-motion: reduce) {
+  .k-section { animation: none; }
+  .k-btn, .k-listing-card, .khfs-card, .kex-card { transition: none; }
+}
+
+/* --- Listing price badge --- */
+.k-price {
+    font-family: var(--kp-font);
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--kp-primary);
+}
+
+/* --- Badge system --- */
+.k-badge {
+    font-family: var(--kp-font);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    border-radius: 20px;
+    padding: 3px 10px;
+}
+
+/* --- Form inputs --- */
+input[type="text"],
+input[type="email"],
+input[type="search"],
+input[type="tel"],
+input[type="number"],
+textarea,
+select {
+    font-family: var(--kp-font);
+    border: 1.5px solid var(--kp-border);
+    border-radius: var(--kp-radius-sm);
+    transition: border-color var(--kp-transition), box-shadow var(--kp-transition);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: var(--kp-primary);
+    box-shadow: 0 0 0 3px rgba(27,94,32,.15);
+}
+
+/* --- Premium footer accent --- */
+.k-footer {
+    border-top: 3px solid var(--kp-primary);
+}
+
+/* .k-stats-strip, .k-carousel-side-btn, .k-wa-float-left — defined in kegalle-ui-responsive-v1.css (higher cascade priority) */
+
+/* Hero layout is handled by kegalle-frontend.css (rebuilt via Vite) */

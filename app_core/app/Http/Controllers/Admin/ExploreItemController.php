@@ -42,7 +42,9 @@ class ExploreItemController extends Controller
         ];
 
         if ($request->hasFile('image')) {
-            $payload['image'] = $request->file('image')->store('explore', 'public');
+            $payload['image'] = \App\Helpers\ImageHelper::finalize(
+                $request->file('image')->store('explore', 'public')
+            );
         }
 
         ExploreItem::create($payload);
@@ -78,7 +80,9 @@ class ExploreItemController extends Controller
             if ($exploreItem->image) {
                 Storage::disk('public')->delete($exploreItem->image);
             }
-            $payload['image'] = $request->file('image')->store('explore', 'public');
+            $payload['image'] = \App\Helpers\ImageHelper::finalize(
+                $request->file('image')->store('explore', 'public')
+            );
         } elseif ($request->boolean('remove_image') && $exploreItem->image) {
             Storage::disk('public')->delete($exploreItem->image);
             $payload['image'] = null;
@@ -121,7 +125,7 @@ class ExploreItemController extends Controller
             'link_label' => 'nullable|string|max:60',
             'sort_order' => 'nullable|integer',
             'is_active' => 'nullable|boolean',
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:3072'],
             'remove_image' => 'nullable|boolean',
         ]);
     }

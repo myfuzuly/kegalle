@@ -13,7 +13,13 @@ class CustomFieldController extends Controller
 {
     public function index()
     {
-        return view('admin.fields.index', ['fields' => CustomField::latest()->get(), 'groups' => CustomFieldGroup::all(), 'categories' => Category::all()]);
+        return view('admin.fields.index', [
+            'fields'     => CustomField::latest()->get(),
+            'groups'     => CustomFieldGroup::all(),
+            'categories' => cache()->remember('admin_active_categories', 300, fn () =>
+                Category::where('is_active', true)->orderBy('sort_order')->orderBy('name')->get(['id', 'name'])
+            ),
+        ]);
     }
 
     public function store(Request $r)

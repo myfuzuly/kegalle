@@ -1,6 +1,6 @@
 <?php
-require '/home/kurulla/app_core/vendor/autoload.php';
-$app = require '/home/kurulla/app_core/bootstrap/app.php';
+require '/home/kegalle/app_core/vendor/autoload.php';
+$app = require '/home/kegalle/app_core/bootstrap/app.php';
 $app->make('Illuminate\Contracts\Http\Kernel')->handle(
     Illuminate\Http\Request::capture()
 );
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 // Get the FULL error log tail — last 200 lines, no filtering
-$logPath = '/home/kurulla/app_core/storage/logs/laravel.log';
+$logPath = '/home/kegalle/app_core/storage/logs/laravel.log';
 $lines = file($logPath);
 $last = array_slice($lines, -200);
 

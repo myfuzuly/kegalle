@@ -34,16 +34,14 @@ class RoleController extends Controller
             'permissions.*' => 'string|in:' . implode(',', array_keys(Role::PERMISSIONS)),
         ]);
 
-        Role::create([
+        $role = Role::create([
             'key' => Str::slug($data['name'], '_'),
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
-            'is_admin_level' => true,
-            'is_super' => false,
-            'is_protected' => false,
             'sort_order' => 10,
             'permissions' => array_values($data['permissions'] ?? []),
         ]);
+        $role->forceFill(['is_admin_level' => true, 'is_super' => false, 'is_protected' => false])->save();
 
         return back()->with('success', "Role \"{$data['name']}\" created.");
     }

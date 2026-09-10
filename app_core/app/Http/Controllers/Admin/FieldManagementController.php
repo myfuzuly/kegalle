@@ -18,7 +18,7 @@ class FieldManagementController extends Controller
 
         $fields = CustomField::withCount('categories')->orderBy('sort_order')->orderBy('label')->get();
 
-        $categories = Category::with('parent')
+        $categories = Category::with(['parent', 'customFields'])
             ->whereNotNull('parent_id')
             ->where('is_active', true)
             ->orderBy('sort_order')->orderBy('name')->get();
@@ -34,16 +34,20 @@ class FieldManagementController extends Controller
     {
         $data = $request->validate([
             'label' => 'required|string|max:100',
-            'type' => 'required|in:select,text,number,checkbox_group,brand_select,model_select',
+            'type' => 'required|in:select,text,number,checkbox_group,brand_select,model_select,pill_group,text_unit',
             'options' => 'nullable|string',
             'placeholder' => 'nullable|string|max:150',
+            'unit' => 'nullable|string|max:20',
+            'multi' => 'nullable|boolean',
+            'full_width' => 'nullable|boolean',
             'is_required' => 'nullable|boolean',
             'is_searchable' => 'nullable|boolean',
             'sort_order' => 'nullable|integer',
         ]);
 
+        $optionTypes = ['select', 'checkbox_group', 'pill_group'];
         $options = null;
-        if (in_array($data['type'], ['select', 'checkbox_group']) && !empty($data['options'])) {
+        if (in_array($data['type'], $optionTypes) && !empty($data['options'])) {
             $options = array_map('trim', explode(',', $data['options']));
         }
 
@@ -53,6 +57,9 @@ class FieldManagementController extends Controller
             'type' => $data['type'],
             'options' => $options,
             'placeholder' => $data['placeholder'] ?? null,
+            'unit' => $data['unit'] ?? null,
+            'multi' => $request->boolean('multi'),
+            'full_width' => $request->boolean('full_width'),
             'is_required' => $request->boolean('is_required'),
             'is_searchable' => $request->boolean('is_searchable'),
             'sort_order' => $data['sort_order'] ?? 0,
@@ -65,16 +72,20 @@ class FieldManagementController extends Controller
     {
         $data = $request->validate([
             'label' => 'required|string|max:100',
-            'type' => 'required|in:select,text,number,checkbox_group,brand_select,model_select',
+            'type' => 'required|in:select,text,number,checkbox_group,brand_select,model_select,pill_group,text_unit',
             'options' => 'nullable|string',
             'placeholder' => 'nullable|string|max:150',
+            'unit' => 'nullable|string|max:20',
+            'multi' => 'nullable|boolean',
+            'full_width' => 'nullable|boolean',
             'is_required' => 'nullable|boolean',
             'is_searchable' => 'nullable|boolean',
             'sort_order' => 'nullable|integer',
         ]);
 
+        $optionTypes = ['select', 'checkbox_group', 'pill_group'];
         $options = null;
-        if (in_array($data['type'], ['select', 'checkbox_group']) && !empty($data['options'])) {
+        if (in_array($data['type'], $optionTypes) && !empty($data['options'])) {
             $options = array_map('trim', explode(',', $data['options']));
         }
 
@@ -83,6 +94,9 @@ class FieldManagementController extends Controller
             'type' => $data['type'],
             'options' => $options,
             'placeholder' => $data['placeholder'] ?? null,
+            'unit' => $data['unit'] ?? null,
+            'multi' => $request->boolean('multi'),
+            'full_width' => $request->boolean('full_width'),
             'is_required' => $request->boolean('is_required'),
             'is_searchable' => $request->boolean('is_searchable'),
             'sort_order' => $data['sort_order'] ?? 0,

@@ -10,7 +10,10 @@ class Setting extends Model
 
     public static function getValue(string $key, mixed $default = null): mixed
     {
-        return static::where('key', $key)->value('value') ?? $default;
+        $all = \Illuminate\Support\Facades\Cache::remember('settings_all', 3600, fn() =>
+            static::pluck('value', 'key')->all()
+        );
+        return $all[$key] ?? $default;
     }
 
     public static function setValue(string $key, mixed $value, string $type = 'text'): void
@@ -19,5 +22,6 @@ class Setting extends Model
             ['key' => $key],
             ['value' => $value, 'type' => $type]
         );
+        \Illuminate\Support\Facades\Cache::forget('settings_all');
     }
 }

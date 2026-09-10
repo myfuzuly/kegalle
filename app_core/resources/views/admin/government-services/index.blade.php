@@ -4,20 +4,23 @@
 @section('heading','Government Services Management')
 @section('subheading','Manage the services displayed on the Government Services page')
 @section('actions')<a href="/admin/government-services/create" class="ka-btn ka-btn-primary">+ Add Service</a>@endsection
+@push('styles')
+
+@endpush
 @section('content')
 <section class="sa-card">
-<div class="sa-head"><div><p>Super Admin</p><h1>Government Services</h1></div></div>
-<div class="sa-table-wrap"><table class="sa-table"><thead><tr><th>Icon</th><th>Title</th><th>Description</th><th>Contact</th><th>Sort</th><th>Status</th><th>Action</th></tr></thead><tbody>
+<div class="sa-card-head"><h2>Government Services</h2></div>
+<div class="sa-table-wrap"><table class="sa-table sa-table-government-services"><thead><tr><th>Icon</th><th>Title</th><th>Description</th><th>Contact</th><th>Sort</th><th>Status</th><th>Action</th></tr></thead><tbody>
 @forelse($services as $service)
 <tr>
-    <td>
+    <td class="w64-pr0">
         @if($service->image)
-            <img src="{{ asset('storage/'.$service->image) }}" alt="{{ $service->title }}" style="width:46px;height:46px;border-radius:10px;object-fit:cover">
+            <img class="thumb-44" src="{{ asset('storage/'.$service->image) }}" alt="{{ $service->title }}">
         @else
-            <span style="width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,{{ $service->icon_bg_start }},{{ $service->icon_bg_end }});color:#fff">{{ $service->icon }}</span>
+            <span style="width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,{{ $service->icon_bg_start }},{{ $service->icon_bg_end }});color:#fff">{{ $service->icon }}</span>
         @endif
     </td>
-    <td><b>{{ $service->title }}</b><br><small style="color:#667085">/government-services/{{ $service->slug }}</small></td>
+    <td class="max-w-200"><b class="text-truncate text-truncate-190">{{ $service->title }}</b><small class="text-gray">{{ $service->items_count }} items</small></td>
     <td><small>{{ \Illuminate\Support\Str::limit($service->description, 60) }}</small></td>
     <td><small>{{ $service->phone ?: '—' }}</small></td>
     <td>{{ $service->sort_order }}</td>

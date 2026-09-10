@@ -10,8 +10,9 @@ class Deal extends Model
         'listing_id', 'store_id', 'user_id',
         'deal_price', 'original_price', 'discount_percent',
         'starts_at', 'ends_at',
-        'status', 'is_flash', 'is_featured',
-        'admin_note', 'sold_count', 'stock_qty',
+        'status', 'admin_note', 'sold_count', 'stock_qty',
+        'title', 'description',
+        'poster_type', 'organizer_name', 'organizer_phone', 'organizer_email',
     ];
 
     protected $casts = [

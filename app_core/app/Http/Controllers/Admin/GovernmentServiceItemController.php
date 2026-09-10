@@ -44,7 +44,9 @@ class GovernmentServiceItemController extends Controller
         ];
 
         if ($request->hasFile('image')) {
-            $payload['image'] = $request->file('image')->store('government-services/items', 'public');
+            $payload['image'] = \App\Helpers\ImageHelper::finalize(
+                $request->file('image')->store('government-services/items', 'public')
+            );
         }
 
         GovernmentServiceItem::create($payload);
@@ -79,7 +81,9 @@ class GovernmentServiceItemController extends Controller
             if ($item->image) {
                 Storage::disk('public')->delete($item->image);
             }
-            $payload['image'] = $request->file('image')->store('government-services/items', 'public');
+            $payload['image'] = \App\Helpers\ImageHelper::finalize(
+                $request->file('image')->store('government-services/items', 'public')
+            );
         } elseif ($request->boolean('remove_image') && $item->image) {
             Storage::disk('public')->delete($item->image);
             $payload['image'] = null;
@@ -116,10 +120,10 @@ class GovernmentServiceItemController extends Controller
             'phone' => 'nullable|string|max:100',
             'email' => 'nullable|string|max:190',
             'address' => 'nullable|string|max:500',
-            'map_url' => 'nullable|string|max:500',
+            'map_url' => ['nullable','string','max:500','regex:/^https:\/\/www\.google\.com\/maps\/embed/'],
             'sort_order' => 'nullable|integer',
             'is_active' => 'nullable|boolean',
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:3072'],
             'remove_image' => 'nullable|boolean',
         ]);
     }

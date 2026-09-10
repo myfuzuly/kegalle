@@ -18,7 +18,7 @@ echo 'from: ' . config('mail.from.address') . '<br><br>';
 
 try {
     \Illuminate\Support\Facades\Mail::raw('Contact form delivery test from kurulla.com diagnostics.', function ($m) {
-        $m->to(config('mail.from.address'))->subject('Kurulla mail diagnostic test');
+        $m->to(config('mail.from.address'))->subject('kegalle mail diagnostic test');
     });
     echo '<b>TEST SEND: SUCCESS</b>';
 } catch (\Throwable $e) {

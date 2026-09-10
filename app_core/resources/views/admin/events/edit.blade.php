@@ -9,7 +9,7 @@
 <form class="ka-premium-form" method="post" action="/admin/events/{{ $event->id }}">
 @csrf @method('PUT')
 
-@if($errors->any())<div style="background:#FFEBEE;color:#C62828;padding:10px 16px;border-radius:8px;margin-bottom:16px;font-size:14px">@foreach($errors->all() as $e)<div>{{ $e }}</div>@endforeach</div>@endif
+@if($errors->any())<div class="alert-red-sm">@foreach($errors->all() as $e)<div>{{ $e }}</div>@endforeach</div>@endif
 
 <div class="ka-form-grid">
     <div class="ka-field ka-span-2"><label>Event Title *</label><input name="title" value="{{ old('title', $event->title) }}" required></div>
@@ -39,7 +39,7 @@
     <label class="ka-check"><input type="checkbox" name="is_featured" value="1" @checked(old('is_featured', $event->is_featured))> Featured Event</label>
 </div>
 
-<div style="background:#F5F7FB;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px;color:#666">
+<div class="notice-gray">
     <b>Stats:</b> {{ number_format($event->views ?? 0) }} views · Created {{ $event->created_at?->diffForHumans() }} · Slug: <code>{{ $event->slug }}</code>
 </div>
 

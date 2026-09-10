@@ -15,14 +15,19 @@ class User extends Authenticatable
         'email',
         'phone',
         'password',
-        'role',
-        'status',
-        'allow_multiple_stores',
-        'store_limit',
         'location_id',
         'account_type',
-        'verification_token',
-        'email_verified_at',
+        'avatar',
+        'social_provider',
+        'social_provider_id',
+        'phone_verified_at',
+    ];
+
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'phone_verified_at' => 'datetime',
+        'last_login_at'     => 'datetime',
+        'is_verified'       => 'boolean',
     ];
 
     protected $hidden = [
@@ -54,16 +59,12 @@ class User extends Authenticatable
             return true;
         }
 
-        try {
-            $role = $this->roleModel;
-            if ($role) {
-                return $role->allows($permission);
-            }
-        } catch (\Throwable $e) {
-            // roles table unavailable — fall through to legacy behaviour
+        $role = $this->roleModel;
+        if ($role) {
+            return $role->allows($permission);
         }
 
-        // Legacy: plain "admin" role gets everything except role management
+        // No custom role assigned — plain "admin" gets all sections except role management
         return $this->role === 'admin' && $permission !== 'roles';
     }
 

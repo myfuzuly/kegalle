@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Mail\NewChatMessageMail;
 use App\Models\ChatThread;
 use App\Models\ChatMessage;
 use App\Models\Listing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class ChatController extends Controller
 {
@@ -83,6 +86,9 @@ class ChatController extends Controller
 
         abort_if($sellerId === $userId, 403, 'You cannot message yourself.');
 
+        $listing = Listing::findOrFail($request->listing_id);
+        abort_if((int) $listing->user_id !== $sellerId, 422, 'Listing does not belong to that seller.');
+
         // Check for existing thread
         $thread = ChatThread::where('listing_id', $request->listing_id)
             ->where('buyer_id', $userId)
@@ -98,11 +104,22 @@ class ChatController extends Controller
             ]);
         }
 
-        ChatMessage::create([
+        $msg = ChatMessage::create([
             'thread_id' => $thread->id,
             'sender_id' => $userId,
             'message' => $request->message,
         ]);
+
+        $thread->load(['buyer', 'seller', 'listing']);
+        $sender = $thread->buyer_id === $userId ? $thread->buyer : $thread->seller;
+        $recipient = $thread->buyer_id === $userId ? $thread->seller : $thread->buyer;
+        if ($recipient && $recipient->email) {
+            try {
+                Mail::to($recipient->email)->queue(new NewChatMessageMail($thread, $msg, $sender->name ?? 'Someone'));
+            } catch (\Throwable $e) {
+                Log::warning('Chat mail failed: ' . $e->getMessage());
+            }
+        }
 
         return redirect()->route('dashboard.chat.show', $thread)->with('success', 'Message sent.');
     }
@@ -116,11 +133,22 @@ class ChatController extends Controller
             'message' => 'required|string|max:2000',
         ]);
 
-        ChatMessage::create([
+        $msg = ChatMessage::create([
             'thread_id' => $thread->id,
             'sender_id' => $userId,
             'message' => $request->message,
         ]);
+
+        $thread->load(['buyer', 'seller', 'listing']);
+        $sender = $thread->buyer_id === $userId ? $thread->buyer : $thread->seller;
+        $recipient = $thread->buyer_id === $userId ? $thread->seller : $thread->buyer;
+        if ($recipient && $recipient->email) {
+            try {
+                Mail::to($recipient->email)->queue(new NewChatMessageMail($thread, $msg, $sender->name ?? 'Someone'));
+            } catch (\Throwable $e) {
+                Log::warning('Chat mail failed: ' . $e->getMessage());
+            }
+        }
 
         return redirect()->route('dashboard.chat.show', $thread)->with('success', 'Reply sent.');
     }

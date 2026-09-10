@@ -1,0 +1,531 @@
+
+
+/* --------------------------------------------------------------------------
+   19. LISTING PAGE LAYOUT — sidebar 260px + main 1fr
+   -------------------------------------------------------------------------- */
+.k-listing-page-grid{display:grid;grid-template-columns:260px minmax(0,1fr);gap:24px;align-items:start}
+
+/* --------------------------------------------------------------------------
+   20. STORE PROFILE CARD
+   -------------------------------------------------------------------------- */
+
+.k-store-profile-card {
+    border-radius: var(--k-radius-lg);
+    border: 1.5px solid var(--k-border);
+    background: var(--k-surface);
+    box-shadow: var(--k-shadow-sm);
+    overflow: hidden;
+    transition: box-shadow var(--k-duration-base) var(--k-ease-out);
+}
+
+@media (hover: hover) {
+  .k-store-profile-card:hover { box-shadow: var(--k-shadow); }
+}
+
+/* ================================================================
+   HERO — FINAL DEFINITIVE (last file in bundle, wins all conflicts)
+   ================================================================ */
+.home-hero {
+    min-height: 680px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    overflow: hidden !important;
+}
+.home-hero-inner {
+    position: relative !important;
+    z-index: 2 !important;
+    width: 100% !important;
+    max-width: 1280px !important;
+    margin: 0 auto !important;
+    padding: 24px 40px !important;
+    box-sizing: border-box !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 32px !important;
+    align-items: stretch !important;
+    align-self: center !important;
+}
+/* Premium glass card — same for both sides */
+.hero-actions-card,
+.hero-text-card {
+    background: rgba(0,0,0,.55) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255,255,255,.22) !important;
+    border-radius: 20px !important;
+    box-shadow: 0 8px 40px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.1) !important;
+    box-sizing: border-box !important;
+    color: #fff !important;
+    padding: 24px 20px !important;
+}
+.hero-actions-card {
+    order: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+}
+.hero-text-card {
+    order: 2 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+}
+/* Typography */
+
+.home-hero p, .home-hero .hero-sub{color:rgba(255,255,255,.88) !important}
+.hero-actions-card .hero-card-heading,
+.hero-actions-card h2, .hero-actions-card h3 {
+    color: rgba(255,255,255,.95) !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    margin-bottom: 12px !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    line-height: 1.4 !important;
+}
+/* Action buttons */
+.hero-action-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    margin-bottom: 12px !important;
+}
+.hero-action-btn {
+    padding: 10px 8px !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255,255,255,.15) !important;
+    background: rgba(255,255,255,.08) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    gap: 4px !important;
+    color: #fff !important;
+    text-decoration: none !important;
+}
+.hero-action-btn:hover{background:rgba(255,255,255,.18) !important}
+.hero-action-btn strong{font-size:12px !important;font-weight:700 !important;color:#fff !important}
+.hero-action-btn span{font-size:10px !important;color:rgba(255,255,255,.7) !important;line-height:1.3 !important}
+.hero-action-icon {
+    width: 32px !important;
+    height: 32px !important;
+    background: rgba(76,175,80,.3) !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+/* Trending */
+.hero-trending {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 5px !important;
+    padding-top: 10px !important;
+    overflow: visible !important;
+    border-top: 1px solid rgba(255,255,255,.15) !important;
+}
+.hero-trending-label {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    color: rgba(255,255,255,.6) !important;
+    text-transform: uppercase !important;
+    letter-spacing: .05em !important;
+}
+.hero-trend-tag {
+    background: rgba(255,255,255,.12) !important;
+    color: rgba(255,255,255,.9) !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    padding: 3px 8px !important;
+    border-radius: 20px !important;
+    text-decoration: none !important;
+    white-space: nowrap !important;
+    border: 1px solid rgba(255,255,255,.18) !important;
+}
+/* Mobile */
+@media (max-width: 900px) {
+    .home-hero { min-height: 0 !important; }
+    .home-hero-inner {
+        grid-template-columns: 1fr !important; gap: 16px !important;
+        padding: 20px 16px !important;
+    }
+    .hero-text-card { order: 1 !important; }
+    .hero-actions-card { order: 2 !important; }
+}
+
+/* ================================================================
+   FEATURED STORE CARDS (khfs) — Full card system
+   ================================================================ */
+.khfs-item {
+    flex: 0 0 calc(25% - 12px);
+    min-width: 220px;
+    max-width: calc(25% - 12px);
+}
+
+.khfs-card {
+    display: flex;
+    flex-direction: column;
+    border-radius: 14px;
+    border: 1.5px solid var(--k-border);
+    background: var(--k-surface);
+    box-shadow: 0 2px 10px rgba(0,0,0,.07);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: transform .2s ease, box-shadow .2s ease;
+    will-change: transform;
+    height: 100%;
+}
+.khfs-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(27,94,32,.18);
+    border-color: var(--k-accent, #2e7d32);
+}
+
+.khfs-banner {
+    position: relative;
+    aspect-ratio: 16 / 6;
+    background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.khfs-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.khfs-logo-ring {
+    position: absolute;
+    bottom: -18px;
+    left: 14px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    background: #fff;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.khfs-logo-ring img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.khfs-logo-init {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--k-primary, #1b5e20);
+    line-height: 1;
+}
+
+.khfs-rank-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0,0,0,.55);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    backdrop-filter: blur(6px);
+}
+
+.khfs-body {
+    padding: 28px 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+}
+.khfs-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--k-text-primary, #1e293b);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.khfs-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    min-height: 20px;
+}
+.khfs-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    line-height: 1.4;
+}
+.khfs-badge-v {
+    background: #e8f5e9;
+    color: #1b5e20;
+}
+.khfs-badge-p {
+    background: #e3f2fd;
+    color: #0d47a1;
+}
+
+.khfs-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px solid var(--k-border, #e2e8f0);
+}
+.khfs-count {
+    font-size: 12px;
+    color: var(--k-text-muted, #64748b);
+}
+.khfs-count strong {
+    color: var(--k-text-primary, #1e293b);
+    font-weight: 700;
+}
+.khfs-visit {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--k-primary, #1b5e20);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+/* Add Your Store card */
+.khfs-add-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 100%;
+    min-height: 180px;
+    border-radius: 14px;
+    border: 2px dashed var(--k-border, #e2e8f0);
+    background: var(--k-surface);
+    text-decoration: none;
+    color: var(--k-text-muted, #64748b);
+    transition: border-color .2s, background .2s;
+    padding: 24px 16px;
+}
+.khfs-add-card:hover {
+    border-color: var(--k-primary, #1b5e20);
+    background: #f0faf0;
+    color: var(--k-primary, #1b5e20);
+}
+.khfs-add-icon {
+    font-size: 32px;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--k-primary, #1b5e20);
+    opacity: .6;
+}
+.khfs-add-name {
+    font-size: 13px;
+    font-weight: 700;
+}
+.khfs-add-meta {
+    font-size: 11px;
+    opacity: .7;
+}
+
+@media (max-width: 900px) {
+    .khfs-item {
+        flex: 0 0 calc(50% - 8px);
+        max-width: calc(50% - 8px);
+        min-width: 180px;
+    }
+}
+@media (max-width: 480px) {
+    .khfs-item {
+        flex: 0 0 calc(100% - 8px);
+        max-width: calc(100% - 8px);
+    }
+}
+
+/* ================================================================
+   SECTION HEADER, WA FLOAT, CAROUSEL, STATS STRIP
+   (--kp-* light tokens defined in kegalle-premium-ui.css; dark overrides merged above)
+   ================================================================ */
+
+/* Section header gold accent */
+.k-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--k-border, #e2e8f0);
+    position: relative;
+}
+.k-section-header::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 48px;
+    height: 2px;
+    background: var(--k-primary, #1b5e20);
+    border-radius: 2px;
+}
+
+/* WhatsApp float */
+.k-wa-float-left {
+    background: linear-gradient(180deg, #25D366 0%, #128C7E 100%);
+    box-shadow: 3px 0 16px rgba(18,140,126,.35);
+    z-index: 80;
+}
+.k-wa-float-left:hover {
+    background: linear-gradient(180deg, #128C7E 0%, #0f7a6e 100%);
+    box-shadow: 3px 0 22px rgba(18,140,126,.5);
+}
+
+/* Carousel nav buttons */
+.k-carousel-side-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--k-surface, #fff);
+    border: 1.5px solid var(--k-border, #e2e8f0);
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    color: var(--k-text-primary, #1e293b);
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .2s;
+    flex-shrink: 0;
+}
+.k-carousel-side-btn:hover {
+    background: var(--k-primary, #1b5e20);
+    color: #fff;
+    border-color: var(--k-primary, #1b5e20);
+    box-shadow: 0 4px 12px rgba(27,94,32,.25);
+}
+
+/* k-stats-strip */
+.k-stats-strip {
+    background: linear-gradient(135deg, var(--kp-primary, #1b5e20) 0%, #2e7d32 100%);
+    box-shadow: 0 4px 16px rgba(27,94,32,.25);
+}
+
+/* LISTING GRID — 3 columns inside sidebar layout */
+.k-grid-4{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;overflow:visible}
+@media (max-width:1100px){.k-grid-4{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}
+@media (max-width:640px){.k-grid-4{grid-template-columns:1fr!important;gap:12px!important}}
+
+/* PREMIUM LISTING CARD — Verified badge fix */
+.kpc-verified{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;color:#2e7d32;background:#e8f5e9;border:1px solid #c8e6c9;border-radius:4px;padding:2px 6px;white-space:nowrap;flex-shrink:0}
+.kpc-store-name,.kpc-user{display:flex;align-items:center;gap:4px;font-size:12px;color:#4a5568;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.kpc-meta{display:flex;align-items:center;gap:4px;font-size:12px;color:#6b7280;flex-wrap:wrap}
+.kpc-seller{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0}
+
+/* PREMIUM LISTING CARD */
+.kpc,.k-listing-card{
+  background:var(--k-surface);
+  border:1px solid var(--k-border);
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+  transition:box-shadow .2s,transform .18s,border-color .2s;
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+}
+.kpc:hover,.k-listing-card:hover{
+  box-shadow:0 8px 28px rgba(0,0,0,.13),0 2px 8px rgba(0,0,0,.06);
+  transform:translateY(-3px);
+  border-color:var(--k-primary-light);
+}
+.kpc-img,.k-listing-img{
+  width:100%;
+  aspect-ratio:4/3;
+  overflow:hidden;
+  background:var(--k-surface-2);
+  flex-shrink:0;
+}
+.kpc-img img,.kpc-photo,.k-listing-img img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition:transform .3s;
+}
+.kpc:hover .kpc-photo,.k-listing-card:hover .k-listing-img img{transform:scale(1.05)}
+.kpc-body,.k-listing-body{padding:14px 16px 16px;flex:1;display:flex;flex-direction:column;gap:6px}
+.kpc-title,.k-listing-title{
+  font-size:14.5px;
+  font-weight:600;
+  color:var(--k-text-primary);
+  line-height:1.35;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+.kpc-price,.k-listing-price{
+  font-size:15px;
+  font-weight:700;
+  color:var(--k-primary);
+  margin-top:auto;
+  padding-top:8px;
+}
+.kpc-footer,.k-listing-footer{
+  padding:10px 16px;
+  border-top:1px solid var(--k-border-light);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  font-size:12px;
+  color:var(--k-text-muted);
+}
+.kpc-badge{
+  display:inline-flex;
+  align-items:center;
+  font-size:11px;
+  font-weight:600;
+  padding:3px 8px;
+  border-radius:20px;
+  background:var(--k-primary-xlight);
+  color:var(--k-primary);
+  border:1px solid #C8E6C9;
+}
+
+/* --------------------------------------------------------------------------
+   WISHLIST HEART BUTTON
+   -------------------------------------------------------------------------- */
+.kpc-heart{
+  position:absolute;top:10px;right:10px;
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(4px);
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  z-index:4;
+  box-shadow:0 1px 6px rgba(0,0,0,.14);
+  transition:background .15s,transform .15s,box-shadow .15s;
+  color:#9ca3af;
+}
+.kpc-heart:hover{background:#fff;transform:scale(1.12);box-shadow:0 2px 10px rgba(0,0,0,.18);color:#e53e3e}
+.kpc-heart-active{color:#e53e3e!important;background:#fff!important;}
+.kpc-heart-active svg{fill:#e53e3e}
+@keyframes kpc-heart-pop{0%{transform:scale(1)}40%{transform:scale(1.35)}100%{transform:scale(1)}}
+.kpc-heart-active{animation:kpc-heart-pop .3s ease}
+
+/* --------------------------------------------------------------------------
+   SEARCH BAR RESPONSIVE WIDTH
+   -------------------------------------------------------------------------- */
+#k-search-vue{flex:1;min-width:0;}
+@media(max-width:640px){
+  #k-search-vue{width:100%;order:3;flex-basis:100%;}
+}

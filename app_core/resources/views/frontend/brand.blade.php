@@ -16,7 +16,10 @@
 <div class="container k-content-section">
     <div class="k-layout-sidebar">
         <div class="k-filter-sidebar">
-            <div class="k-filter-header"><span class="k-filter-title">Filter by Category</span><a href="/brand/{{ $brand->slug }}" class="k-filter-clear">Clear</a></div>
+            <div class="k-filter-header">
+                <span class="k-filter-title"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="k-filter-icon"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>Filter</span>
+                <a href="/brand/{{ $brand->slug }}" class="k-filter-clear">Clear Filters</a>
+            </div>
             <div class="k-filter-section">
                 <div class="k-filter-option">
                     <a href="/brand/{{ $brand->slug }}" class="k-filter-cat-link {{ !request('category') ? 'k-filter-label-active' : '' }}"><span>All Categories</span><span class="cnt">{{ $totalCount }}</span></a>
@@ -50,7 +53,7 @@
                 @forelse($listings as $listing)
                     @include('frontend.listings.card', ['listing' => $listing])
                 @empty
-                    <div class="k-empty-state-box k-text-tertiary" style="grid-column:1/-1">
+                    <div class="k-empty-state-box k-text-tertiary k-col-full">
                         <h3 class="k-empty-state-heading">No {{ $brand->name }} listings found</h3>
                         <p class="k-text-secondary">Try selecting a different category or check back later.</p>
                     </div>

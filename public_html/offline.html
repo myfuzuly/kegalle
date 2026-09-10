@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="si" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>No Connection — kegalle</title>
+<style>
+  :root { --green: #1a6b36; --green-light: #e8f5e9; --text: #1a202c; --muted: #718096; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f9fafb;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+  }
+  .icon-wrap {
+    width: 96px; height: 96px;
+    background: var(--green-light);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+  }
+  .icon-wrap svg { width: 48px; height: 48px; color: var(--green); }
+  .logo {
+    font-size: 22px; font-weight: 900; color: var(--green);
+    margin-bottom: 6px; letter-spacing: -.5px;
+  }
+  .logo span { color: #333; font-weight: 400; font-size: 13px; display: block; margin-top: 2px; }
+  h1 { font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 10px; }
+  p { font-size: 15px; color: var(--muted); max-width: 300px; line-height: 1.6; margin-bottom: 32px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--green); color: #fff;
+    border: none; border-radius: 12px;
+    padding: 14px 28px; font-size: 15px; font-weight: 700;
+    cursor: pointer; text-decoration: none;
+    transition: background .15s;
+  }
+  .btn:active { background: #155828; }
+  .cached-links { margin-top: 36px; }
+  .cached-links p { font-size: 13px; color: var(--muted); margin-bottom: 14px; }
+  .link-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .link-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #fff; border: 1.5px solid #e2e8f0;
+    border-radius: 20px; padding: 8px 16px;
+    font-size: 13px; font-weight: 600; color: var(--text);
+    text-decoration: none; cursor: pointer;
+  }
+  .link-chip:active { background: #f0fdf4; border-color: var(--green); }
+  .pulse {
+    width: 8px; height: 8px; border-radius: 50%; background: #ef4444;
+    display: inline-block;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
+  @media (prefers-color-scheme: dark) {
+    body { background: #0f172a; }
+    :root { --text: #f1f5f9; --muted: #94a3b8; --green-light: #052e16; }
+    .link-chip { background: #1e293b; border-color: #334155; color: #f1f5f9; }
+    .link-chip:active { background: #052e16; border-color: var(--green); }
+  }
+</style>
+</head>
+<body>
+
+<div class="icon-wrap">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="1" y1="1" x2="23" y2="23"/>
+    <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/>
+    <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/>
+    <path d="M10.71 5.05A16 16 0 0 1 22.56 9"/>
+    <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/>
+    <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+    <line x1="12" y1="20" x2="12.01" y2="20"/>
+  </svg>
+</div>
+
+<div class="logo">kegalle <span>Kegalle Marketplace</span></div>
+
+<h1>You're Offline</h1>
+<p>Check your internet connection and try again. Some pages you've visited recently may still be available.</p>
+
+<button class="btn" onclick="location.reload()">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+  Try Again
+</button>
+
+<div class="cached-links">
+  <p><span class="pulse"></span> Cached pages (available offline)</p>
+  <div class="link-row">
+    <a class="link-chip" href="/">🏠 Home</a>
+    <a class="link-chip" href="/listings">📋 All Ads</a>
+    <a class="link-chip" href="/stores">🏪 Stores</a>
+    <a class="link-chip" href="/dashboard">📊 Dashboard</a>
+  </div>
+</div>
+
+<script>
+// Auto-retry when connection restored
+window.addEventListener('online', () => location.reload());
+</script>
+</body>
+</html>

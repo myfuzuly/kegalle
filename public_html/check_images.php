@@ -1,9 +1,9 @@
 <?php
 $paths = [
-    '/home/kurulla/public_html/storage',
-    '/home/kurulla/public_html/storage/listings',
-    '/home/kurulla/app_core/storage/app/public',
-    '/home/kurulla/app_core/storage/app/public/listings',
+    '/home/kegalle/public_html/storage',
+    '/home/kegalle/public_html/storage/listings',
+    '/home/kegalle/app_core/storage/app/public',
+    '/home/kegalle/app_core/storage/app/public/listings',
 ];
 
 foreach ($paths as $p) {
@@ -22,9 +22,9 @@ foreach ($paths as $p) {
 }
 
 // Check specific file
-$file = '/home/kurulla/app_core/storage/app/public/listings/aTBE0qlkEQpGyYYDbnEZbJbVRPTs2MF3538yWlvA.jpg';
+$file = '/home/kegalle/app_core/storage/app/public/listings/aTBE0qlkEQpGyYYDbnEZbJbVRPTs2MF3538yWlvA.jpg';
 echo "<p><b>Specific image</b>: " . (file_exists($file) ? "EXISTS (" . filesize($file) . " bytes)" : "<span style='color:red'>NOT FOUND</span>") . "</p>";
 
 // Check via public_html/storage path
-$file2 = '/home/kurulla/public_html/storage/listings/aTBE0qlkEQpGyYYDbnEZbJbVRPTs2MF3538yWlvA.jpg';
+$file2 = '/home/kegalle/public_html/storage/listings/aTBE0qlkEQpGyYYDbnEZbJbVRPTs2MF3538yWlvA.jpg';
 echo "<p><b>Via public symlink</b>: " . (file_exists($file2) ? "EXISTS (" . filesize($file2) . " bytes)" : "<span style='color:red'>NOT FOUND</span>") . "</p>";

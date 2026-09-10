@@ -22,10 +22,16 @@
                 <div class="kg-alert">{{ session('success') }}</div>
             @endif
 
+            @auth
             <form method="POST" action="/email/resend">
                 @csrf
                 <button class="kg-btn kg-btn-primary kg-auth-btn" type="submit">Resend Verification Email</button>
             </form>
+            @else
+            <p style="font-size:14px;color:var(--k-text-secondary);margin-top:8px">
+                Once verified, <a href="/login" style="color:var(--k-primary)">login to your account</a>.
+            </p>
+            @endauth
         </div>
     </div>
 </section>

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Role extends Model
 {
-    protected $fillable = ['key', 'name', 'description', 'is_admin_level', 'is_super', 'is_protected', 'sort_order', 'permissions'];
+    protected $fillable = ['key', 'name', 'description', 'sort_order', 'permissions'];
 
     protected $casts = [
         'is_admin_level' => 'boolean',

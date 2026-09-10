@@ -40,7 +40,9 @@ class AdBannerController extends Controller
         ];
 
         if ($request->hasFile('image')) {
-            $payload['image'] = $request->file('image')->store('ad-banners', 'public');
+            $payload['image'] = \App\Helpers\ImageHelper::finalize(
+                $request->file('image')->store('ad-banners', 'public')
+            );
         }
 
         AdBanner::create($payload);
@@ -73,7 +75,9 @@ class AdBannerController extends Controller
             if ($adBanner->image) {
                 Storage::disk('public')->delete($adBanner->image);
             }
-            $payload['image'] = $request->file('image')->store('ad-banners', 'public');
+            $payload['image'] = \App\Helpers\ImageHelper::finalize(
+                $request->file('image')->store('ad-banners', 'public')
+            );
         } elseif ($request->boolean('remove_image') && $adBanner->image) {
             Storage::disk('public')->delete($adBanner->image);
             $payload['image'] = null;
@@ -112,7 +116,7 @@ class AdBannerController extends Controller
             'is_active' => 'nullable|boolean',
             'starts_at' => 'nullable|date',
             'ends_at' => 'nullable|date',
-            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:3072'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:3072'],
             'remove_image' => 'nullable|boolean',
         ]);
     }

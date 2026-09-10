@@ -1,7 +1,7 @@
 <a class="kg-listing-card" href="/listings/{{ $listing->slug }}">
     <div class="kg-listing-image">
         @if(isset($listing->images) && $listing->images->count())
-            <img src="/storage/{{ $listing->images->first()->path }}" alt="{{ $listing->title }}">
+            <img src="{{ asset('storage/'.ltrim($listing->images->first()->path,'/')) }}" alt="{{ $listing->title }}">
         @else
             <div class="kg-image-placeholder">{{ strtoupper(substr($listing->title,0,1)) }}</div>
         @endif

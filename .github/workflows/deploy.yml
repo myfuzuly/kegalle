@@ -1,0 +1,72 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    name: FTP Deploy → kurulla.com
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history so we can diff against last deploy
+
+      - name: Set up PHP (for pre-deploy checks)
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, pdo, pdo_sqlite, sqlite3
+          coverage: none
+
+      - name: Install Composer deps
+        working-directory: app_core
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Run tests before deploy
+        working-directory: app_core
+        run: |
+          cp .env.example .env 2>/dev/null || echo "APP_KEY=" > .env
+          php artisan key:generate
+          php artisan test --stop-on-failure
+
+      - name: Deploy app_core via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          port: 21
+          local-dir: ./app_core/
+          server-dir: /app_core/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/vendor/**
+            **/.env
+            **/storage/framework/views/**
+            **/storage/logs/**
+
+      - name: Deploy public_html via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USER }}
+          password: ${{ secrets.FTP_PASS }}
+          port: 21
+          local-dir: ./kegalle_extracted/public_html/
+          server-dir: /public_html/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/setup_*.php
+            **/setup_*.lock
+
+      - name: Clear blade cache via HTTP
+        run: |
+          curl -sf "https://kurulla.com/artisan-cache-clear.php" || true
+        continue-on-error: true

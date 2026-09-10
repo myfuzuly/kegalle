@@ -5,104 +5,78 @@
 
 @section('content')
 
-{{-- ========== HERO BANNER ========== --}}
-<section class="k-deals-hero">
-    <div class="container">
-        <div class="k-deals-hero-content">
-            <span class="k-deals-hero-badge">🔥 LIMITED TIME OFFERS</span>
-            <h1 class="k-deals-hero-title">Best Deals & Offers<br>in <span style="color:var(--k-accent)">Kegalle</span></h1>
-            <p class="k-deals-hero-desc">Discover amazing discounts on products, vehicles, properties and more from trusted local sellers.</p>
-            <form class="k-deals-search" action="/deals" method="GET">
-                <span class="k-deals-search-icon">🔍</span>
-                <input type="text" name="q" placeholder="Search deals, products or stores..." value="{{ request('q') }}">
-                <button type="submit" class="k-deals-search-btn">Search Deals</button>
-            </form>
-            <div class="k-deals-hero-badges">
-                <span>✓ Best Prices</span>
-                <span>🔥 Top Sellers</span>
-                <span>✓ Secure Deals</span>
-                <span>🚚 Fast Delivery</span>
-            </div>
+<div class="k-page-header">
+    <div class="k-page-header-inner">
+        <div>
+            <h1>🔥 Best Deals &amp; Offers in Kegalle</h1>
+            <p>Discover amazing discounts on products, vehicles, properties and more from trusted local sellers.</p>
         </div>
-        <div class="k-deals-hero-visual">
-            <div class="k-deals-hero-discount">
-                <span class="k-deals-hero-upto">UP TO</span>
-                <span class="k-deals-hero-percent">70<small>%</small></span>
-                <span class="k-deals-hero-off">OFF</span>
-            </div>
-            <div class="k-deals-hero-countdown">
-                <div class="k-deals-hero-countdown-label">Deal of the Day ends in</div>
-                <div class="k-deals-countdown-boxes" id="dealCountdown">
-                    <div class="k-countdown-box"><span id="cdHours">08</span><small>Hrs</small></div>
-                    <span class="k-countdown-sep">:</span>
-                    <div class="k-countdown-box"><span id="cdMins">24</span><small>Mins</small></div>
-                    <span class="k-countdown-sep">:</span>
-                    <div class="k-countdown-box"><span id="cdSecs">59</span><small>Secs</small></div>
-                </div>
-            </div>
-        </div>
+        <form class="k-page-header-search" action="/deals" method="GET" id="dealsSearchForm">
+            @foreach(request()->except(['q','page']) as $k => $v)
+                @if(is_array($v))
+                    @foreach($v as $item)<input type="hidden" name="{{ $k }}[]" value="{{ $item }}">@endforeach
+                @else
+                    <input type="hidden" name="{{ $k }}" value="{{ $v }}">
+                @endif
+            @endforeach
+            <label for="deals-search" class="sr-only">Search deals</label>
+            <input id="deals-search" type="text" name="q" placeholder="Search deals..." value="{{ request('q') }}" aria-label="Search deals">
+            <button type="submit" aria-label="Submit search">Search</button>
+        </form>
     </div>
-</section>
+</div>
 
 {{-- ========== CATEGORY SHORTCUTS ========== --}}
-<section class="container" style="padding-top:32px;padding-bottom:20px">
+<section class="container k-deals-section--top">
     <div class="k-deals-cats">
         @php
-            $dealCatIcons = ['📱','💻','🚗','🏠','🪑','👗','🔧','⚽','•••'];
-            $dealCatNames = ['Mobiles','Electronics','Vehicles','Property','Furniture','Fashion','Services','Sports','More'];
+            $dealCatIcons = ['📱','💻','🚗','🏠','🪑','👗','🔧','⚽'];
         @endphp
         @foreach($categories->take(8) as $i => $cat)
-            <a href="/listings?categories[]={{ $cat->slug }}" class="k-deals-cat-item">
+            <a href="/listings?categories[]={{ $cat->slug }}" class="k-deals-cat-item {{ in_array($cat->slug, (array)request('categories', [])) ? 'active' : '' }}">
                 <div class="k-deals-cat-icon">{{ $dealCatIcons[$i] ?? '📦' }}</div>
                 <span>{{ $cat->name }}</span>
             </a>
         @endforeach
-        @if($categories->count() < 8)
-            @for($i = $categories->count(); $i < 8; $i++)
-                <a href="/categories" class="k-deals-cat-item">
-                    <div class="k-deals-cat-icon">{{ $dealCatIcons[$i] ?? '📦' }}</div>
-                    <span>{{ $dealCatNames[$i] ?? 'More' }}</span>
-                </a>
-            @endfor
-        @endif
         <a href="/categories" class="k-deals-cat-item">
-            <div class="k-deals-cat-icon">•••</div>
+            <div class="k-deals-cat-icon">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="2" y="2" width="6" height="6" rx="1.5" fill="currentColor" opacity=".7"/><rect x="12" y="2" width="6" height="6" rx="1.5" fill="currentColor" opacity=".7"/><rect x="2" y="12" width="6" height="6" rx="1.5" fill="currentColor" opacity=".7"/><rect x="12" y="12" width="6" height="6" rx="1.5" fill="currentColor" opacity=".7"/></svg>
+            </div>
             <span>More</span>
         </a>
     </div>
 </section>
 
 {{-- ========== FLASH DEALS ========== --}}
-<section class="container" style="padding-bottom:32px">
+@if(($useRealDeals ?? false) && $flashDeals->isNotEmpty())
+@php $flashIsTrue = $flashDeals->first()?->ends_at
+    && $flashDeals->first()->ends_at->gt(now())
+    && $flashDeals->first()->ends_at->lt(now()->addHours(24)); @endphp
+<section class="container k-content-section--pb">
     <div class="k-section-header">
-        <div style="display:flex;align-items:center;gap:12px">
-            <h2 class="k-section-title">⚡ Flash Deals</h2>
+        <div class="k-section-header-row">
+            <h2 class="k-section-title">{{ $flashIsTrue ? '⚡ Flash Deals' : '🏷️ Limited Deals' }}</h2>
+            @if($flashDeals->first()?->ends_at)
             <div class="k-flash-timer-badge">
                 Ending in
-                <span class="k-flash-timer" id="flashTimer">03 : 14 : 29</span>
+                <span class="k-flash-timer" id="flashTimer"
+                      data-ends="{{ $flashDeals->first()->ends_at->toIso8601String() }}">
+                    --:--:--
+                </span>
             </div>
+            @endif
         </div>
-        <a href="/listings?sort=popular" class="k-view-all">View all Flash Deals →</a>
+        <a href="/deals" class="k-view-all">View all Deals →</a>
     </div>
 
     <div class="k-flash-deals-grid">
-        @php $flashSource = ($useRealDeals ?? false) && $flashDeals->isNotEmpty() ? $flashDeals : $featuredListings->take(5); @endphp
-        @foreach($flashSource as $i => $item)
+        @foreach($flashDeals as $item)
             @php
-                $listing = ($useRealDeals ?? false) && isset($item->listing) ? $item->listing : $item;
-                $img = optional($listing->images->first())->path ?? null;
+                $listing = $item->listing;
+                if (!$listing) continue;
+                $img    = optional($listing->images->first())->path ?? null;
                 $imgUrl = $img ? asset('storage/'.ltrim($img,'/')) : null;
-                if (($useRealDeals ?? false) && $item instanceof \App\Models\Deal) {
-                    $originalPrice = $item->original_price;
-                    $salePrice = $item->deal_price;
-                    $discountPct = $item->discount_percent;
-                    $soldPct = $item->stock_qty > 0 ? min(100, (int)($item->sold_count / $item->stock_qty * 100)) : [68,52,73,41,25][$i%5];
-                } else {
-                    $originalPrice = $listing->price > 0 ? $listing->price : rand(50000, 300000);
-                    $discountPct = [18, 24, 20, 16, 30][$i % 5];
-                    $salePrice = (int)($originalPrice * (1 - $discountPct/100));
-                    $soldPct = [68, 52, 73, 41, 25][$i % 5];
-                }
+                $soldPct = $item->stock_qty > 0 ? min(100, (int)($item->sold_count / $item->stock_qty * 100)) : 0;
                 $location = optional($listing->locationModel)->name ?? $listing->location ?? 'Kegalle';
             @endphp
             <a href="/listings/{{ $listing->slug }}" class="k-flash-deal-card">
@@ -110,168 +84,206 @@
                     @if($imgUrl)
                         <img src="{{ $imgUrl }}" alt="{{ $listing->title }}" loading="lazy">
                     @else
-                        <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:48px;background:var(--k-surface-2)">🛍️</div>
+                        <div class="k-deal-img-ph">🛍️</div>
                     @endif
-                    <span class="k-deal-badge-pct">-{{ number_format($discountPct, 0) }}%</span>
-                    <button class="k-deal-heart" aria-label="Save">♡</button>
+                    <span class="k-deal-badge-pct">-{{ number_format($item->discount_percent, 0) }}%</span>
+                    <button class="k-deal-heart" aria-label="Save" type="button">♡</button>
                 </div>
                 <div class="k-flash-deal-info">
                     <h3 class="k-flash-deal-title">{{ \Illuminate\Support\Str::limit($listing->title, 28) }}</h3>
                     <div class="k-flash-deal-loc">📍 {{ $location }}</div>
                     <div class="k-flash-deal-prices">
-                        <span class="k-flash-deal-sale">LKR {{ number_format($salePrice) }}</span>
-                        <span class="k-flash-deal-orig">LKR {{ number_format($originalPrice) }}</span>
+                        <span class="k-flash-deal-sale">LKR {{ number_format($item->deal_price) }}</span>
+                        <span class="k-flash-deal-orig">LKR {{ number_format($item->original_price) }}</span>
                     </div>
+                    @if($soldPct > 0)
                     <div class="k-flash-deal-progress">
                         <div class="k-flash-deal-bar"><div class="k-flash-deal-bar-fill" style="width:{{ $soldPct }}%"></div></div>
                         <span class="k-flash-deal-sold">{{ $soldPct }}% Sold</span>
                     </div>
+                    @endif
                 </div>
             </a>
         @endforeach
     </div>
 </section>
+@endif
 
-{{-- ========== COUPONS ========== --}}
-<section class="container" style="padding-bottom:32px">
-    <div class="k-coupons-row">
-        <div class="k-coupon-card k-coupon-green">
-            <div class="k-coupon-icon">🎫</div>
-            <div class="k-coupon-info">
-                <div class="k-coupon-code">NEWUSER20</div>
-                <div class="k-coupon-desc">20% OFF for new users<br>Min. spend LKR 10,000</div>
-            </div>
-            <button class="k-coupon-copy" onclick="navigator.clipboard.writeText('NEWUSER20');this.textContent='Copied!';setTimeout(()=>this.textContent='Copy Code',2000)">Copy Code</button>
+{{-- ========== SELLER CTA STRIP ========== --}}
+<section class="container k-content-section--pb">
+    <div class="k-deals-seller-strip">
+        <div class="k-deals-seller-icon">🏪</div>
+        <div class="k-deals-seller-text">
+            <strong>Got something to sell?</strong>
+            <span>List your products for free and reach thousands of buyers in Kegalle district.</span>
         </div>
-        <div class="k-coupon-card k-coupon-blue">
-            <div class="k-coupon-icon">🚚</div>
-            <div class="k-coupon-info">
-                <div class="k-coupon-code">FREEDELIVERY</div>
-                <div class="k-coupon-desc">Free delivery on orders<br>above LKR 5,000</div>
-            </div>
-            <button class="k-coupon-copy" onclick="navigator.clipboard.writeText('FREEDELIVERY');this.textContent='Copied!';setTimeout(()=>this.textContent='Copy Code',2000)">Copy Code</button>
-        </div>
-        <div class="k-coupon-card k-coupon-red">
-            <div class="k-coupon-icon">🎁</div>
-            <div class="k-coupon-info">
-                <div class="k-coupon-code">MEGADEAL</div>
-                <div class="k-coupon-desc">Up to 30% OFF on<br>selected items</div>
-            </div>
-            <button class="k-coupon-copy" onclick="navigator.clipboard.writeText('MEGADEAL');this.textContent='Copied!';setTimeout(()=>this.textContent='Copy Code',2000)">Copy Code</button>
+        <div class="k-deals-seller-actions">
+            <a href="/register?account_type=store" class="k-btn k-btn-primary">Open Free Store</a>
+            <a href="/dashboard/listings/create" class="k-btn k-btn-outline k-btn-white">Post an Ad</a>
         </div>
     </div>
 </section>
 
-{{-- ========== FILTER + FEATURED DEALS GRID ========== --}}
-<section class="container" style="padding-bottom:40px">
-    <div class="k-deals-layout">
-        {{-- Sidebar --}}
-        <aside class="k-deals-sidebar">
-            <h3 style="font-size:16px;font-weight:700;margin-bottom:16px">Filter Deals</h3>
-            <button class="k-deals-filter-clear" onclick="window.location='/deals'">Clear All</button>
-
-            <div class="k-filter-group">
-                <div class="k-filter-label">Discount</div>
-                <label class="k-filter-check"><input type="checkbox"> 10% and above</label>
-                <label class="k-filter-check"><input type="checkbox"> 25% and above</label>
-                <label class="k-filter-check"><input type="checkbox"> 50% and above</label>
-            </div>
-
-            <div class="k-filter-group">
-                <div class="k-filter-label">Price Range</div>
-                <div style="display:flex;gap:8px">
-                    <input type="number" placeholder="Min Price" class="k-filter-input">
-                    <input type="number" placeholder="Max Price" class="k-filter-input">
+{{-- ========== FILTER + FEATURED DEALS / LISTINGS GRID ========== --}}
+<section class="container k-content-section--pbl">
+    <form method="GET" action="/deals" id="dealsFilterForm">
+        @if(request('q'))<input type="hidden" name="q" value="{{ request('q') }}">@endif
+        <div class="k-deals-layout">
+            {{-- Sidebar --}}
+            <aside class="k-deals-sidebar">
+                <div class="k-section-header k-section-header--compact">
+                    <h3 class="k-deals-filter-title">Filter Deals</h3>
+                    <a href="/deals" class="k-deals-filter-clear">Clear All</a>
                 </div>
-            </div>
 
-            <div class="k-filter-group">
-                <div class="k-filter-label">Location</div>
-                <label class="k-filter-check"><input type="checkbox"> Kegalle</label>
-                <label class="k-filter-check"><input type="checkbox"> Mawanella</label>
-                <label class="k-filter-check"><input type="checkbox"> Warakapola</label>
-                <label class="k-filter-check"><input type="checkbox"> Rambukkana</label>
-                <label class="k-filter-check"><input type="checkbox"> Aranayake</label>
-                <button class="k-filter-more">Show more ▾</button>
-            </div>
+                @if($useRealDeals ?? false)
+                <div class="k-filter-group">
+                    <div class="k-filter-label">Discount</div>
+                    @foreach([10 => '10% and above', 25 => '25% and above', 50 => '50% and above'] as $val => $label)
+                    <label class="k-filter-check">
+                        <input type="radio" name="discount" value="{{ $val }}" {{ request('discount') == $val ? 'checked' : '' }}>
+                        {{ $label }}
+                    </label>
+                    @endforeach
+                </div>
 
-            <div class="k-filter-group">
-                <div class="k-filter-label">Sort by</div>
-                <select class="k-filter-select">
-                    <option>Newest Deals</option>
-                    <option>Most Popular</option>
-                    <option>Highest Discount</option>
-                    <option>Price: Low to High</option>
-                    <option>Price: High to Low</option>
-                </select>
-            </div>
+                <div class="k-filter-group">
+                    <div class="k-filter-label">Price Range (LKR)</div>
+                    <div class="k-size-grid">
+                        <input type="number" name="min_price" placeholder="Min" class="k-filter-input" value="{{ request('min_price') }}">
+                        <input type="number" name="max_price" placeholder="Max" class="k-filter-input" value="{{ request('max_price') }}">
+                    </div>
+                </div>
 
-            <button class="k-btn k-btn-primary" style="width:100%;justify-content:center;margin-top:8px">Apply Filters</button>
-        </aside>
+                <div class="k-filter-group">
+                    <div class="k-filter-label">Sort by</div>
+                    <select name="sort" class="k-filter-select">
+                        <option value="newest"    {{ request('sort','newest') === 'newest'    ? 'selected' : '' }}>Newest Deals</option>
+                        <option value="popular"   {{ request('sort') === 'popular'   ? 'selected' : '' }}>Most Popular</option>
+                        <option value="discount"  {{ request('sort') === 'discount'  ? 'selected' : '' }}>Highest Discount</option>
+                        <option value="price_low" {{ request('sort') === 'price_low' ? 'selected' : '' }}>Price: Low to High</option>
+                        <option value="price_high"{{ request('sort') === 'price_high'? 'selected' : '' }}>Price: High to Low</option>
+                    </select>
+                </div>
 
-        {{-- Main Grid --}}
-        <div>
-            <div class="k-section-header" style="margin-bottom:16px">
-                <h2 class="k-section-title">Featured Deals</h2>
-                <select class="k-filter-select" style="width:auto">
-                    <option>Newest Deals</option>
-                    <option>Most Popular</option>
-                    <option>Highest Discount</option>
-                </select>
-            </div>
+                <button type="submit" class="k-btn k-btn-primary k-btn-full k-btn-mt-sm">Apply Filters</button>
+                @else
+                <p class="k-filter-note">No active deals yet. <a href="{{ auth()->check() ? '/dashboard/deals/create' : '/register' }}" style="color:var(--k-primary)">Post a deal →</a></p>
+                @endif
+            </aside>
 
-            <div class="k-featured-deals-grid">
-                @php $gridSource = ($useRealDeals ?? false) && (is_object($featuredDeals) && method_exists($featuredDeals, 'total') ? $featuredDeals->total() > 0 : $featuredDeals->isNotEmpty()) ? $featuredDeals : $latestListings; @endphp
-                @foreach($gridSource as $i => $item)
-                    @php
-                        $listing = ($useRealDeals ?? false) && $item instanceof \App\Models\Deal ? $item->listing : $item;
-                        if (!$listing) continue;
-                        $img = optional($listing->images->first())->path ?? null;
-                        $imgUrl = $img ? asset('storage/'.ltrim($img,'/')) : null;
-                        if ($item instanceof \App\Models\Deal) {
-                            $originalPrice = $item->original_price;
-                            $salePrice = $item->deal_price;
-                            $discountPct = $item->discount_percent;
-                        } else {
-                            $originalPrice = $listing->price > 0 ? $listing->price : rand(50000, 300000);
-                            $discountPct = [15, 22, 17, 24, 19, 20, 13, 28, 10, 25, 18, 30][$i % 12];
-                            $salePrice = (int)($originalPrice * (1 - $discountPct/100));
-                        }
-                        $location = optional($listing->locationModel)->name ?? $listing->location ?? 'Kegalle';
-                        $store = $item instanceof \App\Models\Deal ? $item->store : ($listing->store ?? null);
-                        $storeName = $store->name ?? 'Personal Seller';
-                        $storeSlug = $store->slug ?? null;
-                    @endphp
-                    <a href="/listings/{{ $listing->slug }}" class="k-deal-card">
-                        <div class="k-deal-card-img">
-                            @if($imgUrl)
-                                <img src="{{ $imgUrl }}" alt="{{ $listing->title }}" loading="lazy">
-                            @else
-                                <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:48px;background:var(--k-surface-2)">🛍️</div>
-                            @endif
-                            <span class="k-deal-badge-pct">-{{ number_format($discountPct, 0) }}%</span>
-                            @if($item instanceof \App\Models\Deal && $item->is_featured)
-                                <span style="position:absolute;top:10px;right:46px;background:#FFF8E1;color:#B45309;font-size:10px;font-weight:800;padding:3px 9px;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.12)">⭐ FEATURED</span>
-                            @endif
-                            <button class="k-deal-heart" aria-label="Save">♡</button>
-                        </div>
-                        <div class="k-deal-card-info">
-                            <h3 class="k-deal-card-title">{{ \Illuminate\Support\Str::limit($listing->title, 30) }}</h3>
-                            <div class="k-deal-card-loc">📍 {{ $location }}</div>
-                            <div class="k-deal-card-prices">
-                                <span class="k-deal-card-sale">LKR {{ number_format($salePrice) }}</span>
-                                <span class="k-deal-card-orig">LKR {{ number_format($originalPrice) }}</span>
+            {{-- Main Grid --}}
+            <div>
+                @if(!($useRealDeals ?? false))
+                <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #86efac;border-radius:12px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+                    <div>
+                        <strong style="display:block;font-size:14px;color:#166534;margin-bottom:4px">🏷️ No active deals yet — be the first!</strong>
+                        <span style="font-size:13px;color:#15803d">Store owners can post discounted deals to attract more buyers.</span>
+                    </div>
+                    <a href="{{ auth()->check() ? '/dashboard/deals/create' : '/register' }}" class="k-btn k-btn-primary k-btn-sm" style="white-space:nowrap">Post a Deal →</a>
+                </div>
+                @endif
+                <div class="k-section-header k-section-header--compact">
+                    <h2 class="k-section-title">
+                        {{ ($useRealDeals ?? false) ? 'Featured Deals' : 'Browse Listings' }}
+                    </h2>
+                    @if($useRealDeals ?? false)
+                    <select class="k-filter-select k-filter-select--auto" onchange="document.querySelector('[name=sort]').value=this.value;document.getElementById('dealsFilterForm').submit()">
+                        <option value="newest"    {{ request('sort','newest') === 'newest'    ? 'selected' : '' }}>Newest</option>
+                        <option value="popular"   {{ request('sort') === 'popular'   ? 'selected' : '' }}>Most Popular</option>
+                        <option value="discount"  {{ request('sort') === 'discount'  ? 'selected' : '' }}>Highest Discount</option>
+                        <option value="price_low" {{ request('sort') === 'price_low' ? 'selected' : '' }}>Price ↑</option>
+                        <option value="price_high"{{ request('sort') === 'price_high'? 'selected' : '' }}>Price ↓</option>
+                    </select>
+                    @endif
+                </div>
+
+                @php
+                    $gridItems = ($useRealDeals ?? false) ? $featuredDeals : $latestListings;
+                    $isEmpty   = is_object($gridItems) && method_exists($gridItems, 'isEmpty') ? $gridItems->isEmpty() : ($gridItems->count() === 0);
+                @endphp
+
+                @if($isEmpty)
+                    <div class="k-empty-state-box k-empty-state-box--centered">
+                        <span class="k-empty-icon">🔍</span>
+                        <h3 class="k-empty-heading">No deals found</h3>
+                        <p class="k-empty-text">Try adjusting your filters or <a href="/deals">clear all</a>.</p>
+                    </div>
+                @else
+                <div class="k-featured-deals-grid">
+                    @foreach($gridItems as $i => $item)
+                        @php
+                            if (($useRealDeals ?? false) && $item instanceof \App\Models\Deal) {
+                                $listing     = $item->listing;
+                                $salePrice   = $item->deal_price;
+                                $origPrice   = $item->original_price;
+                                $discountPct = (int)$item->discount_percent;
+                                $isFeatured  = $item->is_featured;
+                                $store       = $item->store;
+                            } else {
+                                $listing     = $item;
+                                $salePrice   = null;
+                                $origPrice   = $item->price > 0 ? $item->price : null;
+                                $discountPct = null;
+                                $isFeatured  = $item->is_featured ?? false;
+                                $store       = $item->store ?? null;
+                            }
+                            if (!$listing) continue;
+                            $img      = optional($listing->images->first())->path ?? null;
+                            $imgUrl   = $img ? asset('storage/'.ltrim($img,'/')) : null;
+                            $location = optional($listing->locationModel)->name ?? $listing->location ?? 'Kegalle';
+                            $storeNm  = $store->name ?? 'Personal Seller';
+                            $storeSlug= $store->slug ?? null;
+                        @endphp
+                        <a href="/listings/{{ $listing->slug }}" class="k-deal-card">
+                            <div class="k-deal-card-img">
+                                @if($imgUrl)
+                                    <img src="{{ $imgUrl }}" alt="{{ $listing->title }}" loading="lazy">
+                                @else
+                                    <div class="k-deal-img-ph">🛍️</div>
+                                @endif
+                                @if($discountPct)
+                                    <span class="k-deal-badge-pct">-{{ $discountPct }}%</span>
+                                @endif
+                                @if($isFeatured)
+                                    <span class="k-deals-featured-badge">⭐ FEATURED</span>
+                                @endif
+                                <button class="k-deal-heart" aria-label="Save" type="button">♡</button>
                             </div>
-                            <div class="k-deal-card-store">🏪 @if($storeSlug)<span class="k-deal-store-link" role="link" tabindex="0" style="cursor:pointer" onclick="event.preventDefault();event.stopPropagation();window.location='/store/{{ $storeSlug }}'">{{ $storeName }}</span>@else{{ $storeName }}@endif</div>
-                        </div>
-                    </a>
-                @endforeach
+                            <div class="k-deal-card-info">
+                                <h3 class="k-deal-card-title">{{ \Illuminate\Support\Str::limit($listing->title, 30) }}</h3>
+                                <div class="k-deal-card-loc">📍 {{ $location }}</div>
+                                <div class="k-deal-card-prices">
+                                    @if($salePrice)
+                                        <span class="k-deal-card-sale">LKR {{ number_format($salePrice) }}</span>
+                                        @if($origPrice)
+                                        <span class="k-deal-card-orig">LKR {{ number_format($origPrice) }}</span>
+                                        @endif
+                                    @elseif($origPrice)
+                                        <span class="k-deal-card-sale">LKR {{ number_format($origPrice) }}</span>
+                                    @else
+                                        <span class="k-deal-card-sale">Contact Seller</span>
+                                    @endif
+                                </div>
+                                <div class="k-deal-card-store">🏪
+                                    @if($storeSlug)
+                                        <a class="k-deal-store-link" href="/store/{{ $storeSlug }}" onclick="event.stopPropagation()">{{ $storeNm }}</a>
+                                    @else
+                                        {{ $storeNm }}
+                                    @endif
+                                </div>
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+                @endif
+
+                @if(($useRealDeals ?? false) && method_exists($featuredDeals, 'links'))
+                    <div class="k-deals-pagination">{{ $featuredDeals->links() }}</div>
+                @endif
             </div>
-            @if(($useRealDeals ?? false) && method_exists($featuredDeals, 'links'))
-                <div style="margin-top:16px">{{ $featuredDeals->links() }}</div>
-            @endif
         </div>
-    </div>
+    </form>
 </section>
 
 {{-- ========== TRUST BADGES ========== --}}
@@ -300,40 +312,66 @@
 
 {{-- ========== NEWSLETTER ========== --}}
 <section class="k-deals-newsletter">
-    <div class="container" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px">
-        <div style="display:flex;align-items:center;gap:16px">
-            <span style="font-size:32px">✉️</span>
+    <div class="k-newsletter-inner">
+        <div class="k-newsletter-left">
+            <span class="k-newsletter-icon">✉️</span>
             <div>
-                <div style="font-size:18px;font-weight:700;color:#fff">Subscribe to our newsletter</div>
-                <div style="font-size:13px;color:rgba(255,255,255,.8)">Get the latest deals, offers and updates delivered to your inbox.</div>
+                <div class="k-newsletter-title">Subscribe to our newsletter</div>
+                <div class="k-newsletter-sub">Get the latest deals, offers and updates delivered to your inbox.</div>
             </div>
         </div>
-        <form style="display:flex;gap:8px;flex:1;max-width:400px" onsubmit="event.preventDefault()">
-            <input type="email" placeholder="Enter your email" style="flex:1;padding:10px 16px;border:none;border-radius:var(--k-radius-sm);font-size:14px">
-            <button type="submit" class="k-btn" style="background:var(--k-accent);color:#fff;white-space:nowrap">Subscribe</button>
+        <form class="k-newsletter-form" id="dealsNewsletterForm" onsubmit="dealsNewsletterSubmit(event)">
+            @csrf
+            <input type="email" name="email" placeholder="Enter your email" class="k-newsletter-input" required>
+            <button type="submit" class="k-btn k-btn-accent" id="dealsNewsletterBtn">Subscribe</button>
         </form>
+        <script nonce="{{ $cspNonce ?? '' }}">
+        function dealsNewsletterSubmit(e){
+            e.preventDefault();
+            var form=document.getElementById('dealsNewsletterForm');
+            var btn=document.getElementById('dealsNewsletterBtn');
+            var email=form.querySelector('input[name=email]').value;
+            btn.disabled=true; btn.textContent='Subscribing…';
+            fetch('/newsletter/subscribe',{
+                method:'POST',
+                headers:{'Content-Type':'application/json','X-CSRF-TOKEN':form.querySelector('input[name=_token]').value},
+                body:JSON.stringify({email:email})
+            }).then(function(r){return r.json();}).then(function(d){
+                btn.textContent='✓ Subscribed!';
+                form.querySelector('input[name=email]').value='';
+                setTimeout(function(){btn.textContent='Subscribe';btn.disabled=false;},3000);
+            }).catch(function(){btn.textContent='Try again';btn.disabled=false;});
+        }
+        </script>
     </div>
 </section>
 
 @endsection
 
 @push('scripts')
-<script>
-// Countdown timer
+<script nonce="{{ $cspNonce ?? '' }}">
+// Flash deal countdown — driven by real ends_at from DB
 (function(){
-    function pad(n){return n<10?'0'+n:n}
-    var end = new Date();
-    end.setHours(23,59,59,0);
+    var timerEl = document.getElementById('flashTimer');
+    if (!timerEl) return;
+    var end = new Date(timerEl.dataset.ends);
+    if (isNaN(end)) return;
+    function pad(n){ return n < 10 ? '0'+n : n; }
     function tick(){
-        var now=new Date(),d=Math.max(0,end-now),
-            h=Math.floor(d/36e5),m=Math.floor(d%36e5/6e4),s=Math.floor(d%6e4/1e3);
-        document.getElementById('cdHours').textContent=pad(h);
-        document.getElementById('cdMins').textContent=pad(m);
-        document.getElementById('cdSecs').textContent=pad(s);
-        var ft=document.getElementById('flashTimer');
-        if(ft)ft.textContent=pad(h)+' : '+pad(m)+' : '+pad(s);
+        var now = new Date(), d = Math.max(0, end - now);
+        if (d === 0) { timerEl.textContent = 'Ended'; return; }
+        var days = Math.floor(d/864e5), h = Math.floor(d%864e5/36e5), m = Math.floor(d%36e5/6e4), s = Math.floor(d%6e4/1e3);
+        timerEl.textContent = days > 0
+            ? days+'d '+pad(h)+'h '+pad(m)+'m '+pad(s)+'s'
+            : pad(h)+' : '+pad(m)+' : '+pad(s);
     }
-    tick();setInterval(tick,1000);
+    tick(); setInterval(tick, 1000);
+})();
+
+// Auto-submit filter sidebar on sort-select change
+(function(){
+    var sel = document.querySelector('#dealsFilterForm [name="sort"]');
+    if (sel) sel.addEventListener('change', function(){ document.getElementById('dealsFilterForm').submit(); });
 })();
 </script>
 @endpush

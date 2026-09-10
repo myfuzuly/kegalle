@@ -3,54 +3,139 @@
 @section('page','Blog')
 @section('heading','Blog Management')
 @section('subheading','Create and manage articles shown on the public blog')
-@section('content')
-<section class="sa-card"><div class="sa-card-head"><h2>Add Article</h2><span>Full CRUD</span></div>
-<form class="ka-premium-form" id="createPostForm" method="post" action="/admin/posts" enctype="multipart/form-data">
-@csrf
-<div class="ka-form-grid">
-    <div class="ka-field ka-span-2"><label>Article Title</label><input name="title" placeholder="e.g. Top 10 Places to Visit in Kegalle" required></div>
-    <div class="ka-field"><label>Slug URL</label><input name="slug" placeholder="auto-generated if empty"></div>
-    <div class="ka-field"><label>Cover Image</label><input type="file" name="image" accept="image/*"></div>
-    <div class="ka-field ka-span-2"><label>Excerpt</label><input name="excerpt" placeholder="Short summary shown on blog listing cards"></div>
-    <label class="ka-check"><input type="checkbox" name="is_published" value="1" checked> Published</label>
-</div>
-
-<div style="margin-top:16px">
-    <label style="display:block;font-size:13px;font-weight:700;margin-bottom:8px;color:#0D1B2A">Article Body</label>
-    <div id="createPostEditor" style="background:#fff;min-height:200px"></div>
-    <textarea name="body" id="createPostBody" style="display:none"></textarea>
-</div>
-
-<div style="border-top:1px solid #E5E8EF;margin-top:18px;padding-top:14px">
-    <div style="font-weight:700;font-size:13px;margin-bottom:10px;color:#0D1B2A">🔍 SEO Settings (optional — falls back to title/excerpt if left blank)</div>
-    <div class="ka-form-grid">
-        <div class="ka-field ka-span-2"><label>SEO Meta Title</label><input name="meta_title" placeholder="~50-60 characters ideal" maxlength="180"></div>
-        <div class="ka-field ka-span-2"><label>SEO Meta Description</label><textarea name="meta_description" placeholder="~150-160 characters ideal" maxlength="320"></textarea></div>
-    </div>
-</div>
-
-<div class="ka-form-actions">
-    <button class="ka-btn ka-btn-primary">Add Article</button>
-</div>
-</form>
-</section>
+@section('actions')<a href="#add-article" class="ka-btn ka-btn-primary" data-scroll-to="add-article">+ Add Article</a>@endsection
 
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+
 @endpush
+
+@section('content')
+
+@if(session('success'))
+<div class="alert-success">✓ {{ session('success') }}</div>
+@endif
+
+{{-- Articles table --}}
+<div class="pst-card">
+    <div class="pst-card-head">
+        <div class="pst-card-icon purple">✍️</div>
+        <span class="pst-card-title">Articles</span>
+        <span class="pst-card-meta">{{ $posts->total() }} articles</span>
+    </div>
+    <div class="pst-table-wrap">
+    <table class="pst-table">
+    <thead><tr>
+        <th class="w-240">Title</th>
+        <th>Excerpt</th>
+        <th class="w-110">Published</th>
+        <th class="w90-center">Status</th>
+        <th>Actions</th>
+    </tr></thead>
+    <tbody>
+    @forelse($posts as $post)
+    <tr>
+        <td>
+            <span class="fw7-trunc-230">{{ $post->title }}</span>
+            <small class="text-muted">#{{ $post->id }}</small>
+        </td>
+        <td class="fs-12h text-gray">{{ \Illuminate\Support\Str::limit($post->excerpt ?? strip_tags($post->body ?? ''),80) }}</td>
+        <td class="fs125-nw-slate">{{ optional($post->published_at)->format('M d, Y') ?? '—' }}</td>
+        <td class="text-center"><span class="sa-status {{ $post->is_published ? 'active':'suspended' }}">{{ $post->is_published ? 'Published':'Draft' }}</span></td>
+        <td>
+            <div class="pst-actions">
+                <a href="/blog/{{ $post->slug }}" target="_blank" class="pst-act">👁 View</a>
+                <a href="/admin/posts/{{ $post->id }}/edit" class="pst-act">✎ Edit</a>
+                <form method="post" action="/admin/posts/{{ $post->id }}/toggle" class="d-contents">@csrf
+                    <button class="pst-act">{{ $post->is_published ? 'Unpublish':'Publish' }}</button>
+                </form>
+                <form method="post" action="/admin/posts/{{ $post->id }}" onsubmit="return confirm('Delete this article?')" class="d-contents">@csrf @method('DELETE')
+                    <button class="pst-act danger">🗑</button>
+                </form>
+            </div>
+        </td>
+    </tr>
+    @empty
+    <tr><td class="empty-state-lg" colspan="5">No articles yet. Add one below.</td></tr>
+    @endforelse
+    </tbody>
+    </table>
+    </div>
+    <div class="p14-22">{{ $posts->links('vendor.pagination.ka-admin') }}</div>
+</div>
+
+{{-- Add Article form --}}
+<div class="pst-card" id="add-article">
+    <div class="pst-card-head">
+        <div class="pst-card-icon green">✚</div>
+        <span class="pst-card-title">Add New Article</span>
+    </div>
+    <form class="pst-body" id="createPostForm" method="post" action="/admin/posts" enctype="multipart/form-data">
+    @csrf
+    <div class="pst-grid">
+        <div class="pst-field pst-full">
+            <label class="pst-label">Article Title</label>
+            <input name="title" class="pst-input" placeholder="e.g. Top 10 Places to Visit in Kegalle" required>
+        </div>
+        <div class="pst-field">
+            <label class="pst-label">Slug URL</label>
+            <input name="slug" class="pst-input" placeholder="auto-generated if empty">
+        </div>
+        <div class="pst-field">
+            <label class="pst-label">Cover Image</label>
+            <input type="file" name="image" class="pst-input p8-13" accept="image/*">
+        </div>
+        <div class="pst-field pst-full">
+            <label class="pst-label">Excerpt</label>
+            <input name="excerpt" class="pst-input" placeholder="Short summary shown on blog listing cards">
+        </div>
+        <div class="pst-field pst-full">
+            <label class="pst-label mb-4px">Article Body</label>
+            <div class="bg-white-220h" id="createPostEditor"></div>
+            <textarea name="body" id="createPostBody" class="hidden"></textarea>
+        </div>
+    </div>
+
+    <div class="pst-seo-head">SEO Settings <small class="fw4-muted">(optional — falls back to title/excerpt)</small></div>
+    <div class="pst-grid">
+        <div class="pst-field pst-full">
+            <label class="pst-label">SEO Meta Title</label>
+            <input name="meta_title" class="pst-input" placeholder="~50-60 characters" maxlength="180">
+        </div>
+        <div class="pst-field pst-full">
+            <label class="pst-label">SEO Meta Description</label>
+            <textarea name="meta_description" class="pst-textarea" rows="2" placeholder="~150-160 characters" maxlength="320"></textarea>
+        </div>
+    </div>
+    </form>
+    <div class="pst-foot">
+        <button type="submit" form="createPostForm" class="pst-btn-primary">Publish Article</button>
+        <label class="pst-check">
+            <input type="checkbox" name="is_published" value="1" checked form="createPostForm">
+            Published immediately
+        </label>
+    </div>
+</div>
+
+@endsection
+
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
-<script>
-(function () {
-    var createQuill = new Quill('#createPostEditor', { theme: 'snow', placeholder: 'Write the article body here…' });
-    document.getElementById('createPostForm').addEventListener('submit', function () {
+<script nonce="{{ $cspNonce ?? '' }}">
+(function(){
+    // Delegated scroll-to handler
+    document.addEventListener('click',function(e){
+        var el=e.target.closest('[data-scroll-to]');
+        if(!el) return;
+        e.preventDefault();
+        var target=document.getElementById(el.dataset.scrollTo);
+        if(target) target.scrollIntoView({behavior:'smooth'});
+    });
+
+    var createQuill = new Quill('#createPostEditor', { theme:'snow', placeholder:'Write the article body here…' });
+    document.getElementById('createPostForm').addEventListener('submit', function(){
         document.getElementById('createPostBody').value = createQuill.root.innerHTML;
     });
 })();
 </script>
 @endpush
-<section class="sa-card"><div class="sa-card-head"><h2>Articles from Database</h2><span>{{ $posts->total() }} articles</span></div>
-<div class="sa-table-wrap"><table class="sa-table sa-table-posts"><thead><tr><th>Title</th><th>Slug</th><th>Published</th><th>Status</th><th>Actions</th></tr></thead><tbody>
-@forelse($posts as $post)<tr><td><b>{{ $post->title }}</b><small>#{{ $post->id }}</small></td><td>{{ $post->slug }}</td><td>{{ optional($post->published_at)->format('M d, Y') ?? '—' }}</td><td><span class="sa-status {{ $post->is_published ? 'active' : 'suspended' }}">{{ $post->is_published ? 'Published' : 'Draft' }}</span></td><td class="sa-actions-inline"><a href="/admin/posts/{{ $post->id }}/edit" title="Edit">Edit</a><form method="post" action="/admin/posts/{{ $post->id }}/toggle">@csrf<button title="Toggle">Toggle</button></form><form method="post" action="/admin/posts/{{ $post->id }}" onsubmit="return confirm('Delete this article?')">@csrf @method('DELETE')<button class="danger" title="Delete">Delete</button></form></td></tr>@empty<tr><td colspan="5">No articles found.</td></tr>@endforelse
-</tbody></table></div>{{ $posts->links() }}</section>
-@endsection

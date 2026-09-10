@@ -156,24 +156,28 @@ return new class extends Migration
             $t->timestamps();
         });
 
-        Schema::create('chat_threads', function (Blueprint $t) {
-            $t->id();
-            $t->foreignId('listing_id')->nullable()->constrained()->nullOnDelete();
-            $t->foreignId('buyer_id')->constrained('users')->cascadeOnDelete();
-            $t->foreignId('seller_id')->constrained('users')->cascadeOnDelete();
-            $t->string('status')->default('open');
-            $t->timestamps();
-        });
+        if (! Schema::hasTable('chat_threads')) {
+            Schema::create('chat_threads', function (Blueprint $t) {
+                $t->id();
+                $t->foreignId('listing_id')->nullable()->constrained()->nullOnDelete();
+                $t->foreignId('buyer_id')->constrained('users')->cascadeOnDelete();
+                $t->foreignId('seller_id')->constrained('users')->cascadeOnDelete();
+                $t->string('status')->default('open');
+                $t->timestamps();
+            });
+        }
 
-        Schema::create('chat_messages', function (Blueprint $t) {
-            $t->id();
-            $t->foreignId('thread_id')->constrained('chat_threads')->cascadeOnDelete();
-            $t->foreignId('sender_id')->constrained('users')->cascadeOnDelete();
-            $t->text('message')->nullable();
-            $t->string('attachment_path')->nullable();
-            $t->timestamp('read_at')->nullable();
-            $t->timestamps();
-        });
+        if (! Schema::hasTable('chat_messages')) {
+            Schema::create('chat_messages', function (Blueprint $t) {
+                $t->id();
+                $t->foreignId('thread_id')->constrained('chat_threads')->cascadeOnDelete();
+                $t->foreignId('sender_id')->constrained('users')->cascadeOnDelete();
+                $t->text('message')->nullable();
+                $t->string('attachment_path')->nullable();
+                $t->timestamp('read_at')->nullable();
+                $t->timestamps();
+            });
+        }
 
         Schema::create('reviews', function (Blueprint $t) {
             $t->id();

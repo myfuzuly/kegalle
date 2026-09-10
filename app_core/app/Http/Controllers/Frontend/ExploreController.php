@@ -9,7 +9,9 @@ class ExploreController extends Controller
 {
     public function index()
     {
-        $exploreItems = ExploreItem::active()->orderBy('sort_order')->get();
+        $exploreItems = cache()->remember('explore_items_list', 1800, fn() =>
+            ExploreItem::active()->orderBy('sort_order')->get()
+        );
 
         return view('pages.explore-index', compact('exploreItems'));
     }

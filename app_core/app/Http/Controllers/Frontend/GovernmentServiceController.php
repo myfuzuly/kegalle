@@ -9,7 +9,9 @@ class GovernmentServiceController extends Controller
 {
     public function index()
     {
-        $services = GovernmentService::active()->orderBy('sort_order')->get();
+        $services = cache()->remember('gov_services_list', 1800, fn() =>
+            GovernmentService::active()->orderBy('sort_order')->get()
+        );
 
         return view('pages.government-services', compact('services'));
     }

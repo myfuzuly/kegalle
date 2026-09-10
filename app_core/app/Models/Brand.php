@@ -6,9 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Brand extends Model
 {
-    protected $fillable = ['category_group', 'name', 'slug', 'sort_order', 'is_active'];
+    protected $fillable = ['category_id', 'category_group', 'name', 'slug', 'sort_order', 'is_active'];
 
     protected $casts = ['is_active' => 'boolean'];
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'brand_category');
+    }
 
     public function models()
     {

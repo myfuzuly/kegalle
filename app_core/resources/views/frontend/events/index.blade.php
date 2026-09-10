@@ -5,60 +5,18 @@
 
 @section('content')
 
-{{-- ========== HERO ========== --}}
-<section class="ke-hero">
-    <div class="container">
-        <div class="ke-hero-content">
-            <span class="ke-hero-eyebrow">Discover Amazing</span>
-            <h1 class="ke-hero-title">Events in <span>Kegalle</span></h1>
-            <p class="ke-hero-desc">Find concerts, workshops, festivals, exhibitions and community events happening around you.</p>
-            <form class="ke-hero-search" action="/events" method="GET">
-                <div class="ke-hero-search-field">
-                    <span>🔍</span>
-                    <input type="text" name="q" placeholder="Search events, venues or organizers..." value="{{ request('q') }}">
-                </div>
-                <div class="ke-hero-search-field">
-                    <span>📍</span>
-                    <select name="location">
-                        <option value="">Kegalle, Sri Lanka</option>
-                        @foreach($locations as $loc)
-                            <option value="{{ $loc }}" {{ request('location') === $loc ? 'selected' : '' }}>{{ $loc }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <button type="submit" class="ke-hero-search-btn">Search Events</button>
-            </form>
-            <div class="ke-hero-badges">
-                <span>🎯 Local Events</span>
-                <span>✓ Trusted Organizers</span>
-                <span>🔒 Secure Booking</span>
-                <span>🎫 Easy Cancellation</span>
-            </div>
+<div class="k-page-header">
+    <div class="k-page-header-inner">
+        <div>
+            <h1>Events in Kegalle</h1>
+            <p>Find concerts, workshops, festivals, exhibitions and community events happening around you.</p>
         </div>
-        <div class="ke-hero-highlight">
-            @if($featuredEvents->isNotEmpty())
-                @php $hero = $featuredEvents->first(); @endphp
-                <div class="ke-highlight-card">
-                    <div class="ke-highlight-head">
-                        <span>Upcoming Highlight</span>
-                        <em class="ke-tag-featured">Featured</em>
-                    </div>
-                    <div class="ke-highlight-body">
-                        <div class="ke-highlight-date"><strong>{{ $hero->event_date->format('d') }}</strong><small>{{ strtoupper($hero->event_date->format('M')) }}</small></div>
-                        <div>
-                            <strong>{{ $hero->title }}</strong>
-                            <small>📍 {{ $hero->venue }}</small>
-                            @if($hero->starts_at && $hero->ends_at)
-                                <small>🕐 {{ $hero->starts_at->format('g:i A') }} - {{ $hero->ends_at->format('g:i A') }}</small>
-                            @endif
-                        </div>
-                    </div>
-                    <a href="/events/{{ $hero->slug }}" class="ke-highlight-btn">View Details</a>
-                </div>
-            @endif
-        </div>
+        <form class="k-page-header-search" action="/events" method="GET">
+            <input type="text" name="q" placeholder="Search events..." value="{{ request('q') }}">
+            <button type="submit">Search</button>
+        </form>
     </div>
-</section>
+</div>
 
 {{-- ========== CATEGORY SHORTCUTS ========== --}}
 <section class="container k-event-cats-section">
@@ -82,9 +40,11 @@
 
         {{-- LEFT: FILTERS --}}
         <aside class="ke-filters">
-            <button class="ke-filter-toggle" onclick="this.nextElementSibling.classList.toggle('ke-filters-open')">☰ Show Filters</button>
+            <button class="ke-filter-toggle" data-filter-toggle aria-expanded="false">☰ Show Filters</button>
             <div class="ke-filters-body">
-            <div class="ke-filters-head"><h3>Filter Events</h3><a href="/events">Clear All</a></div>
+            <div class="ke-filters-head"><h3>Filter Events</h3><a href="/events{{ request('q') ? '?q='.urlencode(request('q')) : '' }}">Clear All</a></div>
+            <form action="/events" method="GET" id="keFilterForm">
+            @if(request('q'))<input type="hidden" name="q" value="{{ request('q') }}">@endif
 
             <div class="ke-filter-group">
                 <div class="ke-filter-label">Date</div>
@@ -128,9 +88,17 @@
                 <label class="ke-filter-check"><input type="checkbox"> Hybrid</label>
             </div>
 
-            <button class="k-btn k-btn-primary k-btn-center k-event-filter-btn">Apply Filters</button>
+            <button type="submit" class="k-btn k-btn-primary k-btn-center k-event-filter-btn">Apply Filters</button>
+            </form>
             </div>
         </aside>
+<script nonce="{{ $cspNonce ?? '' }}">
+(function(){
+    var f = document.getElementById('keFilterForm');
+    if(!f) return;
+    f.querySelectorAll('select').forEach(function(el){ el.addEventListener('change', function(){ f.submit(); }); });
+})();
+</script>
 
         {{-- CENTER: EVENT GRID --}}
         <div class="ke-center">
@@ -303,3 +271,14 @@
 </section>
 
 @endsection
+
+@push('scripts')
+<script nonce="{{ $cspNonce ?? '' }}">
+document.querySelectorAll('[data-filter-toggle]').forEach(function(btn){
+    btn.addEventListener('click',function(){
+        var open=btn.nextElementSibling.classList.toggle('ke-filters-open');
+        btn.setAttribute('aria-expanded',open);
+    });
+});
+</script>
+@endpush

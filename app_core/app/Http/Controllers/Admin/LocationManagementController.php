@@ -34,6 +34,14 @@ class LocationManagementController extends Controller
             ->orderBy('name')
             ->get();
 
+        if ($request->ajax()) {
+            return response()->json([
+                'total'      => $locations->total(),
+                'rows'       => view('admin.locations._rows', compact('locations'))->render(),
+                'pagination' => (string) $locations->links('vendor.pagination.ka-admin'),
+            ]);
+        }
+
         return view('admin.locations.index', compact('locations', 'parents'));
     }
 

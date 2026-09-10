@@ -25,7 +25,7 @@ class PostManagementController extends Controller
             'slug' => 'nullable|string|max:200|unique:posts,slug',
             'excerpt' => 'nullable|string|max:500',
             'body' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+            'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:4096',
             'is_published' => 'nullable|boolean',
             'meta_title' => 'nullable|string|max:180',
             'meta_description' => 'nullable|string|max:320',
@@ -34,6 +34,7 @@ class PostManagementController extends Controller
         $path = null;
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('blog', 'public');
+            $path = \App\Helpers\ImageHelper::finalize($path);
         }
 
         Post::create([
@@ -63,7 +64,7 @@ class PostManagementController extends Controller
             'slug' => ['required', 'string', 'max:200', Rule::unique('posts', 'slug')->ignore($post->id)],
             'excerpt' => 'nullable|string|max:500',
             'body' => 'nullable|string',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
+            'image' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:4096',
             'is_published' => 'nullable|boolean',
             'meta_title' => 'nullable|string|max:180',
             'meta_description' => 'nullable|string|max:320',
@@ -72,6 +73,7 @@ class PostManagementController extends Controller
         $path = $post->image;
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('blog', 'public');
+            $path = \App\Helpers\ImageHelper::finalize($path);
         }
 
         $wasPublished = (bool) $post->is_published;

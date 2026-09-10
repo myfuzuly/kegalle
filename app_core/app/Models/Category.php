@@ -34,4 +34,9 @@ class Category extends Model
             ->withPivot('is_required', 'show_in_filter', 'show_in_list', 'sort_order')
             ->orderByPivot('sort_order');
     }
+
+    public function brands()
+    {
+        return $this->belongsToMany(Brand::class, 'brand_category');
+    }
 }

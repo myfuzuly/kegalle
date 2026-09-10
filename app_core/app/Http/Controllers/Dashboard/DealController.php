@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Deal;
 use App\Models\Listing;
+use App\Models\Store;
+use App\Services\ListingService;
 use Illuminate\Http\Request;
 
 class DealController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
         $isAdmin = in_array($user->role ?? '', ['super_admin', 'admin']);
@@ -18,7 +21,18 @@ class DealController extends Controller
         if (!$isAdmin) {
             $query->where('user_id', $user->id);
         }
-        $deals = $query->paginate(20);
+        $query->when($request->status && $request->status !== '', fn ($q) => $q->where('status', $request->status))
+              ->when($request->q, fn ($q) => $q->whereHas('listing', fn($qb) => $qb->where('title', 'like', '%'.$request->q.'%')));
+
+        $deals = $query->paginate(20)->withQueryString();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'total'      => $deals->total(),
+                'rows'       => view('dashboard.deals._rows', compact('deals'))->render(),
+                'pagination' => (string) $deals->links('vendor.pagination.dashboard'),
+            ]);
+        }
 
         return view('dashboard.deals.index', compact('deals'));
     }
@@ -66,6 +80,10 @@ class DealController extends Controller
         $originalPrice = $listing->price;
         $dealPrice = $request->deal_price;
 
+        if (is_null($originalPrice) || $originalPrice <= 0) {
+            return back()->with('error', 'Cannot create a deal for a listing with no price set.');
+        }
+
         if ($dealPrice >= $originalPrice) {
             return back()->with('error', 'Deal price must be lower than the original price (LKR ' . number_format($originalPrice) . ').');
         }
@@ -88,6 +106,66 @@ class DealController extends Controller
 
         return redirect()->route('dashboard.deals.index')
             ->with('success', 'Deal submitted for admin approval!');
+    }
+
+    public function createWithProduct()
+    {
+        $categories = Category::where('is_active', true)->orderBy('sort_order')->orderBy('name')->get();
+        $store = Store::where('user_id', auth()->id())->first();
+
+        return view('dashboard.deals.create-with-product', compact('categories', 'store'));
+    }
+
+    public function storeWithProduct(Request $request, ListingService $listingService)
+    {
+        $request->validate([
+            'title'       => 'required|string|min:5|max:191',
+            'category_id' => 'required|exists:categories,id',
+            'price'       => 'required|numeric|min:1',
+            'description' => 'required|string|min:20',
+            'deal_price'  => 'required|numeric|min:1',
+            'starts_at'   => 'required|date|after_or_equal:today',
+            'ends_at'     => 'required|date|after:starts_at',
+            'stock_qty'   => 'nullable|integer|min:1',
+            'images'      => 'nullable|array|max:5',
+            'images.*'    => 'image|max:4096',
+        ]);
+
+        if ($request->deal_price >= $request->price) {
+            return back()->withInput()->with('error', 'Deal price must be lower than the original price (LKR ' . number_format($request->price) . ').');
+        }
+
+        $user = auth()->user();
+
+        $validated = $request->only(['title', 'category_id', 'price', 'description']);
+        $validated['type']    = 'product';
+        $validated['ad_type'] = 'sale';
+        if ($store = Store::where('user_id', $user->id)->first()) {
+            $validated['store_id'] = $store->id;
+        }
+
+        $listing = $listingService->create($request, $validated, $user);
+
+        $originalPrice   = (float) $request->price;
+        $dealPrice       = (float) $request->deal_price;
+        $discountPercent = round((($originalPrice - $dealPrice) / $originalPrice) * 100, 2);
+
+        Deal::create([
+            'listing_id'       => $listing->id,
+            'store_id'         => $listing->store_id,
+            'user_id'          => $user->id,
+            'deal_price'       => $dealPrice,
+            'original_price'   => $originalPrice,
+            'discount_percent' => $discountPercent,
+            'starts_at'        => $request->starts_at,
+            'ends_at'          => $request->ends_at,
+            'is_flash'         => $request->boolean('is_flash'),
+            'stock_qty'        => $request->stock_qty,
+            'status'           => 'pending',
+        ]);
+
+        return redirect()->route('dashboard.deals.index')
+            ->with('success', 'Product and deal submitted for admin approval!');
     }
 
     public function edit(Deal $deal)
@@ -113,7 +191,7 @@ class DealController extends Controller
 
         $data = $request->validate([
             'deal_price' => 'required|numeric|min:1',
-            'starts_at' => 'required|date',
+            'starts_at' => ['required', 'date', $isAdmin ? 'nullable' : 'after_or_equal:today'],
             'ends_at' => 'required|date|after:starts_at',
             'is_flash' => 'boolean',
             'stock_qty' => 'nullable|integer|min:1',
@@ -141,11 +219,14 @@ class DealController extends Controller
 
     public function destroy(Deal $deal)
     {
-        if ($deal->user_id !== auth()->id()) {
+        $user = auth()->user();
+        $isAdmin = in_array($user->role ?? '', ['super_admin', 'admin']);
+
+        if (!$isAdmin && $deal->user_id !== $user->id) {
             return back()->with('error', 'Unauthorized.');
         }
 
-        if ($deal->status === 'approved') {
+        if (!$isAdmin && $deal->status === 'approved') {
             return back()->with('error', 'Cannot delete an approved deal. Contact admin.');
         }
 

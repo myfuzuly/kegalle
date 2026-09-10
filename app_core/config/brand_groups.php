@@ -1,0 +1,30 @@
+<?php
+
+return [
+    'smartphones' => 'mobile', 'feature-phones' => 'mobile', 'tablets' => 'mobile',
+    'smart-watches' => 'mobile',
+    'computers' => 'computer', 'laptops' => 'computer',
+    'tv-audio' => 'tv', 'cameras' => 'camera',
+    'networking' => 'electronics', 'gaming' => 'electronics', 'smart-home' => 'electronics',
+    'office-electronics' => 'electronics', 'electronic-components' => 'electronics',
+    'cars' => 'vehicle', 'suvs-jeeps' => 'vehicle', 'vans' => 'vehicle', 'pickups' => 'vehicle',
+    'three-wheelers' => 'vehicle', 'motorcycles' => 'vehicle_bike', 'buses' => 'vehicle',
+    'trucks-lorries' => 'vehicle', 'tractors' => 'vehicle', 'heavy-machinery' => 'vehicle',
+    'electric-vehicles' => 'vehicle', 'boats-watercraft' => 'vehicle_boat',
+    'bicycles' => 'vehicle_bicycle',
+    'kitchen-appliances' => 'home', 'large-appliances' => 'home',
+    'cleaning-appliances' => 'home', 'cooling-heating' => 'home', 'small-appliances' => 'home',
+    'furniture' => 'furniture', 'kitchen-dining' => 'home', 'bathroom' => 'home',
+    'lighting' => 'home', 'decor' => 'home', 'garden' => 'home', 'home-improvement' => 'home',
+    'pet-food' => 'pet',
+    // Old slug compat
+    'mobile-phones' => 'mobile', 'mobile-accessories' => 'mobile', 'mobile-spare-parts' => 'mobile',
+    'smart-products' => 'mobile', 'computers-laptops-tablets' => 'computer',
+    'computer-accessories' => 'computer', 'tv' => 'tv', 'tv-accessories' => 'tv',
+    'camera' => 'camera', 'audio-mp3' => 'electronics', 'electronic-home-appliances' => 'electronics',
+    'video-games-other-electronics' => 'electronics', 'aircon-fittings' => 'electronics',
+    'bikes' => 'vehicle_bike', 'lorries' => 'vehicle', 'heavy-duty' => 'vehicle',
+    'tractor' => 'vehicle', 'boats' => 'vehicle_boat', 'bicycle' => 'vehicle_bicycle',
+    'bathrooms' => 'home', 'kitchen-items' => 'home', 'other-items' => 'home',
+    'animal-accessories' => 'pet',
+];

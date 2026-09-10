@@ -1,0 +1,349 @@
+/* Kegalle Landing Page — extracted from landing.blade.php */
+
+/* ══════════════════════════════════════════════════════
+   Kegalle Marketplace — Landing Page
+   ══════════════════════════════════════════════════════ */
+*{box-sizing:border-box}
+
+/* ── Variables ─────────────────────────────────────── */
+:root {
+    --lp-green: #1b5e20;
+    --lp-green-mid: #2d6a4f;
+    --lp-green-lt: #4ade80;
+    --lp-navy: #0d1b2a;
+    --lp-navy-mid: #1a2e40;
+    --lp-gold: #f59e0b;
+    --lp-text: #0f172a;
+    --lp-muted: #64748b;
+    --lp-border: #e2e8f0;
+    --lp-surface: #f8fafc;
+    --lp-radius: 16px;
+}
+
+/* ── Hero ──────────────────────────────────────────── */
+.lp-hero {
+    min-height: 92vh;
+    background: linear-gradient(145deg,#0d1b2a 0%,#1a2e40 40%,#1b4332 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.lp-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%,rgba(74,222,128,.07) 0%,transparent 70%);
+    pointer-events: none;
+}
+.lp-hero-dot-grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+}
+.lp-hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(74,222,128,.12);
+    border: 1px solid rgba(74,222,128,.25);
+    color: #4ade80;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 40px;
+    margin-bottom: 28px;
+}
+.lp-hero-h1 {
+    font-size: clamp(36px,7vw,72px);
+    font-weight: 900;
+    line-height: 1.07;
+    color: #fff;
+    letter-spacing: -2px;
+    margin: 0 0 20px;
+    max-width: 820px;
+}
+.lp-hero-h1 span {
+    background: linear-gradient(90deg,#4ade80,#86efac);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.lp-hero-sub {
+    font-size: clamp(16px,2.2vw,20px);
+    color: rgba(255,255,255,.65);
+    max-width: 560px;
+    line-height: 1.6;
+    margin: 0 auto 40px;
+    font-weight: 400;
+}
+.lp-hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:56px}
+.lp-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg,#22c55e,#16a34a);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 15px 32px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform .15s,box-shadow .15s;
+    box-shadow: 0 4px 24px rgba(34,197,94,.35);
+}
+.lp-btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(34,197,94,.45);color:#fff}
+.lp-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,.08);
+    color: rgba(255,255,255,.9);
+    font-size: 16px;
+    font-weight: 600;
+    padding: 15px 32px;
+    border-radius: 12px;
+    border: 1.5px solid rgba(255,255,255,.18);
+    text-decoration: none;
+    transition: all .15s;
+}
+.lp-btn-ghost:hover{background:rgba(255,255,255,.15);color:#fff}
+
+/* ── Hero stats bar ────────────────────────────────── */
+.lp-hero-stats {
+    display: flex;
+    gap: 0;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(255,255,255,.04);
+    backdrop-filter: blur(12px);
+}
+.lp-stat {
+    padding: 20px 40px;
+    text-align: center;
+    position: relative;
+    border-right: 1px solid rgba(255,255,255,.08);
+}
+.lp-stat:last-child{border-right:none}
+.lp-stat-num{font-size:28px;font-weight:900;color:#fff;line-height:1;display:block}
+.lp-stat-lbl{font-size:12px;color:rgba(255,255,255,.45);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:5px;display:block}
+
+/* ── Section wrapper ───────────────────────────────── */
+.lp-section{padding:80px 20px;max-width:1200px;margin:0 auto}
+.lp-section-eyebrow{font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--lp-green);margin-bottom:10px}
+.lp-section-title{font-size:clamp(26px,4vw,40px);font-weight:900;color:var(--lp-text);letter-spacing:-.5px;margin:0 0 14px}
+.lp-section-sub{font-size:16px;color:var(--lp-muted);max-width:560px;line-height:1.65;margin:0 0 48px}
+
+/* ── How it works ──────────────────────────────────── */
+.lp-how-bg{background:var(--lp-surface)}
+.lp-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.lp-step{background:#fff;border:1.5px solid var(--lp-border);border-radius:var(--lp-radius);padding:32px 28px;position:relative;transition:box-shadow .2s}
+.lp-step:hover{box-shadow:0 8px 32px rgba(0,0,0,.08)}
+.lp-step-num{font-size:11px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--lp-muted);margin-bottom:16px}
+.lp-step-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:18px}
+.lp-step-icon-green{background:linear-gradient(135deg,#f0fdf4,#dcfce7)}
+.lp-step-icon-blue{background:linear-gradient(135deg,#eff6ff,#dbeafe)}
+.lp-step-icon-gold{background:linear-gradient(135deg,#fffbeb,#fef3c7)}
+.lp-step h3{font-size:18px;font-weight:800;color:var(--lp-text);margin:0 0 10px}
+.lp-step p{font-size:14px;color:var(--lp-muted);line-height:1.65;margin:0}
+.lp-step-connector{position:absolute;top:52px;right:-18px;width:36px;height:2px;background:linear-gradient(90deg,var(--lp-border),transparent);z-index:1}
+
+/* ── Categories grid ───────────────────────────────── */
+.lp-cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px}
+.lp-cat-card {
+    background: #fff;
+    border: 1.5px solid var(--lp-border);
+    border-radius: 14px;
+    padding: 20px 14px;
+    text-align: center;
+    text-decoration: none;
+    transition: all .18s;
+    display: block;
+}
+.lp-cat-card:hover{border-color:var(--lp-green);box-shadow:0 4px 16px rgba(27,94,32,.1);transform:translateY(-2px)}
+.lp-cat-emoji{font-size:28px;display:block;margin-bottom:8px;line-height:1}
+.lp-cat-name{font-size:13px;font-weight:700;color:var(--lp-text);line-height:1.3}
+.lp-cat-count{font-size:11px;color:var(--lp-muted);margin-top:4px}
+
+/* ── Feature strips ────────────────────────────────── */
+.lp-features{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.lp-feature{display:flex;align-items:flex-start;gap:16px}
+.lp-feature-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px}
+.lp-feature h4{font-size:15px;font-weight:700;color:var(--lp-text);margin:0 0 5px}
+.lp-feature p{font-size:13px;color:var(--lp-muted);margin:0;line-height:1.55}
+
+/* ── Seller CTA strip ──────────────────────────────── */
+.lp-seller-strip {
+    background: linear-gradient(135deg,#1b4332 0%,#2d6a4f 50%,#1b5e20 100%);
+    position: relative;
+    overflow: hidden;
+    padding: 72px 20px;
+    text-align: center;
+}
+.lp-seller-strip::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle,rgba(255,255,255,.05) 1px,transparent 1px);
+    background-size: 24px 24px;
+    pointer-events: none;
+}
+.lp-seller-strip-inner{position:relative;z-index:1;max-width:700px;margin:0 auto}
+.lp-seller-strip h2{font-size:clamp(28px,4vw,44px);font-weight:900;color:#fff;letter-spacing:-.5px;margin:0 0 14px}
+.lp-seller-strip p{font-size:17px;color:rgba(255,255,255,.7);margin:0 0 36px;line-height:1.6}
+.lp-seller-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.lp-seller-btn-white {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #fff;
+    color: var(--lp-green);
+    font-size: 15px;
+    font-weight: 700;
+    padding: 13px 28px;
+    border-radius: 11px;
+    text-decoration: none;
+    transition: all .15s;
+    box-shadow: 0 4px 16px rgba(0,0,0,.2);
+}
+.lp-seller-btn-white:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,.25);color:var(--lp-green)}
+.lp-seller-btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: rgba(255,255,255,.9);
+    font-size: 15px;
+    font-weight: 600;
+    padding: 13px 28px;
+    border-radius: 11px;
+    border: 1.5px solid rgba(255,255,255,.35);
+    text-decoration: none;
+    transition: all .15s;
+}
+.lp-seller-btn-outline:hover{background:rgba(255,255,255,.1);color:#fff}
+
+/* ── Testimonials ──────────────────────────────────── */
+.lp-reviews-bg{background:var(--lp-surface)}
+.lp-reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.lp-review-card{background:#fff;border:1.5px solid var(--lp-border);border-radius:var(--lp-radius);padding:28px}
+.lp-review-stars{color:#f59e0b;font-size:14px;margin-bottom:12px;letter-spacing:1px}
+.lp-review-text{font-size:14px;color:var(--lp-text);line-height:1.65;margin:0 0 20px;font-style:italic}
+.lp-review-author{display:flex;align-items:center;gap:10px}
+.lp-review-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1b5e20,#4ade80);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:800;flex-shrink:0}
+.lp-review-name{font-size:13px;font-weight:700;color:var(--lp-text)}
+.lp-review-loc{font-size:12px;color:var(--lp-muted)}
+
+/* ── Store CTA ─────────────────────────────────────── */
+.lp-store-cta {
+    background: linear-gradient(135deg,#eff6ff 0%,#f0fdf4 100%);
+    border: 1.5px solid #dbeafe;
+    border-radius: 24px;
+    padding: 56px 40px;
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    margin: 0 20px;
+}
+.lp-store-cta-text{flex:1}
+.lp-store-cta-text h2{font-size:clamp(22px,3vw,34px);font-weight:900;color:var(--lp-text);margin:0 0 12px;letter-spacing:-.3px}
+.lp-store-cta-text p{font-size:15px;color:var(--lp-muted);line-height:1.65;margin:0 0 28px}
+.lp-store-cta-img{font-size:80px;line-height:1;flex-shrink:0}
+.lp-store-features{display:flex;flex-direction:column;gap:8px;margin-bottom:28px}
+.lp-store-feature-item{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--lp-text)}
+.lp-store-feature-item::before{content:'✓';width:20px;height:20px;background:var(--lp-green);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+
+/* ── Nav bar ───────────────────────────────────────── */
+.lp-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 64px;
+    background: rgba(13,27,42,.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    transition: background .3s;
+}
+.lp-nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.lp-nav-logo-mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#22c55e,#15803d);display:flex;align-items:center;justify-content:center}
+.lp-nav-logo-mark svg{width:20px;height:20px;fill:#fff}
+.lp-nav-brand{font-size:17px;font-weight:800;color:#fff;letter-spacing:-.3px}
+.lp-nav-brand span{color:#4ade80}
+.lp-nav-links{display:flex;align-items:center;gap:8px}
+.lp-nav-link{font-size:14px;font-weight:600;color:rgba(255,255,255,.7);padding:8px 14px;border-radius:8px;text-decoration:none;transition:all .15s}
+.lp-nav-link:hover{background:rgba(255,255,255,.08);color:#fff}
+.lp-nav-btn {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    background: var(--lp-green);
+    padding: 9px 20px;
+    border-radius: 9px;
+    text-decoration: none;
+    transition: all .15s;
+}
+.lp-nav-btn:hover{background:#15803d;color:#fff}
+.lp-nav-btn-ghost {
+    font-size: 14px;
+    font-weight: 600;
+    color: rgba(255,255,255,.8);
+    padding: 9px 20px;
+    border-radius: 9px;
+    text-decoration: none;
+    border: 1.5px solid rgba(255,255,255,.2);
+    transition: all .15s;
+}
+.lp-nav-btn-ghost:hover{background:rgba(255,255,255,.08);color:#fff}
+
+/* ── Footer ────────────────────────────────────────── */
+.lp-footer{background:var(--lp-navy);padding:60px 40px 32px;color:rgba(255,255,255,.6)}
+.lp-footer-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.lp-footer-brand p{font-size:13px;line-height:1.7;margin:12px 0 0;max-width:280px}
+.lp-footer-col h4{font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.35);margin:0 0 16px}
+.lp-footer-col a{display:block;font-size:14px;color:rgba(255,255,255,.55);text-decoration:none;margin-bottom:10px;transition:color .15s}
+.lp-footer-col a:hover{color:#fff}
+.lp-footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:24px;max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:rgba(255,255,255,.3)}
+.lp-footer-bottom a{color:rgba(255,255,255,.4);text-decoration:none}
+.lp-footer-bottom a:hover{color:#fff}
+
+/* ── Responsive ────────────────────────────────────── */
+@media(max-width:900px){
+  .lp-steps{grid-template-columns:1fr}
+  .lp-step-connector{display:none}
+  .lp-features{grid-template-columns:1fr}
+  .lp-reviews-grid{grid-template-columns:1fr}
+  .lp-store-cta{flex-direction:column;gap:24px;padding:36px 24px;margin:0 16px}
+  .lp-store-cta-img{font-size:56px}
+  .lp-footer-inner{grid-template-columns:1fr 1fr;gap:32px}
+  .lp-footer{padding:40px 20px 24px}
+}
+@media(max-width:700px){
+  .lp-hero{padding:100px 16px 48px;min-height:auto}
+  .lp-hero-stats{flex-direction:column;width:100%}
+  .lp-stat{border-right:none;border-bottom:1px solid rgba(255,255,255,.08);padding:16px 24px}
+  .lp-stat:last-child{border-bottom:none}
+  .lp-nav{padding:0 16px;height:56px}
+  .lp-nav-links .lp-nav-link{display:none}
+  .lp-section{padding:48px 16px}
+  .lp-cat-grid{grid-template-columns:repeat(3,1fr)}
+  .lp-footer-inner{grid-template-columns:1fr;gap:24px}
+  .lp-footer-bottom{flex-direction:column;gap:8px;text-align:center}
+}
+
+.lp-body .k-main-content, .lp-body .k-page-wrap{padding:0 !important;max-width:none !important}
+.lp-body body, body.lp-body{padding-top:0}

@@ -14,4 +14,9 @@ class ChatMessage extends Model
     {
         return $this->belongsTo(User::class, 'sender_id');
     }
+
+    public function thread()
+    {
+        return $this->belongsTo(ChatThread::class, 'thread_id');
+    }
 }

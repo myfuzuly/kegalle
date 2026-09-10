@@ -1,6 +1,6 @@
 <?php
-require '/home/kurulla/app_core/vendor/autoload.php';
-$app = require '/home/kurulla/app_core/bootstrap/app.php';
+require '/home/kegalle/app_core/vendor/autoload.php';
+$app = require '/home/kegalle/app_core/bootstrap/app.php';
 $kernel = $app->make('Illuminate\Contracts\Http\Kernel');
 $kernel->handle(Illuminate\Http\Request::capture());
 

@@ -1,5 +1,5 @@
 <?php
-$routeFile = '/home/kurulla/app_core/routes/web.php';
+$routeFile = '/home/kegalle/app_core/routes/web.php';
 
 // Try opcache invalidation
 if (function_exists('opcache_invalidate')) {
@@ -10,8 +10,8 @@ if (function_exists('opcache_invalidate')) {
 }
 
 // Boot Laravel and list routes containing 'saved'
-require '/home/kurulla/app_core/vendor/autoload.php';
-$app = require '/home/kurulla/app_core/bootstrap/app.php';
+require '/home/kegalle/app_core/vendor/autoload.php';
+$app = require '/home/kegalle/app_core/bootstrap/app.php';
 $kernel = $app->make(\Illuminate\Contracts\Http\Kernel::class);
 
 $router = $app->make('router');
@@ -25,6 +25,6 @@ foreach ($routes as $route) {
 echo "\nTotal routes: " . count($routes) . "\n";
 
 // Check cache files
-$cacheDir = '/home/kurulla/app_core/bootstrap/cache/';
+$cacheDir = '/home/kegalle/app_core/bootstrap/cache/';
 $cacheFiles = glob($cacheDir . '*.php');
 echo "Cache files: " . (count($cacheFiles) ? implode(', ', array_map('basename', $cacheFiles)) : 'none') . "\n";

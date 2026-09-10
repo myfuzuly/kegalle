@@ -1,8 +1,6 @@
 @extends('layouts.dashboard')
+@section('banner_sub', 'Listings you\'ve saved for later.')
 
-@push('styles')
-<link rel="stylesheet" href="/css/kurulla-main.css?v=44">
-@endpush
 
 @section('title','My Favorites')
 @section('eyebrow','Account')
@@ -12,14 +10,14 @@
 @section('content')
 <section class="kd-card">
     @if($favorites->count())
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px">
+        <div class="grid-auto-220">
             @foreach($favorites as $favorite)
                 @if($favorite->listing)
                     @include('frontend.listings.card', ['listing' => $favorite->listing])
                 @endif
             @endforeach
         </div>
-        <div style="margin-top:20px">{{ $favorites->links() }}</div>
+        <div class="mt-20">{{ $favorites->links() }}</div>
     @else
         <div class="kd-empty">
             <strong>No favorites yet</strong>
