@@ -1,4 +1,4 @@
-@extends('layouts.dashboard')
+﻿@extends('layouts.dashboard')
 @section('banner_sub', 'Need help? Send a message directly to the kegalle admin team.')
 @section('title','Contact Administrator')
 @section('heading','Contact Admin')

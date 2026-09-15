@@ -1,4 +1,4 @@
-@extends('layouts.dashboard')
+﻿@extends('layouts.dashboard')
 @section('banner_sub', 'Manage your business stores on Kegalle Marketplace.')
 @section('title','My Stores')
 @section('heading','My Stores')

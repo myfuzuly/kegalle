@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 @section('title','Contact Us · Kegalle Marketplace')
 @section('meta_description','Get in touch with the Kegalle Marketplace team — send us a message, call, or chat with us on WhatsApp.')
 @section('content')
@@ -17,7 +17,7 @@
         <div class="cu-hero-stats">
             <div class="cu-hero-stat"><strong>&lt; 24h</strong><span>Response time</span></div>
             <div class="cu-hero-stat-div"></div>
-            <div class="cu-hero-stat"><strong>+94 712 930 930</strong><span>Call us free</span></div>
+            <div class="cu-hero-stat"><strong>+94 713 930 930</strong><span>Call us free</span></div>
             <div class="cu-hero-stat-div"></div>
             <div class="cu-hero-stat"><strong>WhatsApp</strong><span>Instant chat</span></div>
         </div>
@@ -115,13 +115,13 @@
                 Contact Details
             </div>
             <div class="cu-info-rows">
-                <a href="tel:+94712930930" class="cu-irow">
+                <a href="tel:+94713930930" class="cu-irow">
                     <div class="cu-irow-icon k-icon-green">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.014 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
                     </div>
                     <div class="cu-irow-body">
                         <div class="cu-irow-lbl">Hotline</div>
-                        <div class="cu-irow-val">+94 712 930 930</div>
+                        <div class="cu-irow-val">+94 713 930 930</div>
                     </div>
                     <svg class="cu-irow-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                 </a>
@@ -131,7 +131,7 @@
                     </div>
                     <div class="cu-irow-body">
                         <div class="cu-irow-lbl">Telephone</div>
-                        <div class="cu-irow-val">+94 35 223 44 33</div>
+                        <div class="cu-irow-val">+94 35 223 4433</div>
                     </div>
                     <svg class="cu-irow-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                 </a>

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 @section('title','Safety Tips · Kegalle Marketplace')
 @section('meta_description','Simple safety precautions to follow when buying or selling on Kegalle Marketplace.')
 @section('content')
@@ -15,7 +15,9 @@
 </div>
 
 <div class="k-guide-wrap">
-    <div class="k-breadcrumb"><a href="/">Home</a><span class="sep">›</span><a href="/help-center">Help Center</a><span class="sep">›</span><span class="current">Safety Tips</span></div>
+    <div class="k-breadcrumb">
+        <a href="/">Home</a><span class="sep">›</span><a href="/help-center">Help Center</a><span class="sep">›</span><span class="current">Safety Tips</span>
+    </div>
 
     <div class="k-guide-section">
         <h2 class="k-guide-section-h2">
@@ -24,11 +26,27 @@
             </div>
             When Meeting in Person
         </h2>
-        <ul class="k-guide-list">
-            <li>Meet in a safe, public, well-lit location — preferably during daytime</li>
-            <li>Bring a friend or family member along if possible</li>
-            <li>Tell someone where you're going and who you're meeting</li>
-        </ul>
+        <div class="k-tip-card">
+            <div class="k-tip-card-num">1</div>
+            <div class="k-tip-card-body">
+                <strong>Choose a public location</strong>
+                <span>Meet in a safe, well-lit public place — a busy market, bank lobby, or police station carpark. Avoid private addresses for a first meeting.</span>
+            </div>
+        </div>
+        <div class="k-tip-card">
+            <div class="k-tip-card-num">2</div>
+            <div class="k-tip-card-body">
+                <strong>Bring someone with you</strong>
+                <span>Ask a friend or family member to come along, especially for high-value items. There's safety in numbers.</span>
+            </div>
+        </div>
+        <div class="k-tip-card">
+            <div class="k-tip-card-num">3</div>
+            <div class="k-tip-card-body">
+                <strong>Tell someone where you're going</strong>
+                <span>Share the meeting location and the seller's contact details with a trusted person before you leave.</span>
+            </div>
+        </div>
     </div>
 
     <div class="k-guide-section">
@@ -38,11 +56,27 @@
             </div>
             Before You Pay
         </h2>
-        <ul class="k-guide-list">
-            <li>Inspect the item carefully and confirm it matches the listing description</li>
-            <li>Avoid sending advance payments to sellers you haven't met or verified</li>
-            <li>Use cash or secure payment methods for in-person transactions</li>
-        </ul>
+        <div class="k-tip-card">
+            <div class="k-tip-card-num">4</div>
+            <div class="k-tip-card-body">
+                <strong>Inspect before you pay</strong>
+                <span>Check the item carefully in person. Make sure it matches the listing photos and description before handing over any money.</span>
+            </div>
+        </div>
+        <div class="k-tip-card">
+            <div class="k-tip-card-num">5</div>
+            <div class="k-tip-card-body">
+                <strong>Never send advance payments</strong>
+                <span>Avoid sending money to a seller you haven't met or verified. Legitimate sellers don't require upfront bank transfers before viewing.</span>
+            </div>
+        </div>
+        <div class="k-tip-card">
+            <div class="k-tip-card-num">6</div>
+            <div class="k-tip-card-body">
+                <strong>Use cash or secure methods</strong>
+                <span>For in-person transactions, cash is safest. If using a payment app, confirm the recipient's details before sending.</span>
+            </div>
+        </div>
     </div>
 
     <div class="k-guide-section">
@@ -52,10 +86,18 @@
             </div>
             Spotting Red Flags
         </h2>
+        <div class="k-alert">
+            <div class="k-alert-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="k-alert-body">
+                Watch out for: prices that seem too good to be true · sellers who pressure you to pay immediately or off-platform · requests for gift cards, wire transfers, or unusual payment methods.
+            </div>
+        </div>
         <ul class="k-guide-list">
-            <li>Prices that seem too good to be true</li>
-            <li>Sellers who pressure you to pay immediately or off-platform</li>
-            <li>Requests for unusual payment methods (gift cards, wire transfers to strangers)</li>
+            <li>Prices significantly below market value — if it looks too good, it usually is</li>
+            <li>Sellers who won't meet in person or video-call to verify the item</li>
+            <li>Requests to move the conversation off Kegalle Marketplace to a private number only</li>
         </ul>
     </div>
 
@@ -67,7 +109,7 @@
             Reporting a Problem
         </h2>
         <div class="k-guide-report">
-            <p>If you encounter a suspicious listing or user, use the "Report Ad" option on the listing page, or <a href="/contact-us">contact us</a> directly. We review every report promptly.</p>
+            <p>If you encounter a suspicious listing or user, use the <strong>"Report Ad"</strong> option on the listing page, or <a href="/contact-us">contact us</a> directly. We review every report promptly and take action within 24 hours.</p>
         </div>
     </div>
 

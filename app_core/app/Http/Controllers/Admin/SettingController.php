@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
@@ -14,7 +14,7 @@ class SettingController extends Controller
             'site_name' => Setting::getValue('site_name', 'Kegalle'),
             'site_tagline' => Setting::getValue('site_tagline', 'Buy, Sell & Discover'),
             'support_email' => Setting::getValue('support_email', 'support@kegalle.com'),
-            'support_phone' => Setting::getValue('support_phone', '+94 76 693 0930'),
+            'support_phone' => Setting::getValue('support_phone', '+94 713 930 930'),
             'whatsapp_number' => Setting::getValue('whatsapp_number', '94712930930'),
             'default_currency' => Setting::getValue('default_currency', 'LKR'),
             'listing_approval_mode' => Setting::getValue('listing_approval_mode', 'manual'),

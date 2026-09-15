@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title','Kegalle Marketplace — Buy, Sell & Discover Locally in Kegalle')
 @section('meta_description','Buy and sell products, vehicles, property, electronics and more in Kegalle, Sri Lanka. Browse trusted local stores, classified ads, and verified sellers — all in one place.')
@@ -11,7 +11,7 @@
   "name": "Kegalle Marketplace",
   "url": "https://kegalle.com",
   "description": "The local online marketplace for the Kegalle district — buy, sell and discover products, services, stores and classified ads.",
-  "telephone": "+94712930930",
+  "telephone": "+94713930930",
   "email": "support@kegalle.com",
   "logo": {
     "@type": "ImageObject",

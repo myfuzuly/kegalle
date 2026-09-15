@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 @section('title','About Us · Kegalle Marketplace')
 @section('meta_description','Learn about Kegalle Marketplace — the local online marketplace connecting buyers, sellers and businesses across the Kegalle district of Sri Lanka.')
 @section('content')
@@ -159,11 +159,11 @@
             </div>
             <div class="k-about-cta-body">
                 <strong>Phone</strong>
-                <span class="k-about-cta-value"><a href="tel:+94712930930">+94 712 930 930</a></span>
+                <span class="k-about-cta-value"><a href="tel:+94713930930">+94 713 930 930</a></span>
                 <span class="k-about-cta-sub">Mon–Sat, 9 AM–6 PM</span>
             </div>
             <div class="k-about-cta-footer">
-                <a href="tel:+94712930930" class="k-btn k-btn-outline k-btn-sm">Call Now</a>
+                <a href="tel:+94713930930" class="k-btn k-btn-outline k-btn-sm">Call Now</a>
             </div>
         </div>
     </div>
