@@ -199,3 +199,15 @@ Schedule::call(function () {
         Log::info("Deal expiry: {$expired} deal(s) marked as expired.");
     }
 })->daily()->name('deal-expiry-cleanup')->withoutOverlapping();
+
+/*
+|--------------------------------------------------------------------------
+| Wholesale Price Roll-Forward — runs daily at 11:00 AM Sri Lanka time
+| Copies previous day's prices to today if none exist yet
+|--------------------------------------------------------------------------
+*/
+Schedule::command('prices:rollforward')
+    ->dailyAt('11:00')
+    ->timezone('Asia/Colombo')
+    ->name('wholesale-price-rollforward')
+    ->withoutOverlapping();
