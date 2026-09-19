@@ -1,8 +1,6 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\WholesalePriceController as AdminWholesalePriceController;
-use App\Http\Controllers\WholesalePriceController;
 use App\Http\Controllers\Admin\CategoryManagementController;
 use App\Http\Controllers\Admin\FieldManagementController;
 use App\Http\Controllers\Admin\ChatController;
@@ -118,7 +116,6 @@ Route::middleware('cache.page:86400')->group(function () {
     Route::view('/faq', 'pages.faq')->name('pages.faq');
 });
 Route::view('/contact-us', 'pages.contact')->name('pages.contact');
-Route::get('/market-prices', [WholesalePriceController::class, 'index'])->name('market-prices');
 Route::redirect('/government-services', '/public-services', 301);
 Route::redirect('/government-services/{slug}', '/public-services/{slug}', 301);
 Route::get('/public-services', [\App\Http\Controllers\Frontend\GovernmentServiceController::class, 'index'])->name('gov-services.index')->middleware('cache.page:1800');
@@ -855,13 +852,6 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
         \Illuminate\Support\Facades\Artisan::call('test:emails', ['--to' => $to]);
         return response("<pre style='padding:20px'>".htmlspecialchars(\Illuminate\Support\Facades\Artisan::output())."</pre>")->header('Cache-Control','no-store');
     })->middleware('throttle:3,1');
-});
-
-// Wholesale Prices — admin
-Route::prefix('admin')->middleware(['auth', 'account.active', 'is_admin'])->group(function () {
-    Route::get('/wholesale-prices', [AdminWholesalePriceController::class, 'index'])->name('admin.wholesale-prices.index');
-    Route::post('/wholesale-prices', [AdminWholesalePriceController::class, 'store'])->name('admin.wholesale-prices.store');
-    Route::delete('/wholesale-prices/{date}', [AdminWholesalePriceController::class, 'destroy'])->name('admin.wholesale-prices.destroy');
 });
 
 Route::fallback(fn () => abort(404));

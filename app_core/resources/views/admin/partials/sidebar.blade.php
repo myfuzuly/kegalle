@@ -92,9 +92,6 @@
             <span class="kaa-ic"><svg viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg></span> Explore Kegalle
         </a>
         @endif
-        <a class="ka-nav {{ request()->is('admin/wholesale-prices*') ? 'active' : '' }}" href="/admin/wholesale-prices">
-            <span class="kaa-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span> Market Prices
-        </a>
 
         @if($can('listings') || $can('classifieds') || $can('deals') || $can('events') || $can('posts') || $can('explore-items'))
         </div>{{-- /content section --}}
@@ -106,16 +103,8 @@
         <div class="ka-nav-section">
         @endif
         @if($can('users'))
-        @php
-            $isRegularUsers = request()->is('admin/users*') && request('role','') === 'regular';
-            $isAdminUsers   = request()->is('admin/users*') && request('role','') === 'admins';
-            $isAllUsers     = request()->is('admin/users*') && !in_array(request('role',''), ['regular','admins']);
-        @endphp
-        <a class="ka-nav {{ $isRegularUsers ? 'active' : '' }}" href="/admin/users?role=regular">
-            <span class="kaa-ic"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Regular Users
-        </a>
-        <a class="ka-nav {{ $isAdminUsers ? 'active' : '' }}" href="/admin/users?role=admins">
-            <span class="kaa-ic"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span> Admin Users
+        <a class="ka-nav {{ request()->is('admin/users*') ? 'active' : '' }}" href="/admin/users">
+            <span class="kaa-ic"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Users
         </a>
         @endif
         @if($can('stores'))
