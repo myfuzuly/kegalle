@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 @section('title','About Us · Kegalle Marketplace')
 @section('meta_description','Learn about Kegalle Marketplace — the local online marketplace connecting buyers, sellers and businesses across the Kegalle district of Sri Lanka.')
 @section('content')
@@ -133,11 +133,11 @@
             </div>
             <div class="k-about-cta-body">
                 <strong>WhatsApp</strong>
-                <span class="k-about-cta-value"><a href="https://wa.me/94712930930?text={{ urlencode('Hi, I need help with Kegalle Marketplace.') }}" target="_blank" rel="noopener">+94 712 930 930</a></span>
+                <span class="k-about-cta-value"><a href="https://wa.me/94703234433?text={{ urlencode('Hi, I need help with Kegalle Marketplace.') }}" target="_blank" rel="noopener">+94 70 323 4433</a></span>
                 <span class="k-about-cta-sub">Typically replies instantly</span>
             </div>
             <div class="k-about-cta-footer">
-                <a href="https://wa.me/94712930930?text={{ urlencode('Hi, I need help with Kegalle Marketplace.') }}" target="_blank" rel="noopener" class="k-btn k-btn-primary k-btn-sm">Chat Now</a>
+                <a href="https://wa.me/94703234433?text={{ urlencode('Hi, I need help with Kegalle Marketplace.') }}" target="_blank" rel="noopener" class="k-btn k-btn-primary k-btn-sm">Chat Now</a>
             </div>
         </div>
         <div class="k-about-cta-card">
@@ -159,11 +159,11 @@
             </div>
             <div class="k-about-cta-body">
                 <strong>Phone</strong>
-                <span class="k-about-cta-value"><a href="tel:+94713930930">+94 713 930 930</a></span>
+                <span class="k-about-cta-value"><a href="tel:+94703234433">+94 70 323 4433</a></span>
                 <span class="k-about-cta-sub">Mon–Sat, 9 AM–6 PM</span>
             </div>
             <div class="k-about-cta-footer">
-                <a href="tel:+94713930930" class="k-btn k-btn-outline k-btn-sm">Call Now</a>
+                <a href="tel:+94703234433" class="k-btn k-btn-outline k-btn-sm">Call Now</a>
             </div>
         </div>
     </div>

@@ -77,6 +77,7 @@
                     <th class="w-110">Status</th>
                     <th class="w-110">Verified</th>
                     <th class="w-110">Featured</th>
+                    <th class="w-110">Listings</th>
                     <th class="w-210">Actions</th>
                 </tr>
             </thead>

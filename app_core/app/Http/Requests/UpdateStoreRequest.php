@@ -31,6 +31,7 @@ class UpdateStoreRequest extends FormRequest
             'whatsapp_same' => ['nullable'],
             'categories' => ['nullable', 'array'],
             'categories.*' => ['integer', 'exists:categories,id'],
+            'listings_auto_approve' => ['nullable', 'boolean'],
         ];
     }
 }

@@ -267,7 +267,7 @@
                                 </div>
                                 <div class="k-deal-card-store">🏪
                                     @if($storeSlug)
-                                        <a class="k-deal-store-link" href="/store/{{ $storeSlug }}" onclick="event.stopPropagation()">{{ $storeNm }}</a>
+                                        <span class="k-deal-store-link" role="link" tabindex="0" data-href="/store/{{ $storeSlug }}">{{ $storeNm }}</span>
                                     @else
                                         {{ $storeNm }}
                                     @endif
@@ -350,6 +350,8 @@
 
 @push('scripts')
 <script nonce="{{ $cspNonce ?? '' }}">
+document.addEventListener('click',function(e){var s=e.target.closest('.k-deal-store-link[data-href]');if(!s)return;e.preventDefault();e.stopPropagation();window.location.href=s.dataset.href;},true);
+document.addEventListener('keydown',function(e){if(e.key!=='Enter')return;var s=e.target.closest&&e.target.closest('.k-deal-store-link[data-href]');if(s){e.preventDefault();window.location.href=s.dataset.href;}});
 // Flash deal countdown — driven by real ends_at from DB
 (function(){
     var timerEl = document.getElementById('flashTimer');

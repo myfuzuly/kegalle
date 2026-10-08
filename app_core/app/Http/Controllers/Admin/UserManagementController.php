@@ -22,6 +22,8 @@ class UserManagementController extends Controller
             ->when($request->role && $request->role !== '', function ($q) use ($request) {
                 if ($request->role === 'admins') {
                     $q->whereIn('role', ['admin', 'super_admin']);
+                } elseif ($request->role === 'regular') {
+                    $q->whereIn('role', ['user', 'seller']);
                 } else {
                     $q->where('role', $request->role);
                 }
@@ -35,12 +37,24 @@ class UserManagementController extends Controller
             \App\Models\Role::orderBy('sort_order')->get()
         );
 
-        $stats = cache()->remember('admin_user_stats', 60, fn () => [
-            'total'      => User::count(),
-            'active'     => User::where('status', 'active')->count(),
-            'unverified' => User::whereNull('email_verified_at')->count(),
-            'suspended'  => User::where('status', 'suspended')->count(),
-        ]);
+        $sectionRole = $request->role ?? '';
+        $statsKey = 'admin_user_stats_' . $sectionRole;
+        $stats = cache()->remember($statsKey, 60, function () use ($sectionRole) {
+            $base = match($sectionRole) {
+                'admins'  => User::whereIn('role', ['admin', 'super_admin']),
+                'regular' => User::whereIn('role', ['user', 'seller']),
+                default   => User::query(),
+            };
+            return [
+                'total'      => (clone $base)->count(),
+                'active'     => (clone $base)->where('status', 'active')->count(),
+                'unverified' => (clone $base)->whereNull('email_verified_at')->count(),
+                'suspended'  => (clone $base)->where('status', 'suspended')->count(),
+                'admins'     => User::whereIn('role', ['admin', 'super_admin'])->count(),
+                'sellers'    => User::where('role', 'seller')->count(),
+                'regular'    => User::whereIn('role', ['user', 'seller'])->count(),
+            ];
+        });
 
         if ($request->ajax()) {
             return response()->json([
@@ -50,7 +64,7 @@ class UserManagementController extends Controller
             ]);
         }
 
-        return view('admin.users.index', compact('users', 'allRoles', 'stats'));
+        return view('admin.users.index', compact('users', 'allRoles', 'stats', 'sectionRole'));
     }
 
     public function exportCsv(Request $request)

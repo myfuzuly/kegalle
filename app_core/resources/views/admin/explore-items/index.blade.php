@@ -17,7 +17,7 @@
         @if($item->image)
             <img src="{{ asset('storage/'.$item->image) }}" alt="{{ $item->title }}" class="thumb-sm">
         @else
-            <span style="width:44px;height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,{{ $item->gradient_start }},{{ $item->gradient_end }})">{{ $item->icon }}</span>
+            <span class="ka-icon-box-44" style="background:linear-gradient(135deg,{{ $item->gradient_start }},{{ $item->gradient_end }})">{{ $item->icon }}</span>
         @endif
     </td>
     <td class="max-w-200"><b class="text-truncate text-truncate-190">{{ $item->title }}</b><small class="text-gray">{{ $item->sub_items_count }} items</small></td>

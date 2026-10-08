@@ -25,7 +25,7 @@
 @endphp
 
 <div class="flex-g10-mb20">
-    <span style="font-size:12px;font-weight:700;padding:3px 10px;background:{{ $lc['bg'] }};color:{{ $lc['color'] }};border-radius:12px">{{ strtoupper($level) }}</span>
+    <span class="ka-cat-color-pill" style="background:{{ $lc['bg'] }};color:{{ $lc['color'] }}">{{ strtoupper($level) }}</span>
     @if($category->parent)
     <span class="fs13-muted-var">
         @if($category->parent->parent)

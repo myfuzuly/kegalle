@@ -109,7 +109,7 @@
         <td class="text-center">
             <div class="rev-stars">
                 @for($i=1;$i<=5;$i++)
-                <span style="color:{{ $i<=(int)$review->rating ? '#f59e0b':'#e5e7eb' }}">★</span>
+                <span class="{{ $i<=(int)$review->rating ? 'ka-star-active' : 'ka-star-muted' }}">★</span>
                 @endfor
             </div>
             <div class="fs-11 text-muted">{{ $review->rating }}/5</div>

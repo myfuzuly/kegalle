@@ -17,7 +17,7 @@
     <td>{{ $listing->locationModel->name ?? $listing->location ?? '-' }}</td>
     <td>{{ $listing->store->name ?? $listing->user->name ?? 'Seller' }}</td>
     <td>LKR {{ number_format($listing->price ?? 0) }}</td>
-    <td><span style="display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;{{ $statusStyle }}">{{ $markChar }} {{ ucfirst($listing->status) }}</span></td>
+    <td><span class="ka-pill" style="{{ $statusStyle }}">{{ $markChar }} {{ ucfirst($listing->status) }}</span></td>
     <td>@if($listing->is_featured)<span class="status-amber">★ Featured</span>@else<span class="status-gray">— No</span>@endif</td>
     <td class="sa-actions-inline">
         <a href="/listings/{{ $listing->slug }}" target="_blank">View</a>

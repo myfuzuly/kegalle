@@ -96,6 +96,30 @@
         <label>Description</label>
         <textarea name="description">{{ old('description', $store->description) }}</textarea>
     </div>
+
+    <div class="ka-field ka-span-2">
+        <label>Listing Approval</label>
+        <div class="ka-approval-toggle">
+            <label class="ka-toggle-option {{ old('listings_auto_approve', $store->listings_auto_approve) ? '' : 'ka-toggle-active' }}">
+                <input type="radio" name="listings_auto_approve" value="0" class="ka-input-hidden"
+                    {{ old('listings_auto_approve', $store->listings_auto_approve) ? '' : 'checked' }}>
+                <span class="ka-toggle-icon">🔍</span>
+                <span>
+                    <strong>Manual Approval</strong>
+                    <small>New listings go to pending — admin must approve</small>
+                </span>
+            </label>
+            <label class="ka-toggle-option {{ old('listings_auto_approve', $store->listings_auto_approve) ? 'ka-toggle-active' : '' }}">
+                <input type="radio" name="listings_auto_approve" value="1" class="ka-input-hidden"
+                    {{ old('listings_auto_approve', $store->listings_auto_approve) ? 'checked' : '' }}>
+                <span class="ka-toggle-icon">⚡</span>
+                <span>
+                    <strong>Auto Approval</strong>
+                    <small>New listings go live immediately</small>
+                </span>
+            </label>
+        </div>
+    </div>
 </div>
 <div class="ka-form-actions">
     <button class="ka-btn ka-btn-primary">Update Store</button>
@@ -120,10 +144,10 @@
             <div class="caption-mt2">Stores Created</div>
         </div>
         <div class="stat-card">
-            <div style="font-size:28px;font-weight:800;color:{{ $ownerStores >= $ownerLimit ? '#c62828' : '#1b5e20' }}">{{ $ownerLimit }}</div>
+            <div class="ka-limit-count {{ $ownerStores >= $ownerLimit ? 'ka-limit-over' : 'ka-limit-ok' }}">{{ $ownerLimit }}</div>
             <div class="caption-mt2">Current Limit</div>
         </div>
-        <div style="background:{{ $ownerStores >= $ownerLimit ? '#ffebee' : '#e8f5e9' }};border-radius:10px;padding:10px 16px;font-size:13px;font-weight:700;color:{{ $ownerStores >= $ownerLimit ? '#c62828' : '#2e7d32' }}">
+        <div class="ka-limit-box ka-fw-700 {{ $ownerStores >= $ownerLimit ? 'over' : 'ok' }}">
             {{ $ownerStores >= $ownerLimit ? '🔒 Limit reached — Create Store is disabled for this seller' : '✅ Seller can still create ' . ($ownerLimit - $ownerStores) . ' more store(s)' }}
         </div>
     </div>
@@ -177,12 +201,12 @@
 </section>
 
 {{-- ── DANGER ZONE ─────────────────────────────────────────────────────── --}}
-<section style="border:2px solid #fca5a5;border-radius:16px;padding:28px 32px;margin-top:24px;background:#fff5f5;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+<section class="ka-danger-zone">
+    <div class="ka-danger-zone-head">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        <span style="font-size:16px;font-weight:800;color:#dc2626;">Danger Zone</span>
+        <span class="ka-danger-zone-title">Danger Zone</span>
     </div>
-    <p style="font-size:13px;color:#6b7280;margin-bottom:20px;">Permanently delete this store and all its listings. This action cannot be undone.</p>
+    <p class="ka-danger-zone-desc">Permanently delete this store and all its listings. This action cannot be undone.</p>
     <button type="button" id="dzStoreDeleteBtn" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
         Delete Store & All Listings
@@ -190,22 +214,22 @@
 </section>
 
 {{-- Store Delete Confirmation Modal --}}
-<div id="dzStoreModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);align-items:center;justify-content:center;">
-    <div style="background:#fff;border-radius:20px;padding:36px 40px;max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.25);">
-        <div style="text-align:center;margin-bottom:20px;">
-            <div style="width:56px;height:56px;background:#fee2e2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+<div id="dzStoreModal" class="ka-modal-overlay">
+    <div class="ka-modal-box">
+        <div class="ka-modal-icon-wrap">
+            <div class="ka-modal-icon">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
             </div>
-            <h3 style="font-size:18px;font-weight:800;color:#111;margin-bottom:8px;">Delete "{{ $store->name }}"?</h3>
-            <p style="font-size:13px;color:#6b7280;line-height:1.6;">All listings belonging to this store will also be deleted. <strong style="color:#dc2626;">This cannot be undone.</strong></p>
+            <h3 class="ka-modal-title">Delete "{{ $store->name }}"?</h3>
+            <p class="ka-modal-desc">All listings belonging to this store will also be deleted. <strong class="ka-text-danger">This cannot be undone.</strong></p>
         </div>
-        <p style="font-size:13px;color:#374151;margin-bottom:8px;">Type <strong>DELETE</strong> to confirm:</p>
-        <input id="dzStoreInput" type="text" placeholder="Type DELETE here" style="width:100%;border:2px solid #e5e7eb;border-radius:8px;padding:10px 14px;font-size:14px;margin-bottom:16px;outline:none;box-sizing:border-box;">
-        <div style="display:flex;gap:10px;">
-            <button type="button" id="dzStoreCancelBtn" style="flex:1;padding:12px;border:1.5px solid #e5e7eb;border-radius:8px;background:#fff;font-size:14px;font-weight:600;cursor:pointer;color:#374151;">Cancel</button>
+        <p class="ka-modal-reason">Type <strong>DELETE</strong> to confirm:</p>
+        <input id="dzStoreInput" type="text" placeholder="Type DELETE here" class="ka-modal-input">
+        <div class="ka-modal-btns">
+            <button type="button" id="dzStoreCancelBtn" class="ka-modal-btn-cancel">Cancel</button>
             <form method="POST" action="/admin/stores/{{ $store->id }}" style="flex:1;">
                 @csrf @method('DELETE')
-                <button type="submit" id="dzStoreConfirmBtn" style="width:100%;padding:12px;border:none;border-radius:8px;background:#dc2626;color:#fff;font-size:14px;font-weight:700;cursor:pointer;opacity:.4;pointer-events:none;">Delete Permanently</button>
+                <button type="submit" id="dzStoreConfirmBtn" class="ka-modal-btn-danger" style="opacity:.4;pointer-events:none;">Delete Permanently</button>
             </form>
         </div>
     </div>
@@ -263,11 +287,19 @@ if (waSame) {
     var input = document.getElementById('dzStoreInput');
     var confirmBtn = document.getElementById('dzStoreConfirmBtn');
     if(!btn || !modal) return;
-    btn.addEventListener('click', function(){ modal.style.display='flex'; input.value=''; confirmBtn.style.opacity='.4'; confirmBtn.style.pointerEvents='none'; input.focus(); });
-    cancelBtn.addEventListener('click', function(){ modal.style.display='none'; });
-    modal.addEventListener('click', function(e){ if(e.target===modal) modal.style.display='none'; });
+    btn.addEventListener('click', function(){ modal.classList.add('open'); input.value=''; confirmBtn.style.opacity='.4'; confirmBtn.style.pointerEvents='none'; input.focus(); });
+    cancelBtn.addEventListener('click', function(){ modal.classList.remove('open'); });
+    modal.addEventListener('click', function(e){ if(e.target===modal) modal.classList.remove('open'); });
     input.addEventListener('input', function(){ var ok=this.value==='DELETE'; confirmBtn.style.opacity=ok?'1':'.4'; confirmBtn.style.pointerEvents=ok?'auto':'none'; });
 })();
+
+// Listing approval toggle active state
+document.querySelectorAll('.ka-approval-toggle input[type=radio]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        document.querySelectorAll('.ka-toggle-option').forEach(function(el) { el.classList.remove('ka-toggle-active'); });
+        if (this.checked) this.closest('.ka-toggle-option').classList.add('ka-toggle-active');
+    });
+});
 
 </script>
 @endsection

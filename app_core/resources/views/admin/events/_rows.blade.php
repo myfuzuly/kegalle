@@ -23,7 +23,7 @@
     <td>@if($event->is_free)<span class="green-fw7-fs13">Free</span>@else<b class="fs-13">LKR {{ number_format($event->price ?? 0) }}</b>@endif</td>
     <td><small>{{ ucfirst($event->event_type ?? 'offline') }}</small></td>
     <td>@if($event->is_featured)<span class="status-amber-sm">★ Featured</span>@else<span class="text-115-muted">— No</span>@endif</td>
-    <td><span style="display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;{{ $statusStyle }}">{{ $markChar }} {{ ucfirst($event->status) }}</span></td>
+    <td><span class="ka-pill" style="{{ $statusStyle }}">{{ $markChar }} {{ ucfirst($event->status) }}</span></td>
     <td class="fs13-tnum">{{ number_format($event->views ?? 0) }}</td>
     <td class="sa-actions-inline">
         <a href="/events/{{ $event->slug }}" target="_blank">View</a>

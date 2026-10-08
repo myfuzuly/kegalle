@@ -144,7 +144,7 @@
         @if(request()->hasAny(['q','type']))<a href="/admin/locations" class="loc-filter-clear">✕ Clear</a>@endif
         <div class="flex-1"></div>
         @foreach(['province','district','city','town'] as $t)
-        <a href="?type={{ $t }}" class="loc-type-tag {{ $t }}" style="text-decoration:none;cursor:pointer;{{ request('type')===$t ? 'outline:2px solid currentColor;outline-offset:1px' : '' }}">{{ ucfirst($t) }}</a>
+        <a href="?type={{ $t }}" class="loc-type-tag {{ $t }} ka-loc-type-btn {{ request('type')===$t ? 'active' : '' }}">{{ ucfirst($t) }}</a>
         @endforeach
     </form>
     <div class="loc-table-wrap">

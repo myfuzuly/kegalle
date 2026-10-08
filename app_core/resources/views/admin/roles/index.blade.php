@@ -71,7 +71,7 @@
     @foreach($roles as $role)
     <details class="rol-role-item">
         <summary class="rol-role-summary">
-            <div class="rol-role-avatar" style="background:{{ $role->is_super ? '#f3e8ff' : ($role->is_admin_level ? '#e8f5e9' : '#f5f5f5') }}">
+            <div class="rol-role-avatar {{ $role->is_super ? 'ka-role-super' : ($role->is_admin_level ? 'ka-role-admin' : 'ka-role-basic') }}">
                 {{ $role->is_super ? '👑' : ($role->is_admin_level ? '🛡️' : '👤') }}
             </div>
             <div class="flex-grow-min">

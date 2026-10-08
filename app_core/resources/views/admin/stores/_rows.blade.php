@@ -16,12 +16,13 @@
         <td>{{ $store->listings_count }}</td>
         <td>
             @php $limit = (int)($store->user->store_limit ?? 1); $owned = $store->user?->stores->count() ?? 0; @endphp
-            <span style="font-weight:700;color:{{ $owned >= $limit ? '#c62828' : '#1b5e20' }}">{{ $owned }}/{{ $limit }}</span>
+            <span class="ka-fw-700 {{ $owned >= $limit ? 'ka-text-danger-strong' : 'ka-text-success-strong' }}">{{ $owned }}/{{ $limit }}</span>
             @if($owned >= $limit)<span class="fs10-red-block">Locked</span>@endif
         </td>
         <td><span class="sa-status {{ $store->status }}">{{ ucfirst($store->status) }}</span></td>
         <td><span class="sa-status {{ $store->is_verified ? 'active' : 'suspended' }}">{{ $store->is_verified ? '✓ Verified' : '✕ No' }}</span></td>
         <td><span class="sa-status {{ $store->is_featured ? 'active' : 'suspended' }}">{{ $store->is_featured ? '★ Featured' : '— No' }}</span></td>
+        <td><span class="sa-status {{ $store->listings_auto_approve ? 'active' : '' }}" title="{{ $store->listings_auto_approve ? 'Listings auto-approved' : 'Listings require manual approval' }}">{{ $store->listings_auto_approve ? '⚡ Auto' : '🔍 Manual' }}</span></td>
         <td class="sa-actions-inline">
             <a href="/store/{{ $store->slug }}" target="_blank" title="View">View</a>
             <a href="/admin/stores/{{ $store->id }}/edit" title="Edit">Edit</a>
@@ -31,5 +32,5 @@
         </td>
     </tr>
 @empty
-    <tr><td colspan="10" class="td-empty">No stores found.</td></tr>
+    <tr><td colspan="11" class="td-empty">No stores found.</td></tr>
 @endforelse

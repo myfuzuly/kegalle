@@ -53,7 +53,7 @@ class ListingService
             'location_id'     => $locationId,
             'type'            => $type,
             'ad_type'         => $validated['ad_type'] ?? 'sale',
-            'status'          => 'pending',
+            'status'          => ($store?->listings_auto_approve) ? 'approved' : 'pending',
             'is_featured'     => false,
             'is_top'          => false,
             'payment_methods' => $request->input('payment_methods') ?: ['cash_on_pickup'],
@@ -83,6 +83,9 @@ class ListingService
         $resolvedStoreId = $validated['store_id'] ?? $listing->store_id;
         $type = $resolvedStoreId ? 'product' : 'classified';
 
+        $resolvedStore = $resolvedStoreId ? Store::find($resolvedStoreId) : null;
+        $newStatus = ($resolvedStore?->listings_auto_approve) ? 'approved' : 'pending';
+
         $listing->update([
             'title'           => $validated['title'],
             'category_id'     => $validated['category_id'] ?? $listing->category_id,
@@ -91,7 +94,7 @@ class ListingService
             'price'           => $validated['price'] ?? 0,
             'description'     => $validated['description'],
             'payment_methods' => $request->input('payment_methods') ?: $listing->payment_methods,
-            'status'          => 'pending',
+            'status'          => $newStatus,
         ]);
 
         $this->deleteImages($request, $listing);

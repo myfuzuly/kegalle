@@ -831,8 +831,8 @@ Route::get('/api/subcategories/{parentId}', function ($parentId) {
 
 Route::middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/admin/fix-views', function (\Illuminate\Http\Request $req) {
-        $expected = env('FIX_VIEWS_TOKEN', '');
-        if ($req->query('token') !== $expected) abort(403);
+        $expected = (string) config('services.admin_tokens.fix_views', '');
+        if ($expected === '' || !hash_equals($expected, (string) $req->query('token'))) abort(403);
         \Illuminate\Support\Facades\Artisan::call('view:clear');
         \Illuminate\Support\Facades\Artisan::call('cache:clear');
         \Illuminate\Support\Facades\Artisan::call('route:clear');
@@ -846,8 +846,8 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
     })->middleware('throttle:5,1');
 
     Route::get('/admin/test-emails', function (\Illuminate\Http\Request $req) {
-        $expected = env('TEST_EMAIL_TOKEN', '');
-        if ($expected === '' || $req->query('token') !== $expected) abort(403);
+        $expected = (string) config('services.admin_tokens.test_email', '');
+        if ($expected === '' || !hash_equals($expected, (string) $req->query('token'))) abort(403);
         $to = auth()->user()->email;
         \Illuminate\Support\Facades\Artisan::call('test:emails', ['--to' => $to]);
         return response("<pre style='padding:20px'>".htmlspecialchars(\Illuminate\Support\Facades\Artisan::output())."</pre>")->header('Cache-Control','no-store');

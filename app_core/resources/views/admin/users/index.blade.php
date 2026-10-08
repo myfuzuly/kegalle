@@ -1,15 +1,34 @@
 @extends('layouts.admin')
-@section('title','User Management')
+@php
+    $sectionRole = $sectionRole ?? request('role', '');
+    if ($sectionRole === 'admins') {
+        $pageTitle    = 'Admin Users';
+        $pageHeading  = 'Admin Users';
+        $pageSub      = 'Manage administrators, super admins and their permissions';
+        $sectionBanner = ['icon'=>'🛡️','label'=>'Admin Users','color'=>'#7c3aed','bg'=>'#f5f3ff','border'=>'#ddd6fe'];
+    } elseif ($sectionRole === 'regular') {
+        $pageTitle    = 'Regular Users';
+        $pageHeading  = 'Regular Users';
+        $pageSub      = 'Manage sellers and buyers on the marketplace';
+        $sectionBanner = ['icon'=>'👥','label'=>'Regular Users','color'=>'#0369a1','bg'=>'#f0f9ff','border'=>'#bae6fd'];
+    } else {
+        $pageTitle    = 'User Management';
+        $pageHeading  = 'All Users';
+        $pageSub      = 'Manage roles, status and access for all marketplace users';
+        $sectionBanner = null;
+    }
+@endphp
+@section('title', $pageTitle)
 @section('page','Users')
-@section('heading','User Management')
-@section('subheading','Manage roles, status and access for all marketplace users')
+@section('heading', $pageHeading)
+@section('subheading', $pageSub)
 @section('actions')<a class="ka-btn ka-btn-primary" href="/admin/users/create">+ Add User</a>@endsection
 
 @if(session('success'))
-<div style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;font-weight:600;">✓ {{ session('success') }}</div>
+<div class="um-flash-success">✓ {{ session('success') }}</div>
 @endif
 @if(session('error'))
-<div style="background:#fee2e2;color:#991b1b;border:1px solid #fecaca;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;font-weight:600;">✕ {{ session('error') }}</div>
+<div class="um-flash-error">✕ {{ session('error') }}</div>
 @endif
 
 
@@ -17,11 +36,27 @@
 @section('content')
 <div class="um-wrap">
 
+    {{-- Section switcher tabs --}}
+    <div class="um-section-tabs">
+        <a class="um-section-tab {{ $sectionRole === '' ? 'active' : '' }}" href="/admin/users">
+            <span>👤</span> All Users
+            <span class="um-section-count">{{ $stats['total'] ?? 0 }}</span>
+        </a>
+        <a class="um-section-tab {{ $sectionRole === 'regular' ? 'active' : '' }}" href="/admin/users?role=regular">
+            <span>👥</span> Regular Users
+            <span class="um-section-count">{{ $stats['regular'] ?? 0 }}</span>
+        </a>
+        <a class="um-section-tab {{ $sectionRole === 'admins' ? 'active' : '' }}" href="/admin/users?role=admins">
+            <span>🛡️</span> Admin Users
+            <span class="um-section-count">{{ $stats['admins'] ?? 0 }}</span>
+        </a>
+    </div>
+
     {{-- Stat cards --}}
     <div class="um-stats">
         <div class="um-stat">
             <div class="um-stat-icon blue">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             </div>
             <div>
                 <div class="um-stat-val">{{ $stats['total'] ?? $users->total() }}</div>
@@ -30,7 +65,7 @@
         </div>
         <div class="um-stat">
             <div class="um-stat-icon green">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
             </div>
             <div>
                 <div class="um-stat-val">{{ $stats['active'] ?? '—' }}</div>
@@ -39,7 +74,7 @@
         </div>
         <div class="um-stat">
             <div class="um-stat-icon amber">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             </div>
             <div>
                 <div class="um-stat-val">{{ $stats['unverified'] ?? '—' }}</div>
@@ -48,7 +83,7 @@
         </div>
         <div class="um-stat">
             <div class="um-stat-icon red">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
             </div>
             <div>
                 <div class="um-stat-val">{{ $stats['suspended'] ?? '—' }}</div>
@@ -68,8 +103,8 @@
         </div>
         <div class="um-filters">
             <span class="um-filter-label">Role</span>
-            @foreach([''=>'All', 'admins'=>'Admins', 'super_admin'=>'Super Admin', 'admin'=>'Site Admin', 'seller'=>'Seller', 'user'=>'User'] as $val => $label)
-            <button type="button" class="um-pill filter-pill {{ request('role','') === $val ? 'active' : '' }}" data-filter="role" data-value="{{ $val }}">{{ $label }}</button>
+            @foreach([''=>'All', 'regular'=>'Regular', 'admins'=>'Admins', 'super_admin'=>'Super Admin', 'admin'=>'Site Admin', 'seller'=>'Seller', 'user'=>'User'] as $val => $label)
+            <button type="button" class="um-pill filter-pill {{ $sectionRole === $val ? 'active' : '' }}" data-filter="role" data-value="{{ $val }}">{{ $label }}</button>
             @endforeach
             <div class="um-sep"></div>
             <span class="um-filter-label">Status</span>
@@ -82,16 +117,16 @@
 
     {{-- Table --}}
     <div class="um-table-wrap">
-        <div style="overflow-x:auto">
+        <div class="ka-scroll-x">
         <table class="um-table">
             <thead><tr>
-                <th style="width:180px">User</th>
+                <th class="col-user">User</th>
                 <th>Email</th>
-                <th style="width:85px">Role</th>
-                <th style="width:90px">Status</th>
-                <th style="width:110px">Store Limit</th>
-                <th style="width:100px">Email</th>
-                <th style="width:95px">Joined</th>
+                <th class="col-role">Role</th>
+                <th class="col-status">Status</th>
+                <th class="col-limit">Store Limit</th>
+                <th class="col-email-ver">Email</th>
+                <th class="col-joined">Joined</th>
                 <th>Actions</th>
             </tr></thead>
             <tbody id="kuTableBody">
@@ -109,7 +144,7 @@
 <script nonce="{{ $cspNonce ?? '' }}">
 (function(){
     var timer,
-        activeRole   = '{{ request('role','') }}',
+        activeRole   = '{{ $sectionRole }}',
         activeStatus = '{{ request('status','') }}',
         spinner = document.getElementById('kuSpinner'),
         tbody   = document.getElementById('kuTableBody'),

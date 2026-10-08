@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 @section('title','FAQ · Kegalle Marketplace')
 @section('meta_description','Answers to frequently asked questions about buying, selling, and using Kegalle Marketplace.')
 @section('content')
@@ -95,7 +95,7 @@
             <p>Our team is happy to help directly. We respond within 24 hours.</p>
             <div class="k-help-still-btns">
                 <a href="/contact-us" class="k-btn k-btn-white">Contact Us</a>
-                <a href="https://wa.me/94712930930?text={{ urlencode('Hi, I have a question about Kegalle Marketplace.') }}" target="_blank" rel="noopener" class="k-btn k-btn-outline-white">Chat on WhatsApp</a>
+                <a href="https://wa.me/94703234433?text={{ urlencode('Hi, I have a question about Kegalle Marketplace.') }}" target="_blank" rel="noopener" class="k-btn k-btn-outline-white">Chat on WhatsApp</a>
             </div>
         </div>
     </div>

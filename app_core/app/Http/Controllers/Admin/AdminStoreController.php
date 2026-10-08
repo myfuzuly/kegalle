@@ -102,6 +102,7 @@ class AdminStoreController extends Controller
             $data['whatsapp'] = $data['phone'];
         }
         unset($data['logo'], $data['banner'], $data['remove_logo'], $data['remove_banner'], $data['whatsapp_same'], $data['categories'], $data['user_id']);
+        $data['listings_auto_approve'] = $request->boolean('listings_auto_approve');
         $data = \App\Http\Controllers\Dashboard\StoreController::normalizePhones($data);
 
         $storeSlug = Str::slug($data['name'] ?? $store->name);

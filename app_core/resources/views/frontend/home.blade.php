@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 
 @section('title','Kegalle Marketplace — Buy, Sell & Discover Locally in Kegalle')
 @section('meta_description','Buy and sell products, vehicles, property, electronics and more in Kegalle, Sri Lanka. Browse trusted local stores, classified ads, and verified sellers — all in one place.')
@@ -11,7 +11,7 @@
   "name": "Kegalle Marketplace",
   "url": "https://kegalle.com",
   "description": "The local online marketplace for the Kegalle district — buy, sell and discover products, services, stores and classified ads.",
-  "telephone": "+94713930930",
+  "telephone": "+94703234433",
   "email": "support@kegalle.com",
   "logo": {
     "@type": "ImageObject",
@@ -46,7 +46,7 @@
   },
   "sameAs": [
     "https://www.facebook.com/kegallecom",
-    "https://wa.me/94712930930",
+    "https://wa.me/94703234433",
     "https://www.instagram.com/kegallecom"
   ]
 }
@@ -55,12 +55,36 @@
 
 
 @push('styles')
-<style nonce="{{ $cspNonce ?? '' }}">
-{{-- Dynamic hero slide backgrounds --}}
 @php $hSlides = $heroSlides ?? collect(); @endphp
+@php
+    $hPub = base_path('../public_html');
+    $hMobile = function ($url) use ($hPub) {
+        $m = preg_replace('/\.(webp|jpe?g|png)$/i', '-m.$1', (string) $url);
+        $path = parse_url($m, PHP_URL_PATH);
+        return ($m !== $url && $path && str_starts_with($path, '/') && is_file($hPub . $path)) ? $m : null;
+    };
+    $hFirstM = $hSlides->isNotEmpty() ? $hMobile($hSlides->first()->image_url) : null;
+@endphp
+@if($hSlides->isNotEmpty())
+@if($hFirstM)
+<link rel="preload" as="image" href="{{ $hFirstM }}" media="(max-width: 760px)" fetchpriority="high">
+<link rel="preload" as="image" href="{{ $hSlides->first()->image_url }}" media="(min-width: 761px)" fetchpriority="high">
+@else
+<link rel="preload" as="image" href="{{ $hSlides->first()->image_url }}" fetchpriority="high">
+@endif
+@endif
+<style nonce="{{ $cspNonce ?? '' }}">
+{{-- Dynamic hero slide backgrounds: first slide loads immediately, the rest after page load (.hs-ready) --}}
 @foreach($hSlides as $hi => $hSlide)
-.hs-slide-{{ ($hi%4)+1 }}{background-image:url('{{ addslashes($hSlide->image_url) }}')}
+{{ $loop->first ? '' : '.hs-ready ' }}.hs-slide-{{ ($hi%4)+1 }}{background-image:url('{{ addslashes($hSlide->image_url) }}')}
 @endforeach
+@media (max-width:760px){
+@foreach($hSlides as $hi => $hSlide)
+@php $hM = $hMobile($hSlide->image_url); @endphp
+@if($hM){{ $loop->first ? '' : '.hs-ready ' }}.hs-slide-{{ ($hi%4)+1 }}{background-image:url('{{ addslashes($hM) }}')}
+@endif
+@endforeach
+}
 @if($hSlides->isEmpty())
 .hs-slide-1{background-image:url('/images/kegalle-town.png')}
 @endif
@@ -804,7 +828,7 @@ $hClassified=($featuredClassified ?? collect())->merge($latestClassified ?? coll
                             Verified badge &amp; analytics
                         </li>
                     </ul>
-                    <a href="/pricing" class="kex-premium-btn">See Premium Plans →</a>
+                    <a href="/dashboard/membership" class="kex-premium-btn">See Premium Plans →</a>
                 </div>
             </div>
         </div>
@@ -954,6 +978,10 @@ $hClassified=($featuredClassified ?? collect())->merge($latestClassified ?? coll
 @endsection
 
 @push('scripts')
+<script nonce="{{ $cspNonce ?? '' }}">
+(function(){function go(){var h=document.getElementById('home-hero');if(h)h.classList.add('hs-ready');}
+if(document.readyState==='complete'){setTimeout(go,300);}else{window.addEventListener('load',function(){setTimeout(go,300);});}})();
+</script>
 <script nonce="{{ $cspNonce ?? '' }}">
 document.addEventListener('DOMContentLoaded', function(){
     document.querySelectorAll('.k-sidebar-skeleton').forEach(function(el){ el.style.display='none'; });

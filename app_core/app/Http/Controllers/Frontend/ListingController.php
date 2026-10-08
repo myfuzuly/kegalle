@@ -24,7 +24,8 @@ class ListingController extends Controller
         if ($request->filled('q')) {
             $keyword = trim($request->q);
             $query->where(function ($q) use ($keyword) {
-                $q->whereFullText(['title', 'description'], $keyword)
+                $q->where('title', 'like', '%' . $keyword . '%')
+                  ->orWhere('description', 'like', '%' . $keyword . '%')
                   ->orWhere('location', 'like', '%' . $keyword . '%');
             });
         }

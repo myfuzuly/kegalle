@@ -176,14 +176,14 @@
                             </div>
                             @if($leaves->count())
                             <div class="cat-leaf-wrap" id="leaves-{{ $sub->id }}" style="display:none">
-                                <div class="cat-leaf-tags">
+                                <template><div class="cat-leaf-tags">
                                     @foreach($leaves as $leaf)
                                         <a href="/listings?categories[]={{ $leaf->slug }}" class="cat-leaf-tag">
                                             {{ $leaf->name }}
                                             @if($leaf->listings_count > 0)<span>({{ $leaf->listings_count }})</span>@endif
                                         </a>
                                     @endforeach
-                                </div>
+                                </div></template>
                             </div>
                             @endif
                         </div>
@@ -211,13 +211,13 @@
                                     </div>
                                     @if($leaves->count())
                                     <div class="cat-leaf-wrap" id="leaves-{{ $sub->id }}" style="display:none">
-                                        <div class="cat-leaf-tags">
+                                        <template><div class="cat-leaf-tags">
                                             @foreach($leaves as $leaf)
                                                 <a href="/listings?categories[]={{ $leaf->slug }}" class="cat-leaf-tag">
                                                     {{ $leaf->name }}@if($leaf->listings_count > 0)<span>({{ $leaf->listings_count }})</span>@endif
                                                 </a>
                                             @endforeach
-                                        </div>
+                                        </div></template>
                                     </div>
                                     @endif
                                 </div>
@@ -277,6 +277,8 @@
             var subId = toggle.dataset.subId;
             var wrap = document.getElementById('leaves-' + subId);
             if (!wrap) return;
+            var tpl = wrap.querySelector('template');
+            if (tpl) { wrap.appendChild(tpl.content.cloneNode(true)); tpl.remove(); }
             var open = wrap.style.display !== 'none';
             wrap.style.display = open ? 'none' : 'block';
             toggle.classList.toggle('open', !open);

@@ -15,21 +15,21 @@
 @php $totalPending = $pendingStores->count() + $pendingListings->count() + $pendingServices->count() + (isset($pendingDeals) ? $pendingDeals->count() : 0); @endphp
 <div class="approval-summary-bar">
     <div class="approval-summary-item">
-        <div class="approval-summary-icon" style="background:#dbeafe;">🏪</div>
+        <div class="approval-summary-icon ka-approval-box blue">🏪</div>
         <div>
             <div class="approval-summary-count">{{ $pendingStores->count() }}</div>
             <div class="approval-summary-label">Stores</div>
         </div>
     </div>
     <div class="approval-summary-item">
-        <div class="approval-summary-icon" style="background:#dcfce7;">📦</div>
+        <div class="approval-summary-icon ka-approval-box green">📦</div>
         <div>
             <div class="approval-summary-count">{{ $pendingListings->count() }}</div>
             <div class="approval-summary-label">Listings</div>
         </div>
     </div>
     <div class="approval-summary-item">
-        <div class="approval-summary-icon" style="background:#ede9fe;">🛠️</div>
+        <div class="approval-summary-icon ka-approval-box purple">🛠️</div>
         <div>
             <div class="approval-summary-count">{{ $pendingServices->count() }}</div>
             <div class="approval-summary-label">Services</div>
@@ -37,7 +37,7 @@
     </div>
     @isset($pendingDeals)
     <div class="approval-summary-item">
-        <div class="approval-summary-icon" style="background:#fef3c7;">⚡</div>
+        <div class="approval-summary-icon ka-approval-box amber">⚡</div>
         <div>
             <div class="approval-summary-count">{{ $pendingDeals->count() }}</div>
             <div class="approval-summary-label">Deals</div>
@@ -45,9 +45,9 @@
     </div>
     @endisset
     <div class="approval-summary-item approval-summary-item--total">
-        <div class="approval-summary-icon" style="background:#f0fdf4;">✅</div>
+        <div class="approval-summary-icon ka-approval-box light-green">✅</div>
         <div>
-            <div class="approval-summary-count" style="color:{{ $totalPending > 0 ? '#b45309' : '#15803d' }};">{{ $totalPending }}</div>
+            <div class="approval-summary-count {{ $totalPending > 0 ? 'ka-text-pending' : 'ka-text-ok' }}">{{ $totalPending }}</div>
             <div class="approval-summary-label">Total Pending</div>
         </div>
     </div>

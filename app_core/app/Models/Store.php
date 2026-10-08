@@ -24,13 +24,15 @@ class Store extends Model
         'longitude',
         'opening_hours',
         'status',
+        'listings_auto_approve',
     ];
 
     protected $casts = [
-        'opening_hours'         => 'array',
-        'is_featured'           => 'boolean',
-        'is_verified'           => 'boolean',
-        'membership_expires_at' => 'datetime',
+        'opening_hours'           => 'array',
+        'is_featured'             => 'boolean',
+        'is_verified'             => 'boolean',
+        'membership_expires_at'   => 'datetime',
+        'listings_auto_approve'   => 'boolean',
     ];
 
     public function user()

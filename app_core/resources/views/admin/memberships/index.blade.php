@@ -16,12 +16,12 @@
 {{-- Plans grid --}}
 <div class="sa-card" style="margin-bottom:22px">
     <div class="sa-card-head">
-        <h2 style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">💎</span> Active Plans</h2>
+        <h2 class="ka-flex-row-8"><span style="font-size:20px">💎</span> Active Plans</h2>
         <span>{{ $plans->count() }} plan{{ $plans->count() !== 1 ? 's' : '' }}</span>
     </div>
 
     @if($plans->count())
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;padding:20px">
+    <div class="ka-grid-auto-240" style="padding:20px">
         @foreach($plans as $plan)
         @php
           $accent = match(strtolower($plan->slug ?? $plan->name)) {
@@ -31,43 +31,43 @@
             default                => ['color'=>'#1b5e20','bg'=>'#f0fdf4','border'=>'#86efac'],
           };
         @endphp
-        <div style="border:2px solid {{ $plan->is_active ? $accent['border'] : '#e2e8f0' }};border-radius:12px;overflow:hidden;background:var(--ka-surface,#fff)">
-            <div style="background:{{ $plan->is_active ? $accent['bg'] : '#f8fafc' }};padding:16px 18px;border-bottom:1px solid {{ $accent['border'] }}">
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-                    <span style="font-size:17px;font-weight:800;color:{{ $plan->is_active ? $accent['color'] : '#94a3b8' }}">
+        <div class="ka-plan-card" style="border-color:{{ $plan->is_active ? $accent['border'] : '#e2e8f0' }}">
+            <div class="ka-plan-card-head" style="background:{{ $plan->is_active ? $accent['bg'] : '#f8fafc' }};border-bottom-color:{{ $accent['border'] }}">
+                <div class="ka-plan-head-row">
+                    <span class="ka-plan-name" style="color:{{ $plan->is_active ? $accent['color'] : '#94a3b8' }}">
                         {{ $plan->name }}
                     </span>
-                    <span style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:{{ $plan->is_active ? '#dcfce7' : '#f1f5f9' }};color:{{ $plan->is_active ? '#15803d' : '#94a3b8' }}">
+                    <span class="ka-plan-status-badge" style="background:{{ $plan->is_active ? '#dcfce7' : '#f1f5f9' }};color:{{ $plan->is_active ? '#15803d' : '#94a3b8' }}">
                         {{ $plan->is_active ? '● Active' : '○ Inactive' }}
                     </span>
                 </div>
-                <div style="font-size:22px;font-weight:800;color:var(--ka-text,#0f172a)">
+                <div class="ka-plan-price">
                     LKR {{ number_format($plan->price, 0) }}
-                    <span style="font-size:13px;font-weight:400;color:#64748b">/ {{ $plan->duration_days }}d</span>
+                    <span class="ka-plan-price-sub">/ {{ $plan->duration_days }}d</span>
                 </div>
             </div>
-            <div style="padding:14px 18px">
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+            <div class="ka-plan-card-body">
+                <div class="ka-plan-stat-grid">
                     @foreach([
                         ['Ads',      $plan->ad_limit],
                         ['Products', $plan->product_limit],
                         ['Stores',   $plan->store_limit ?? 1],
                         ['Featured', $plan->featured_quota ?? 0],
                     ] as [$lbl, $val])
-                    <div style="background:var(--ka-bg,#f8fafc);border-radius:7px;padding:8px 10px">
-                        <div style="font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.04em">{{ $lbl }}</div>
-                        <div style="font-size:16px;font-weight:800;color:var(--ka-text,#0f172a)">{{ $val }}</div>
+                    <div class="ka-plan-stat-box">
+                        <div class="ka-plan-stat-label">{{ $lbl }}</div>
+                        <div class="ka-plan-stat-val">{{ $val }}</div>
                     </div>
                     @endforeach
                 </div>
-                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <div class="ka-plan-actions">
                     <a href="/admin/memberships/{{ $plan->id }}/edit" class="ka-btn ka-btn-light" style="font-size:12px;padding:5px 12px">✎ Edit</a>
-                    <form method="post" action="/admin/memberships/{{ $plan->id }}/toggle" style="display:contents">@csrf
+                    <form method="post" action="/admin/memberships/{{ $plan->id }}/toggle" class="ka-plan-actions-col">@csrf
                         <button class="ka-btn {{ $plan->is_active ? 'ka-btn-light' : 'ka-btn-primary' }}" style="font-size:12px;padding:5px 12px">
                             {{ $plan->is_active ? 'Deactivate' : 'Activate' }}
                         </button>
                     </form>
-                    <form method="post" action="/admin/memberships/{{ $plan->id }}" style="display:contents" data-confirm="Delete this plan?">@csrf @method('DELETE')
+                    <form method="post" action="/admin/memberships/{{ $plan->id }}" class="ka-plan-actions-col" data-confirm="Delete this plan?">@csrf @method('DELETE')
                         <button class="ka-btn" style="font-size:12px;padding:5px 10px;background:#fef2f2;color:#b91c1c;border:1px solid #fca5a5">🗑</button>
                     </form>
                 </div>
@@ -76,10 +76,10 @@
         @endforeach
     </div>
     @else
-    <div style="text-align:center;padding:48px;color:#94a3b8">
-        <div style="font-size:40px;margin-bottom:10px">💎</div>
-        <div style="font-weight:600;font-size:14px">No membership plans yet</div>
-        <div style="font-size:13px;margin-top:4px">Add your first plan below</div>
+    <div class="ka-empty-sm">
+        <div class="ka-empty-icon">💎</div>
+        <div class="ka-empty-title">No membership plans yet</div>
+        <div class="ka-empty-sub">Add your first plan below</div>
     </div>
     @endif
 </div>
@@ -87,24 +87,24 @@
 {{-- Add Plan --}}
 <div class="sa-card" id="add-plan">
     <div class="sa-card-head">
-        <h2 style="display:flex;align-items:center;gap:8px"><span style="font-size:18px">✚</span> Add New Plan</h2>
+        <h2 class="ka-flex-row-8"><span style="font-size:18px">✚</span> Add New Plan</h2>
     </div>
     <form method="post" action="/admin/memberships" style="padding:20px">
     @csrf
     @if($errors->any())
-    <div style="background:#fef2f2;color:#b91c1c;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:13px">
+    <div class="ka-error-banner">
         {{ $errors->first() }}
     </div>
     @endif
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px">
-        <div style="grid-column:1/-1">
+    <div class="ka-grid-auto-200">
+        <div class="ka-grid-col-full">
             <label class="ka-label">Plan Name <span style="color:#ef4444">*</span></label>
             <input name="name" class="ka-input" placeholder="e.g. Gold Plan" value="{{ old('name') }}" required>
         </div>
         <div>
             <label class="ka-label">Slug <span style="color:#ef4444">*</span></label>
             <input name="slug" class="ka-input" placeholder="gold" value="{{ old('slug') }}" required>
-            <div style="font-size:11px;color:#94a3b8;margin-top:4px">Lowercase, no spaces (e.g. gold, platinum)</div>
+            <div class="ka-fs-11 ka-text-muted" style="margin-top:4px">Lowercase, no spaces (e.g. gold, platinum)</div>
         </div>
         <div>
             <label class="ka-label">Price (LKR) <span style="color:#ef4444">*</span></label>
@@ -131,7 +131,7 @@
             <input name="featured_quota" type="number" class="ka-input" placeholder="0" value="{{ old('featured_quota') }}">
         </div>
     </div>
-    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--ka-border,#e2e8f0);display:flex;gap:10px">
+    <div class="ka-plan-card-footer">
         <button type="submit" class="ka-btn ka-btn-primary">+ Add Plan</button>
         <a href="/admin/memberships" class="ka-btn ka-btn-light">Cancel</a>
     </div>

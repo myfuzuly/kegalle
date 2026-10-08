@@ -44,4 +44,9 @@ return [
         'pixel_id' => env('META_PIXEL_ID', ''),
     ],
 
+    'admin_tokens' => [
+        'fix_views'  => env('FIX_VIEWS_TOKEN', ''),
+        'test_email' => env('TEST_EMAIL_TOKEN', ''),
+    ],
+
 ];

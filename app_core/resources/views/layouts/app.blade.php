@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
@@ -43,22 +43,10 @@
 <meta name="geo.position" content="7.2513;80.3464">
 <meta name="ICBM" content="7.2513, 80.3464">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"></noscript>
 <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/pjs-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/images/kegalle-town.webp" as="image" type="image/webp" fetchpriority="high">
-<link rel="preload" href="/images/kegalle-town.png" as="image" fetchpriority="high">
-<!-- Performance: DNS prefetch for key origins -->
-<link rel="dns-prefetch" href="//fonts.gstatic.com">
-<link rel="dns-prefetch" href="//kegalle.com">
+<link rel="stylesheet" href="/css/kegalle-fonts.css?v=1">
 @vite(['resources/css/app.css', 'resources/js/app.js'], 'vite-dist')
-
-<link rel="preload" href="/css/kegalle-fonts.css?v=1" as="style">
-<link rel="stylesheet" href="/css/kegalle-fonts.css?v=1" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="/css/kegalle-fonts.css?v=1"></noscript>
 @if(request()->is('/'))
 @endif
 <link rel="shortcut icon" href="/favicon-v2.ico">
@@ -80,6 +68,8 @@
 <script nonce="{{ $cspNonce ?? '' }}">!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','{{ config('services.analytics.pixel_id') }}');fbq('track','PageView');</script>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id={{ config('services.analytics.pixel_id') }}&ev=PageView&noscript=1"/></noscript>
 @endif
+{{-- Keep the first-visit splash out of the page flow before the main stylesheet arrives (prevents layout shift) --}}
+<style nonce="{{ $cspNonce ?? '' }}">#k-preloader{position:fixed;inset:0;z-index:99999;background:#0f1a12;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}#k-preloader .k-preloader-logo-img{width:160px;height:auto}</style>
 </head>
 <body>
 <div id="k-preloader" aria-hidden="true">
@@ -157,7 +147,7 @@
                 <a href="/login" class="k-nav-link">Login</a>
                 <a href="/register" class="k-btn k-btn-primary k-btn-sm">+ Post Free Ad</a>
             @endauth
-            <a href="https://wa.me/94712930930?text={{ urlencode('Hi, I found you on Kegalle.com') }}" target="_blank" rel="noopener" class="k-nav-wa-btn" aria-label="WhatsApp us" title="Chat on WhatsApp"><svg viewBox="0 0 24 24" width="18" height="18" fill="#25D366" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
+            <a href="https://wa.me/94703234433?text={{ urlencode('Hi, I found you on Kegalle.com') }}" target="_blank" rel="noopener" class="k-nav-wa-btn" aria-label="WhatsApp us" title="Chat on WhatsApp"><svg viewBox="0 0 24 24" width="18" height="18" fill="#25D366" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
         </div>
 
 <!-- Mobile Slide-out Drawer -->
@@ -211,10 +201,10 @@
         @else
         <a href="/register" class="k-btn k-btn-primary">+ Post Free Ad</a>
         @endauth
-        <a href="/pricing" class="k-btn k-btn-premium-drawer"><span aria-hidden="true">⭐</span> Go Premium</a>
-        <a href="https://wa.me/94712930930" target="_blank" rel="noopener" class="k-drawer-wa-link">
+        <a href="/dashboard/membership" class="k-btn k-btn-premium-drawer"><span aria-hidden="true">⭐</span> Go Premium</a>
+        <a href="https://wa.me/94703234433" target="_blank" rel="noopener" class="k-drawer-wa-link">
             <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-            +94 712 930 930
+            +94 70 323 4433
         </a>
     </div>
 </aside>
@@ -249,13 +239,13 @@
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
                 Trusted &amp; Secure
             </div>
-            <a href="tel:+94713930930" class="k-subnav-hotline" aria-label="Call us at +94 713 930 930">
+            <a href="tel:+94703234433" class="k-subnav-hotline" aria-label="Call us at +94 70 323 4433">
                 <span class="k-hotline-icon-wrap" aria-hidden="true">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
                 </span>
                 <span class="k-hotline-text">
                     <span class="k-hotline-label">Call Us Free</span>
-                    <strong class="k-hotline-number">+94 713 930 930</strong>
+                    <strong class="k-hotline-number">+94 70 323 4433</strong>
                 </span>
                 <span class="k-hotline-pulse" aria-hidden="true"></span>
             </a>
@@ -304,7 +294,7 @@
                 </div>
                 <p class="k-footer-brand-desc">Sri Lanka's trusted local marketplace for the Kegalle district. Buy, sell and discover great deals from verified local sellers.</p>
                 <div class="k-footer-socials">
-                    <a href="https://wa.me/94712930930" target="_blank" rel="noopener" class="k-footer-social k-fsoc-wa" title="WhatsApp" aria-label="WhatsApp">
+                    <a href="https://wa.me/94703234433" target="_blank" rel="noopener" class="k-footer-social k-fsoc-wa" title="WhatsApp" aria-label="WhatsApp">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                     </a>
                     <a href="https://facebook.com/kegallecom" target="_blank" rel="noopener" class="k-footer-social k-fsoc-fb" title="Facebook" aria-label="Facebook">
@@ -314,9 +304,9 @@
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
                     </a>
                 </div>
-                <a href="tel:+94713930930" class="k-footer-phone">
+                <a href="tel:+94703234433" class="k-footer-phone">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
-                    +94 713 930 930
+                    +94 70 323 4433
                 </a>
             </div>
 
@@ -420,7 +410,7 @@
     "logo": "{{ asset('images/icon-192.png') }}",
     "sameAs": [
         "https://www.facebook.com/kegallecom",
-        "https://wa.me/94712930930",
+        "https://wa.me/94703234433",
         "https://www.instagram.com/kegallecom"
     ]
 }

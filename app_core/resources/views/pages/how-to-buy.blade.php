@@ -15,8 +15,33 @@
 </div>
 
 <div class="k-guide-wrap">
-    <div class="k-breadcrumb"><a href="/">Home</a><span class="sep">›</span><a href="/help-center">Help Center</a><span class="sep">›</span><span class="current">How to Buy</span></div>
+    <div class="k-breadcrumb">
+        <a href="/">Home</a><span class="sep">›</span><a href="/help-center">Help Center</a><span class="sep">›</span><span class="current">How to Buy</span>
+    </div>
 
+    {{-- Quick links --}}
+    <div class="k-guide-cta-strip">
+        <a href="/listings" class="k-guide-cta-card">
+            <div class="k-guide-cta-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
+            <div>
+                <div class="k-guide-cta-label">Browse All Ads</div>
+                <div class="k-guide-cta-desc">Search listings now →</div>
+            </div>
+        </a>
+        <a href="/safety-tips" class="k-guide-cta-card">
+            <div class="k-guide-cta-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div>
+                <div class="k-guide-cta-label">Safety Tips</div>
+                <div class="k-guide-cta-desc">Stay safe before you meet →</div>
+            </div>
+        </a>
+    </div>
+
+    {{-- Steps --}}
     <div class="k-guide-steps">
         <div class="k-guide-step">
             <div class="k-guide-step-num">1</div>
@@ -36,7 +61,7 @@
             <div class="k-guide-step-num">3</div>
             <div class="k-guide-step-body">
                 <h3>Review the Listing</h3>
-                <p>Check photos, description, price, and seller details carefully. Look for the "Verified Store" badge for added confidence when buying from a business.</p>
+                <p>Check photos, description, price, and seller details carefully. Look for the <strong>Verified Store</strong> badge for added confidence when buying from a business.</p>
             </div>
         </div>
         <div class="k-guide-step">

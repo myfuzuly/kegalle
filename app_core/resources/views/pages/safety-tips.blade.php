@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 @section('title','Safety Tips · Kegalle Marketplace')
 @section('meta_description','Simple safety precautions to follow when buying or selling on Kegalle Marketplace.')
 @section('content')
@@ -122,7 +122,7 @@
             <p>Our local team is ready to help. We take every report seriously.</p>
             <div class="k-help-still-btns">
                 <a href="/contact-us" class="k-btn k-btn-white">Contact Us</a>
-                <a href="https://wa.me/94712930930?text={{ urlencode('Hi, I need to report a problem on Kegalle Marketplace.') }}" target="_blank" rel="noopener" class="k-btn k-btn-outline-white">WhatsApp Us</a>
+                <a href="https://wa.me/94703234433?text={{ urlencode('Hi, I need to report a problem on Kegalle Marketplace.') }}" target="_blank" rel="noopener" class="k-btn k-btn-outline-white">WhatsApp Us</a>
             </div>
         </div>
     </div>

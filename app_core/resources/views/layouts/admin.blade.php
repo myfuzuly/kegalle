@@ -11,7 +11,7 @@
 <meta name="theme-color" content="#1B5E20">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
-<link rel="stylesheet" href="/css/kegalle-admin.css?v=13">
+<link rel="stylesheet" href="/css/kegalle-admin.css?v=18">
 {{-- @vite(['resources/css/admin.css', 'resources/js/admin.js'], 'vite-dist') --}}
 @stack('styles')
 

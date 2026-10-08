@@ -17,7 +17,7 @@
         @if($service->image)
             <img class="thumb-44" src="{{ asset('storage/'.$service->image) }}" alt="{{ $service->title }}">
         @else
-            <span style="width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,{{ $service->icon_bg_start }},{{ $service->icon_bg_end }});color:#fff">{{ $service->icon }}</span>
+            <span class="ka-icon-box-44" style="background:linear-gradient(135deg,{{ $service->icon_bg_start }},{{ $service->icon_bg_end }});color:#fff">{{ $service->icon }}</span>
         @endif
     </td>
     <td class="max-w-200"><b class="text-truncate text-truncate-190">{{ $service->title }}</b><small class="text-gray">{{ $service->items_count }} items</small></td>

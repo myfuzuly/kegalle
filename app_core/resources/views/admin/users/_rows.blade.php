@@ -19,17 +19,17 @@
                 <div class="um-avatar-init">{{ $initials }}</div>
             @endif
             <div>
-                <a href="/admin/users/{{ $u->id }}" class="um-user-name" title="{{ $u->name }}" style="text-decoration:none;color:inherit">{{ $u->name }}</a>
+                <a href="/admin/users/{{ $u->id }}" class="um-user-name" title="{{ $u->name }}">{{ $u->name }}</a>
                 <div class="um-user-id">#{{ $u->id }}</div>
             </div>
         </div>
     </td>
 
     {{-- Email --}}
-    <td style="font-size:12px;color:#475569;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="{{ $u->email }}">
+    <td class="um-email-cell" title="{{ $u->email }}">
         {{ $u->email }}
         @if($u->phone)
-        <div style="color:#94a3b8;font-size:11px;margin-top:1px;">{{ $u->phone }}</div>
+        <div class="um-phone">{{ $u->phone }}</div>
         @endif
     </td>
 
@@ -45,7 +45,7 @@
 
     {{-- Store Limit --}}
     <td>
-        <form method="POST" action="/admin/users/{{ $u->id }}/store-limit" style="display:contents">
+        <form method="POST" action="/admin/users/{{ $u->id }}/store-limit" class="ka-d-contents">
             @csrf @method('PATCH')
             <div class="um-limit-form">
                 <input class="um-limit-input" type="number" name="store_limit" value="{{ $u->store_limit ?? 1 }}" min="0" max="99">
@@ -64,7 +64,7 @@
     </td>
 
     {{-- Joined --}}
-    <td style="white-space:nowrap;color:#64748b;font-size:12px;">
+    <td class="um-date-cell">
         {{ $u->created_at?->format('d M Y') }}
     </td>
 

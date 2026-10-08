@@ -1,4 +1,4 @@
-﻿@extends('layouts.dashboard')
+@extends('layouts.dashboard')
 @section('banner_sub', 'Need help? Send a message directly to the kegalle admin team.')
 @section('title','Contact Administrator')
 @section('heading','Contact Admin')
@@ -10,7 +10,7 @@
   $waUser  = auth()->user();
   $waStore = \App\Models\Store::where('user_id', $waUser->id)->orderByDesc('created_at')->first();
   $waText  = 'Hi, I am ' . $waUser->name . ($waStore ? ' from ' . $waStore->name : '') . ' on kegalle. I need help with: ';
-  $waLink  = 'https://wa.me/94712930930?text=' . rawurlencode($waText);
+  $waLink  = 'https://wa.me/94703234433?text=' . rawurlencode($waText);
 @endphp
 
 @if(session('success'))
@@ -30,7 +30,7 @@
   </svg>
   <div class="ca-wa-banner-text">
     <div class="ca-wa-banner-title">WhatsApp Admin — Fastest Response</div>
-    <div class="ca-wa-banner-sub">Tap to open WhatsApp and chat with the admin instantly · +94 712 930 930</div>
+    <div class="ca-wa-banner-sub">Tap to open WhatsApp and chat with the admin instantly · +94 70 323 4433</div>
   </div>
   <div class="ca-wa-banner-btn">Open WhatsApp →</div>
   <div class="ca-wa-bubble"></div>

@@ -27,7 +27,7 @@ $totalAssigned = $parents->sum(fn($p) => $p->all_brands->count());
     <div class="bbc-stat"><span class="bbc-stat-num">{{ $totalBrands }}</span><span class="bbc-stat-label">Total Brands</span></div>
     <div class="bbc-stat"><span class="bbc-stat-num">{{ $parents->count() }}</span><span class="bbc-stat-label">Parent Categories</span></div>
     <div class="bbc-stat"><span class="bbc-stat-num">{{ $totalSubcats }}</span><span class="bbc-stat-label">Sub-Categories</span></div>
-    <div class="bbc-stat"><span class="bbc-stat-num" style="{{ $uncategorized->isNotEmpty() ? 'color:#e11d48' : '' }}">{{ $uncategorized->count() }}</span><span class="bbc-stat-label">Uncategorized</span></div>
+    <div class="bbc-stat"><span class="bbc-stat-num {{ $uncategorized->isNotEmpty() ? 'ka-text-rose' : '' }}">{{ $uncategorized->count() }}</span><span class="bbc-stat-label">Uncategorized</span></div>
 </div>
 
 {{-- Parent category sections --}}

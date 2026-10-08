@@ -38,7 +38,7 @@
         {{-- Avatar --}}
         <div class="auc-avatar-row" style="margin-bottom:18px">
             <input type="file" name="avatar" id="aucAvatarInput" accept="image/jpeg,image/png,image/webp" class="hidden">
-            <div class="auc-avatar-zone" id="aucAvatarZone" style="position:relative">
+            <div class="auc-avatar-zone ka-pos-relative" id="aucAvatarZone">
                 @if($user->avatar)
                     <img class="auc-zone-preview" src="{{ $user->avatar }}" alt="">
                 @else
@@ -128,11 +128,11 @@
             <div class="auc-card-icon green">📋</div>
             <div><p class="auc-card-title">Recent Listings</p><p class="auc-card-sub">Last {{ $listings->count() }} ads</p></div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="ka-info-list">
             @foreach($listings as $l)
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--ka-bg-alt,#f8fafc);border-radius:8px;font-size:13px">
-                <a href="/admin/listings/{{ $l->id }}" style="color:var(--ka-accent,#16a34a);font-weight:500;text-decoration:none">{{ Str::limit($l->title,50) }}</a>
-                <span style="color:var(--ka-text-muted,#6b7280)">{{ $l->created_at?->format('d M Y') }}</span>
+            <div class="ka-info-row">
+                <a href="/admin/listings/{{ $l->id }}">{{ Str::limit($l->title,50) }}</a>
+                <span class="ka-info-label">{{ $l->created_at?->format('d M Y') }}</span>
             </div>
             @endforeach
         </div>
@@ -146,11 +146,11 @@
             <div class="auc-card-icon amber">🏪</div>
             <div><p class="auc-card-title">Stores</p><p class="auc-card-sub">{{ $stores->count() }} store(s)</p></div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
+        <div class="ka-info-list">
             @foreach($stores as $s)
-            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--ka-bg-alt,#f8fafc);border-radius:8px;font-size:13px">
-                <a href="/admin/stores/{{ $s->id }}" style="color:var(--ka-accent,#16a34a);font-weight:500;text-decoration:none">{{ $s->name }}</a>
-                <span style="padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;background:{{ $s->is_approved ? '#dcfce7' : '#fef9c3' }};color:{{ $s->is_approved ? '#15803d' : '#92400e' }}">{{ $s->is_approved ? 'Approved' : 'Pending' }}</span>
+            <div class="ka-info-row">
+                <a href="/admin/stores/{{ $s->id }}">{{ $s->name }}</a>
+                <span class="ka-plan-status-badge" style="background:{{ $s->is_approved ? '#dcfce7' : '#fef9c3' }};color:{{ $s->is_approved ? '#15803d' : '#92400e' }}">{{ $s->is_approved ? 'Approved' : 'Pending' }}</span>
             </div>
             @endforeach
         </div>
@@ -181,13 +181,13 @@
             <div class="auc-card-icon slate">ℹ️</div>
             <div><p class="auc-card-title">Account Info</p><p class="auc-card-sub">Read-only details</p></div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:10px;font-size:13px">
-            <div style="display:flex;justify-content:space-between"><span style="color:var(--ka-text-muted,#6b7280)">ID</span><strong>#{{ $user->id }}</strong></div>
-            <div style="display:flex;justify-content:space-between"><span style="color:var(--ka-text-muted,#6b7280)">Registered</span><strong>{{ $user->created_at?->format('d M Y') }}</strong></div>
-            <div style="display:flex;justify-content:space-between"><span style="color:var(--ka-text-muted,#6b7280)">Email Verified</span>
-                <strong style="color:{{ $user->email_verified_at ? '#16a34a':'#ef4444' }}">{{ $user->email_verified_at ? 'Yes' : 'No' }}</strong></div>
-            <div style="display:flex;justify-content:space-between"><span style="color:var(--ka-text-muted,#6b7280)">Listings</span><strong>{{ $user->listings()->count() }}</strong></div>
-            <div style="display:flex;justify-content:space-between"><span style="color:var(--ka-text-muted,#6b7280)">Stores</span><strong>{{ $stores->count() }}</strong></div>
+        <div class="ka-info-list">
+            <div class="ka-info-row"><span class="ka-info-label">ID</span><strong>#{{ $user->id }}</strong></div>
+            <div class="ka-info-row"><span class="ka-info-label">Registered</span><strong>{{ $user->created_at?->format('d M Y') }}</strong></div>
+            <div class="ka-info-row"><span class="ka-info-label">Email Verified</span>
+                <strong class="{{ $user->email_verified_at ? 'ka-text-accent' : 'ka-text-danger' }}">{{ $user->email_verified_at ? 'Yes' : 'No' }}</strong></div>
+            <div class="ka-info-row"><span class="ka-info-label">Listings</span><strong>{{ $user->listings()->count() }}</strong></div>
+            <div class="ka-info-row"><span class="ka-info-label">Stores</span><strong>{{ $stores->count() }}</strong></div>
         </div>
     </div>
 
@@ -261,7 +261,7 @@
         </div>
         <form method="POST" action="/admin/users/{{ $user->id }}/store-limit">
             @csrf
-            <div style="display:flex;gap:8px;align-items:center">
+            <div class="ka-flex-row-8">
                 <input type="number" name="store_limit" value="{{ $user->store_limit ?? 1 }}" min="1" max="999" class="auc-input" style="width:80px">
                 <button type="submit" class="ka-btn ka-btn-primary" style="white-space:nowrap">Set Limit</button>
             </div>
@@ -273,7 +273,7 @@
     <div class="auc-card" style="border-color:#fca5a5">
         <div class="auc-card-header">
             <div class="auc-card-icon" style="background:#fee2e2">⚠️</div>
-            <div><p class="auc-card-title" style="color:#dc2626">Danger Zone</p><p class="auc-card-sub">Irreversible actions</p></div>
+            <div><p class="auc-card-title ka-text-danger">Danger Zone</p><p class="auc-card-sub">Irreversible actions</p></div>
         </div>
         <form method="POST" action="/admin/users/{{ $user->id }}" onsubmit="return confirm('Delete {{ $user->name }}? This cannot be undone.')">
             @csrf @method('DELETE')
@@ -288,13 +288,13 @@
 
 {{-- ── DANGER ZONE ─────────────────────────────────────────────────────── --}}
 @if($user->id !== auth()->id() && !in_array($user->role, ['super_admin']))
-<div class="dz-box" style="border:2px solid #fca5a5;border-radius:16px;padding:28px 32px;margin-top:32px;background:#fff5f5;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+<div class="dz-box ka-danger-zone" style="margin-top:32px">
+    <div class="ka-danger-zone-head">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        <span style="font-size:16px;font-weight:800;color:#dc2626;letter-spacing:-.01em;">Danger Zone</span>
+        <span class="ka-danger-zone-title">Danger Zone</span>
     </div>
-    <p style="font-size:13px;color:#6b7280;margin-bottom:20px;">These actions are permanent and cannot be undone. All listings, stores and data belonging to this user will be deleted.</p>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+    <p class="ka-danger-zone-desc">These actions are permanent and cannot be undone. All listings, stores and data belonging to this user will be deleted.</p>
+    <div class="ka-danger-zone-actions">
         <button type="button" id="dzDeleteBtn" class="ka-btn" style="background:#dc2626;color:#fff;border-color:#dc2626;font-weight:700;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
             Delete User & All Data
@@ -303,25 +303,25 @@
 </div>
 
 {{-- Delete Confirmation Modal --}}
-<div id="dzModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);align-items:center;justify-content:center;">
-    <div style="background:#fff;border-radius:20px;padding:36px 40px;max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.25);">
-        <div style="text-align:center;margin-bottom:20px;">
-            <div style="width:56px;height:56px;background:#fee2e2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+<div id="dzModal" class="ka-modal-overlay">
+    <div class="ka-modal-box">
+        <div class="ka-modal-icon-wrap">
+            <div class="ka-modal-icon">
                 <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
             </div>
-            <h3 style="font-size:18px;font-weight:800;color:#111;margin-bottom:8px;">Delete "{{ $user->name }}"?</h3>
-            <p style="font-size:13px;color:#6b7280;line-height:1.6;">This will permanently delete the user account and all associated listings, stores, and data. <strong style="color:#dc2626;">This cannot be undone.</strong></p>
+            <h3 class="ka-modal-title">Delete "{{ $user->name }}"?</h3>
+            <p class="ka-modal-desc">This will permanently delete the user account and all associated listings, stores, and data. <strong class="ka-text-danger">This cannot be undone.</strong></p>
         </div>
-        <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:#991b1b;">
+        <div class="ka-modal-warn">
             <strong>Will be deleted:</strong> Account · {{ $user->listings()->count() }} listing(s) · {{ $user->stores()->count() }} store(s)
         </div>
-        <p style="font-size:13px;color:#374151;margin-bottom:8px;">Type <strong>DELETE</strong> to confirm:</p>
-        <input id="dzConfirmInput" type="text" placeholder="Type DELETE here" style="width:100%;border:2px solid #e5e7eb;border-radius:8px;padding:10px 14px;font-size:14px;margin-bottom:16px;outline:none;box-sizing:border-box;">
-        <div style="display:flex;gap:10px;">
-            <button type="button" id="dzCancelBtn" style="flex:1;padding:12px;border:1.5px solid #e5e7eb;border-radius:8px;background:#fff;font-size:14px;font-weight:600;cursor:pointer;color:#374151;">Cancel</button>
+        <p class="ka-modal-reason">Type <strong>DELETE</strong> to confirm:</p>
+        <input id="dzConfirmInput" type="text" placeholder="Type DELETE here" class="ka-modal-input">
+        <div class="ka-modal-btns">
+            <button type="button" id="dzCancelBtn" class="ka-modal-btn-cancel">Cancel</button>
             <form method="POST" action="/admin/users/{{ $user->id }}" id="dzDeleteForm" style="flex:1;">
                 @csrf @method('DELETE')
-                <button type="submit" id="dzConfirmBtn" style="width:100%;padding:12px;border:none;border-radius:8px;background:#dc2626;color:#fff;font-size:14px;font-weight:700;cursor:pointer;opacity:.4;pointer-events:none;">Delete Permanently</button>
+                <button type="submit" id="dzConfirmBtn" class="ka-modal-btn-danger" style="opacity:.4;pointer-events:none;">Delete Permanently</button>
             </form>
         </div>
     </div>
@@ -405,12 +405,12 @@ simpleKsd('aucStatusTrigger','aucStatusDropdown','aucStatusVal','aucStatusLabel'
     if(!deleteBtn || !modal) return;
 
     deleteBtn.addEventListener('click', function(){
-        modal.style.display = 'flex';
+        modal.classList.add('open');
         if(input) { input.value = ''; input.focus(); }
         if(confirmBtn) { confirmBtn.style.opacity = '.4'; confirmBtn.style.pointerEvents = 'none'; }
     });
-    cancelBtn.addEventListener('click', function(){ modal.style.display = 'none'; });
-    modal.addEventListener('click', function(e){ if(e.target === modal) modal.style.display = 'none'; });
+    cancelBtn.addEventListener('click', function(){ modal.classList.remove('open'); });
+    modal.addEventListener('click', function(e){ if(e.target === modal) modal.classList.remove('open'); });
     if(input) input.addEventListener('input', function(){
         var ok = this.value === 'DELETE';
         confirmBtn.style.opacity = ok ? '1' : '.4';

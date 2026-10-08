@@ -1,4 +1,4 @@
-﻿@extends('layouts.app')
+@extends('layouts.app')
 @section('title','Help Center · Kegalle Marketplace')
 @section('meta_description','Guides and answers to help you buy, sell, and stay safe on Kegalle Marketplace.')
 @section('content')
@@ -29,7 +29,7 @@
         </div>
         <div class="k-help-stat">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.67A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
-            <span>Phone: <strong>+94 713 930 930</strong></span>
+            <span>Phone: <strong>+94 70 323 4433</strong></span>
         </div>
     </div>
 
@@ -87,7 +87,7 @@
             <p>Can't find what you're looking for? Our local team in Kegalle is happy to help directly — we respond within 24 hours.</p>
             <div class="k-help-still-btns">
                 <a href="/contact-us" class="k-btn k-btn-white">Contact Us</a>
-                <a href="https://wa.me/94712930930?text={{ urlencode('Hi, I need help with Kegalle Marketplace.') }}" target="_blank" rel="noopener" class="k-btn k-btn-outline-white">Chat on WhatsApp</a>
+                <a href="https://wa.me/94703234433?text={{ urlencode('Hi, I need help with Kegalle Marketplace.') }}" target="_blank" rel="noopener" class="k-btn k-btn-outline-white">Chat on WhatsApp</a>
             </div>
         </div>
     </div>

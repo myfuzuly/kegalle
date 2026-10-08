@@ -80,7 +80,7 @@
 @endpush
 
 @push('styles')
-<link rel="stylesheet" href="{{ asset('css/kegalle-store-profile.css') }}?v=7">
+<link rel="stylesheet" href="{{ asset('css/kegalle-store-profile.css') }}?v=11">
 @endpush
 
 @section('content')
@@ -114,7 +114,7 @@
           <div class="ksp-badges">
             @if($store->is_verified)<span class="ksp-badge ksp-badge-v">{!! $iCheck !!} Verified Store</span>@endif
             @if($store->user?->phone_verified_at)<span class="ksp-badge ksp-badge-p">{!! $iMobile !!} Phone Verified</span>@endif
-            <span class="ksp-badge ksp-badge-r" style="background:{{ $rankColor }}">{{ $rankLabel }}</span>
+            @if($rankLabel)<span class="ksp-badge ksp-badge-r ksp-rank-{{ $rank }}">{{ $rankLabel }}</span>@endif
           </div>
           <div class="ksp-meta">
             <span class="ksp-mi">{!! $iBox !!} {{ $store->listings_count??0 }} {{ \Illuminate\Support\Str::plural('Product',$store->listings_count??0) }}</span>
@@ -197,7 +197,7 @@
             <span id="kspSortLabel">{{ $kspCurLabel }}</span>
             <svg class="kpd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </div>
-          <div class="kpd-panel" id="kspSortPanel" style="display:none">
+          <div class="kpd-panel ksp-hidden" id="kspSortPanel">
             <div class="kpd-list">
               @foreach($kspSortOpts as $val=>$lbl)
               <div class="kpd-item{{ $kspCurSort===$val?' selected':'' }}" data-value="{{ $val }}" data-label="{{ $lbl }}">
@@ -229,7 +229,7 @@
         <div class="ksp-rev-summary">
           <div class="ksp-rev-score-col">
             <div class="ksp-rev-big-num">{{ $avgRating }}</div>
-            <div class="ksp-rev-stars-lg">@for($s=1;$s<=5;$s++)<span style="color:{{ $s<=round($avgRating)?'#f59e0b':'#e5e7eb' }}">★</span>@endfor</div>
+            <div class="ksp-rev-stars-lg">@for($s=1;$s<=5;$s++)<span class="{{ $s<=round($avgRating)?'ksp-star-on':'ksp-star-off' }}">★</span>@endfor</div>
             <div class="ksp-rev-count">{{ $reviewCount }} {{ \Illuminate\Support\Str::plural('review',$reviewCount) }}</div>
           </div>
           <div class="ksp-rev-bars">
@@ -237,7 +237,7 @@
               @php $cnt=($reviews??collect())->where('rating',$r)->count();$pct=$reviewCount?round($cnt/$reviewCount*100):0; @endphp
               <div class="ksp-rev-bar-row">
                 <span class="ksp-rev-bar-lbl">{{ $r }} ★</span>
-                <div class="ksp-rev-bar-track"><div class="ksp-rev-bar-fill" style="width:{{ $pct }}%"></div></div>
+                <div class="ksp-rev-bar-track"><div class="ksp-rev-bar-fill" data-pct="{{ $pct }}"></div></div>
                 <span class="ksp-rev-bar-cnt">{{ $cnt }}</span>
               </div>
             @endfor
@@ -276,7 +276,7 @@
               <div class="ksp-rev-name">{{ optional($review->user)->name??'User' }}</div>
               <div class="ksp-rev-date">{{ $review->created_at?->diffForHumans() }}</div>
             </div>
-            <div class="ksp-rev-rating">@for($s=1;$s<=5;$s++)<span style="color:{{ $s<=$review->rating?'#f59e0b':'#e5e7eb' }}">★</span>@endfor</div>
+            <div class="ksp-rev-rating">@for($s=1;$s<=5;$s++)<span class="{{ $s<=$review->rating?'ksp-star-on':'ksp-star-off' }}">★</span>@endfor</div>
           </div>
           <p class="ksp-rev-comment">{{ $review->comment }}</p>
           @if(!empty($review->reply))
@@ -342,9 +342,9 @@
     <div class="ksp-scard">
       <div class="ksp-rank-wrap">
         <span class="ksp-rank-icon">{!! $rankSvg !!}</span>
-        <div class="ksp-rank-lbl" style="color:{{ $rankColor }}">{{ $rankLabel }}</div>
+        <div class="ksp-rank-lbl ksp-rank-{{ $rank }}">{{ $rankLabel }}</div>
         @if($reviewCount>0)
-          <span class="ksp-stars">@for($s=1;$s<=5;$s++)<span style="color:{{ $s<=round($avgRating)?'#f59e0b':'#e5e7eb' }}">★</span>@endfor</span>
+          <span class="ksp-stars">@for($s=1;$s<=5;$s++)<span class="{{ $s<=round($avgRating)?'ksp-star-on':'ksp-star-off' }}">★</span>@endfor</span>
           <span class="ksp-stars-sub">{{ $avgRating }} / 5 &nbsp;·&nbsp; {{ $reviewCount }} {{ \Illuminate\Support\Str::plural('review',$reviewCount) }}</span>
         @else
           <span class="ksp-stars-sub ksp-stars-sub-top">No reviews yet</span>
@@ -564,15 +564,15 @@
     star.addEventListener('click',function(){
       var val=parseInt(this.dataset.val);
       document.getElementById('storeRatingInput').value=val;
-      stars.forEach(function(s){s.style.color=parseInt(s.dataset.val)<=val?'#f59e0b':'#e5e7eb';});
+      stars.forEach(function(s){var on=parseInt(s.dataset.val)<=val;s.classList.toggle('ksp-star-on',on);s.classList.toggle('ksp-star-off',!on);});
     });
     star.addEventListener('mouseenter',function(){
       var val=parseInt(this.dataset.val);
-      stars.forEach(function(s){s.style.color=parseInt(s.dataset.val)<=val?'#fbbf24':'#e5e7eb';});
+      stars.forEach(function(s){var on=parseInt(s.dataset.val)<=val;s.classList.toggle('ksp-star-on',on);s.classList.toggle('ksp-star-off',!on);});
     });
     star.addEventListener('mouseleave',function(){
       var cur=parseInt(document.getElementById('storeRatingInput').value)||0;
-      stars.forEach(function(s){s.style.color=parseInt(s.dataset.val)<=cur?'#f59e0b':'#e5e7eb';});
+      stars.forEach(function(s){var on=parseInt(s.dataset.val)<=cur;s.classList.toggle('ksp-star-on',on);s.classList.toggle('ksp-star-off',!on);});
     });
   });
 
@@ -580,6 +580,11 @@
     var rt=document.querySelector('[data-store-tab="reviews"]');
     if(rt) rt.click();
   }
+
+  /* ── Review bar fills (data-pct → width, no inline style) ── */
+  document.querySelectorAll('.ksp-rev-bar-fill[data-pct]').forEach(function(el){
+    el.style.width=el.dataset.pct+'%';
+  });
 
   var flash=document.getElementById('flashMsg');
   if(flash) setTimeout(function(){flash.style.opacity='0';setTimeout(function(){flash.remove();},300);},4000);
@@ -623,9 +628,9 @@
   (function(){
     var wrap=document.getElementById('kspSortWrap'),trigger=document.getElementById('kspSortTrigger'),panel=document.getElementById('kspSortPanel'),label=document.getElementById('kspSortLabel'),valEl=document.getElementById('kspSortVal');
     if(!wrap)return;
-    trigger.addEventListener('click',function(e){e.stopPropagation();var open=panel.style.display==='block';panel.style.display=open?'none':'block';trigger.classList.toggle('open',!open);});
-    document.addEventListener('click',function(){panel.style.display='none';trigger.classList.remove('open');});
-    panel.addEventListener('click',function(e){var item=e.target.closest('.kpd-item');if(!item)return;var val=item.dataset.value,lbl=item.dataset.label;label.textContent=lbl;wrap.querySelectorAll('.kpd-item').forEach(function(i){i.classList.toggle('selected',i===item);});panel.style.display='none';trigger.classList.remove('open');var u=new URL(window.location.href);if(val)u.searchParams.set('sort',val);else u.searchParams.delete('sort');window.location.href=u.toString();});
+    trigger.addEventListener('click',function(e){e.stopPropagation();var open=!panel.classList.contains('ksp-hidden');panel.classList.toggle('ksp-hidden',open);trigger.classList.toggle('open',!open);});
+    document.addEventListener('click',function(){panel.classList.add('ksp-hidden');trigger.classList.remove('open');});
+    panel.addEventListener('click',function(e){var item=e.target.closest('.kpd-item');if(!item)return;var val=item.dataset.value,lbl=item.dataset.label;label.textContent=lbl;wrap.querySelectorAll('.kpd-item').forEach(function(i){i.classList.toggle('selected',i===item);});panel.classList.add('ksp-hidden');trigger.classList.remove('open');var u=new URL(window.location.href);if(val)u.searchParams.set('sort',val);else u.searchParams.delete('sort');window.location.href=u.toString();});
   })();
 })();
 </script>
