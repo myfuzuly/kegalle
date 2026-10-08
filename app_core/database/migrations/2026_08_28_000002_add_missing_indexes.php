@@ -7,6 +7,9 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (!in_array(DB::getDriverName(), ['mysql', 'mariadb'], true)) {
+            return;
+        }
         $existing = fn($table) => collect(DB::select("SHOW INDEX FROM `{$table}`"))->pluck('Key_name')->unique()->toArray();
 
         if (!in_array('idx_services_user_status', $existing('services'))) {
@@ -20,6 +23,9 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (!in_array(DB::getDriverName(), ['mysql', 'mariadb'], true)) {
+            return;
+        }
         DB::statement('ALTER TABLE services DROP INDEX IF EXISTS idx_services_user_status');
         DB::statement('ALTER TABLE listing_field_values DROP INDEX IF EXISTS uidx_listing_field_values');
     }

@@ -9,10 +9,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(web: __DIR__.'/../routes/web.php', commands: __DIR__.'/../routes/console.php', health: '/up')
     ->withMiddleware(function (Middleware $middleware) {
     $middleware->validateCsrfTokens(except: ['g-return', 'api/chat/*/send', 'api/chat/unread']);
+    $middleware->prepend(\App\Http\Middleware\CanonicalHost::class);
     $middleware->web(append: [
         \App\Http\Middleware\SecurityHeaders::class,
         \App\Http\Middleware\CheckMaintenance::class,
-        \App\Http\Middleware\HandleInertiaRequests::class,
     ]);
     $middleware->alias([
         'verified.custom' => \App\Http\Middleware\EnsureEmailIsVerifiedCustom::class,

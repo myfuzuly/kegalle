@@ -7,6 +7,9 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (!in_array(DB::getDriverName(), ['mysql', 'mariadb'], true)) {
+            return;
+        }
         $indexes = collect(DB::select('SHOW INDEX FROM chat_messages'))->pluck('Key_name')->unique()->toArray();
         if (!in_array('idx_chat_messages_thread_sender_read', $indexes)) {
             DB::statement('ALTER TABLE chat_messages ADD INDEX idx_chat_messages_thread_sender_read (thread_id, sender_id, read_at)');
@@ -15,6 +18,9 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (!in_array(DB::getDriverName(), ['mysql', 'mariadb'], true)) {
+            return;
+        }
         DB::statement('ALTER TABLE chat_messages DROP INDEX IF EXISTS idx_chat_messages_thread_sender_read');
     }
 };

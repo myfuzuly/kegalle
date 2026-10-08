@@ -9,6 +9,9 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (!in_array(DB::getDriverName(), ['mysql', 'mariadb'], true)) {
+            return;
+        }
         // FULLTEXT index — skip if already exists (may have been added via fix_db script)
         $existing = DB::select("SHOW INDEX FROM listings WHERE Key_name = 'ft_listings_search'");
         if (empty($existing)) {
@@ -25,6 +28,9 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (!in_array(DB::getDriverName(), ['mysql', 'mariadb'], true)) {
+            return;
+        }
         DB::statement('ALTER TABLE listings DROP INDEX ft_listings_search');
         Schema::table('listings', function (Blueprint $table) {
             $table->dropIndex('idx_listings_status_cat_date');
