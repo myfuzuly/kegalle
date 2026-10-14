@@ -172,7 +172,7 @@
                 <form method="post" action="/admin/locations/{{ $location->id }}/toggle" class="d-contents">@csrf
                     <button class="loc-act loc-toggle">{{ $location->is_active ? 'Deactivate':'Activate' }}</button>
                 </form>
-                <form method="post" action="/admin/locations/{{ $location->id }}" onsubmit="return confirm('Delete \'{{ addslashes($location->name) }}\'?')" class="d-contents">@csrf @method('DELETE')
+                <form method="post" action="/admin/locations/{{ $location->id }}" data-confirm="Delete '{{ $location->name }}'?" class="d-contents">@csrf @method('DELETE')
                     <button class="loc-act danger">Delete</button>
                 </form>
             </div>

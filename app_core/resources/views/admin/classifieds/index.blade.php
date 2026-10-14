@@ -109,8 +109,8 @@
     <td><span class="pill-red">✕ {{ ucfirst($listing->status) }}</span></td>
     <td class="sa-actions-inline">
         <a href="/admin/classifieds/{{ $listing->id }}/edit">Edit</a>
-        <form method="post" action="/admin/listings/{{ $listing->id }}/approve" onsubmit="return confirm('Re-approve this ad?')">@csrf<button class="text-green600">✓ Approve</button></form>
-        <form method="post" action="/admin/listings/{{ $listing->id }}" onsubmit="return confirm('Permanently delete this ad?')" class="d-inline">@csrf @method('DELETE')<button class="danger">Delete</button></form>
+        <form method="post" action="/admin/listings/{{ $listing->id }}/approve" data-confirm="Re-approve this ad?" >@csrf<button class="text-green600">✓ Approve</button></form>
+        <form method="post" action="/admin/listings/{{ $listing->id }}" data-confirm="Permanently delete this ad?" class="d-inline">@csrf @method('DELETE')<button class="danger">Delete</button></form>
     </td>
 </tr>
 @endforeach

@@ -75,7 +75,7 @@
             @else
             <form method="post" action="/admin/payments/{{ $payment->id }}/status" class="d-contents">
                 @csrf
-                <select class="select-32h" name="status" onchange="this.form.submit()">
+                <select class="select-32h" name="status" data-autosubmit>
                     <option value="pending"  @selected($payment->status==='pending')>Pending</option>
                     <option value="paid"     @selected($payment->status==='paid')>Paid</option>
                     <option value="failed"   @selected($payment->status==='failed')>Failed</option>

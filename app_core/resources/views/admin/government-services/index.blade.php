@@ -29,7 +29,7 @@
         <a href="/admin/government-services/{{ $service->id }}/items">Items ({{ $service->items_count }})</a>
         <a href="/admin/government-services/{{ $service->id }}/edit">Edit</a>
         <form method="post" action="/admin/government-services/{{ $service->id }}/toggle">@csrf<button>Toggle</button></form>
-        <form method="post" action="/admin/government-services/{{ $service->id }}" onsubmit="return confirm('Delete this service?')">@csrf @method('DELETE')<button>Delete</button></form>
+        <form method="post" action="/admin/government-services/{{ $service->id }}" data-confirm="Delete this service?" >@csrf @method('DELETE')<button>Delete</button></form>
     </td>
 </tr>
 @empty

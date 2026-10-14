@@ -22,7 +22,7 @@
     <td class="sa-actions-inline">
         <a href="/admin/explore-items/{{ $explore->id }}/items/{{ $item->id }}/edit">Edit</a>
         <form method="post" action="/admin/explore-items/{{ $explore->id }}/items/{{ $item->id }}/toggle">@csrf<button>Toggle</button></form>
-        <form method="post" action="/admin/explore-items/{{ $explore->id }}/items/{{ $item->id }}" onsubmit="return confirm('Delete this item?')">@csrf @method('DELETE')<button>Delete</button></form>
+        <form method="post" action="/admin/explore-items/{{ $explore->id }}/items/{{ $item->id }}" data-confirm="Delete this item?" >@csrf @method('DELETE')<button>Delete</button></form>
     </td>
 </tr>
 @empty

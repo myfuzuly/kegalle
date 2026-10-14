@@ -123,7 +123,7 @@
             </div>
             </form>
             @if(!$role->is_protected)
-            <form id="delRole{{ $role->id }}" method="post" action="/admin/roles/{{ $role->id }}" onsubmit="return confirm('Delete role \'{{ addslashes($role->name) }}\'?')">@csrf @method('DELETE')</form>
+            <form id="delRole{{ $role->id }}" method="post" action="/admin/roles/{{ $role->id }}" data-confirm="Delete role '{{ $role->name }}'?" >@csrf @method('DELETE')</form>
             @endif
         @endif
         </div>

@@ -49,7 +49,7 @@
                 <form method="post" action="/admin/posts/{{ $post->id }}/toggle" class="d-contents">@csrf
                     <button class="pst-act">{{ $post->is_published ? 'Unpublish':'Publish' }}</button>
                 </form>
-                <form method="post" action="/admin/posts/{{ $post->id }}" onsubmit="return confirm('Delete this article?')" class="d-contents">@csrf @method('DELETE')
+                <form method="post" action="/admin/posts/{{ $post->id }}" data-confirm="Delete this article?" class="d-contents">@csrf @method('DELETE')
                     <button class="pst-act danger">🗑</button>
                 </form>
             </div>

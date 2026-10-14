@@ -28,7 +28,7 @@
             <form method="post" action="/admin/brands/{{ $brand->id }}/toggle" class="d-contents">@csrf
                 <button class="kaa-act kaa-act-toggle">{{ $brand->is_active ? 'Deactivate' : 'Activate' }}</button>
             </form>
-            <form method="post" action="/admin/brands/{{ $brand->id }}" class="d-contents" onsubmit="return confirm('Delete {{ addslashes($brand->name) }} and all its models?')">@csrf @method('DELETE')
+            <form method="post" action="/admin/brands/{{ $brand->id }}" class="d-contents" data-confirm="Delete {{ $brand->name }} and all its models?" >@csrf @method('DELETE')
                 <button class="kaa-act kaa-act-del">Delete</button>
             </form>
         </div>

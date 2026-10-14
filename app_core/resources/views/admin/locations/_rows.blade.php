@@ -16,7 +16,7 @@
     <td class="sa-actions-inline">
         <a href="/admin/locations/{{ $location->id }}/edit">Edit</a>
         <form method="post" action="/admin/locations/{{ $location->id }}/toggle">@csrf<button>Toggle</button></form>
-        <form method="post" action="/admin/locations/{{ $location->id }}" onsubmit="return confirm('Delete this location?')">@csrf @method('DELETE')<button class="danger">Delete</button></form>
+        <form method="post" action="/admin/locations/{{ $location->id }}" data-confirm="Delete this location?" >@csrf @method('DELETE')<button class="danger">Delete</button></form>
     </td>
 </tr>
 @empty

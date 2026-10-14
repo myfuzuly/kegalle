@@ -275,7 +275,7 @@
             <div class="auc-card-icon" style="background:#fee2e2">⚠️</div>
             <div><p class="auc-card-title ka-text-danger">Danger Zone</p><p class="auc-card-sub">Irreversible actions</p></div>
         </div>
-        <form method="POST" action="/admin/users/{{ $user->id }}" onsubmit="return confirm('Delete {{ $user->name }}? This cannot be undone.')">
+        <form method="POST" action="/admin/users/{{ $user->id }}" data-confirm="Delete {{ $user->name }}? This cannot be undone." >
             @csrf @method('DELETE')
             <button type="submit" class="ka-btn" style="background:#dc2626;color:#fff;width:100%">🗑 Delete User</button>
         </form>

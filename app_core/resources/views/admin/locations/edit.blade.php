@@ -118,7 +118,7 @@
         </div>
     </div>
 </div>
-<form class="mt-0" method="post" action="/admin/locations/{{ $location->id }}" onsubmit="return confirm('Delete this location permanently?')">
+<form class="mt-0" method="post" action="/admin/locations/{{ $location->id }}" data-confirm="Delete this location permanently?" >
     @csrf @method('DELETE')
     <button class="btn-rose-full" type="submit" onmouseover="this.style.background='#fecdd3'" onmouseout="this.style.background='#fff1f2'">🗑 Delete Location</button>
 </form>

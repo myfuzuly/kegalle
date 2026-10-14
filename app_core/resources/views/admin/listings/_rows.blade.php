@@ -22,7 +22,7 @@
     <td class="sa-actions-inline">
         <a href="/listings/{{ $listing->slug }}" target="_blank">View</a>
         <a href="/admin/listings/{{ $listing->id }}/edit">Edit</a>
-        <form method="post" action="/admin/listings/{{ $listing->id }}/reject" onsubmit="return confirm('Reject this listing?')">@csrf<button class="danger">Reject</button></form>
+        <form method="post" action="/admin/listings/{{ $listing->id }}/reject" data-confirm="Reject this listing?" >@csrf<button class="danger">Reject</button></form>
         <form method="post" action="/admin/listings/{{ $listing->id }}/feature">@csrf<button>Feature</button></form>
         <form method="post" action="/admin/listings/{{ $listing->id }}/top">@csrf<button>Top</button></form>
     </td>

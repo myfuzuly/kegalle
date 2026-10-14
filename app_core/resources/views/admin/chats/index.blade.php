@@ -15,7 +15,7 @@
     <td class="sa-actions-inline">
         <a href="/admin/chats/{{ $thread->id }}" title="View">View</a>
         <form method="post" action="/admin/chats/{{ $thread->id }}/close">@csrf<button title="Close">Close</button></form>
-        <form method="post" action="/admin/chats/{{ $thread->id }}" onsubmit="return confirm('Delete this conversation?')">@csrf @method('DELETE')<button class="danger" title="Delete">Delete</button></form>
+        <form method="post" action="/admin/chats/{{ $thread->id }}" data-confirm="Delete this conversation?" >@csrf @method('DELETE')<button class="danger" title="Delete">Delete</button></form>
     </td>
 </tr>@empty<tr><td colspan="6">No conversations found.</td></tr>@endforelse
 </tbody></table></div>{{ $threads->links() }}</section>

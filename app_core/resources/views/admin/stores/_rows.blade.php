@@ -26,7 +26,7 @@
         <td class="sa-actions-inline">
             <a href="/store/{{ $store->slug }}" target="_blank" title="View">View</a>
             <a href="/admin/stores/{{ $store->id }}/edit" title="Edit">Edit</a>
-            <form method="post" action="/admin/stores/{{ $store->id }}/suspend" onsubmit="return confirm('Suspend this store?')">@csrf<button class="danger" title="Suspend">Suspend</button></form>
+            <form method="post" action="/admin/stores/{{ $store->id }}/suspend" data-confirm="Suspend this store?" >@csrf<button class="danger" title="Suspend">Suspend</button></form>
             <form method="post" action="/admin/stores/{{ $store->id }}/verify">@csrf<button title="{{ $store->is_verified ? 'Unverify' : 'Verify' }}">{{ $store->is_verified ? 'Unverify' : 'Verify' }}</button></form>
             <form method="post" action="/admin/stores/{{ $store->id }}/feature">@csrf<button title="{{ $store->is_featured ? 'Unfeature' : 'Feature' }}">{{ $store->is_featured ? 'Unfeature' : 'Feature' }}</button></form>
         </td>

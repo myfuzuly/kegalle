@@ -127,7 +127,7 @@
                 @if($review->status !== 'rejected')
                 <form method="post" action="/admin/reviews/{{ $review->id }}/reject" class="d-contents">@csrf<button class="rev-act">✕ Reject</button></form>
                 @endif
-                <form method="post" action="/admin/reviews/{{ $review->id }}" onsubmit="return confirm('Delete this review?')" class="d-contents">@csrf @method('DELETE')
+                <form method="post" action="/admin/reviews/{{ $review->id }}" data-confirm="Delete this review?" class="d-contents">@csrf @method('DELETE')
                     <button class="rev-act danger">🗑</button>
                 </form>
             </div>

@@ -169,7 +169,7 @@
             <form method="post" action="/admin/categories/{{ $cat->id }}/toggle" class="d-contents">@csrf
                 <button class="kaa-act kaa-act-toggle">{{ $cat->is_active ? 'Deactivate' : 'Activate' }}</button>
             </form>
-            <form method="post" action="/admin/categories/{{ $cat->id }}" onsubmit="return confirm('Delete \'{{ addslashes($cat->name) }}\'? This cannot be undone.')" class="d-contents">@csrf @method('DELETE')
+            <form method="post" action="/admin/categories/{{ $cat->id }}" data-confirm="Delete '{{ $cat->name }}'? This cannot be undone." class="d-contents">@csrf @method('DELETE')
                 <button class="kaa-act kaa-act-del">Delete</button>
             </form>
         </div>
@@ -213,7 +213,7 @@
     <div class="kaa-form-row">
         <div class="kaa-field">
             <label for="mainCatSelect">Main Category</label>
-            <select name="_main_id" id="mainCatSelect" onchange="loadSubs(this.value)">
+            <select name="_main_id" id="mainCatSelect" data-onchange="loadSubs">
                 <option value="">— None (creating a Main Category) —</option>
                 @foreach($mainCategories as $m)
                 <option value="{{ $m->id }}" @selected($currentParent && ($currentParent->id === $m->id || $currentParent->parent_id === $m->id))>{{ $m->name }}</option>

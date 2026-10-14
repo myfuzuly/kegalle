@@ -49,7 +49,7 @@
         {{-- Parent selection (hierarchical) --}}
         <div class="ka-field">
             <label>Main Category <small class="text-muted-light">(leave blank to keep as Main)</small></label>
-            <select name="_main_id" id="editMainSel" onchange="editLoadSubs(this.value)">
+            <select name="_main_id" id="editMainSel" data-onchange="editLoadSubs">
                 <option value="">— No Parent (Main Category) —</option>
                 @foreach($mainCategories as $m)
                 <option value="{{ $m->id }}"

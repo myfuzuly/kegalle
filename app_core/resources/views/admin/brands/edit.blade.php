@@ -125,7 +125,7 @@
             <div class="fs13-fw7-dark-mb4">Delete "{{ $brand->name }}"</div>
             <div class="fs12-slate">Permanently deletes this brand and all its models. This action cannot be undone.</div>
         </div>
-        <form method="post" action="/admin/brands/{{ $brand->id }}" onsubmit="return confirm('Permanently delete {{ addslashes($brand->name) }}? This cannot be undone.')">
+        <form method="post" action="/admin/brands/{{ $brand->id }}" data-confirm="Permanently delete {{ $brand->name }}? This cannot be undone." >
             @csrf @method('DELETE')
             <button type="submit" class="be-btn btn-red-40h">Delete Brand</button>
         </form>

@@ -33,7 +33,7 @@
             <form method="post" action="/admin/events/{{ $event->id }}/reject">@csrf<button class="danger">Reject</button></form>
         @endif
         <form method="post" action="/admin/events/{{ $event->id }}/feature">@csrf<button>{{ $event->is_featured ? 'Unfeature' : 'Feature' }}</button></form>
-        <form method="post" action="/admin/events/{{ $event->id }}" onsubmit="return confirm('Delete this event?')">@csrf @method('DELETE')<button class="danger">Del</button></form>
+        <form method="post" action="/admin/events/{{ $event->id }}" data-confirm="Delete this event?" >@csrf @method('DELETE')<button class="danger">Del</button></form>
     </td>
 </tr>
 @empty

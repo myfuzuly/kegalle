@@ -1,286 +1,233 @@
 @extends('layouts.admin')
 
+@section('title', 'Dashboard')
+@section('page', 'Dashboard')
+@section('heading', 'Dashboard')
+@section('subheading', 'What needs attention today, and how the marketplace is trending.')
 
+@php
+    $u = auth()->user();
+    $canApprove = $u->hasPermission('approvals') || $u->hasPermission('listings');
+    $delta = function (int $now, int $prev): array {
+        if ($prev === 0) return $now > 0 ? ['new', 'up'] : ['no change', 'flat'];
+        $p = (int) round(($now - $prev) / $prev * 100);
+        return [($p > 0 ? '+' : '').$p.'%', $p > 0 ? 'up' : ($p < 0 ? 'down' : 'flat')];
+    };
+    $statusPill = fn (?string $s) => match ($s) {
+        'approved', 'active', 'published' => 'ok',
+        'pending' => 'warn',
+        'rejected', 'suspended' => 'bad',
+        default => '',
+    };
+    $pendingTotal = collect($pending)->sum('count');
+    [$uD, $uC] = $delta($stats['users_7d'], $stats['users_prev_7d']);
+    [$lD, $lC] = $delta($stats['listings_7d'], $stats['listings_prev_7d']);
+    [$rD, $rC] = $delta((int) $stats['revenue_30d'], (int) $stats['revenue_prev_30d']);
+    $maintenanceOn = (\App\Models\Setting::getValue('maintenance_mode', '0') === '1');
+@endphp
 
-@section('title','Dashboard')
-@section('page','Dashboard')
-@section('heading','Dashboard')
-@section('eyebrow','Overview')
-@section('page_heading','Dashboard')
-
+@if($pendingTotal && $canApprove)
 @section('actions')
-<a href="/admin/listings" class="ka-btn ka-btn-primary">Moderate Listings</a>
+<a href="/admin/approvals" class="ka-btn ka-btn-primary">Review {{ number_format($pendingTotal) }} pending</a>
 @endsection
+@endif
 
 @section('content')
 
-@php $maintenanceOn = (\App\Models\Setting::getValue('maintenance_mode','0') === '1'); @endphp
-<div class="ka-maintenance-bar {{ $maintenanceOn ? 'ka-maint-on' : 'ka-maint-off' }}">
-    <span>
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        {{ $maintenanceOn ? 'Maintenance Mode is ON — public site shows maintenance page' : 'Maintenance Mode is OFF — site is live' }}
+@if($u->hasPermission('settings'))
+<div class="kx-sysbar {{ $maintenanceOn ? 'is-on' : '' }}" role="status">
+    <span><span class="kx-status-dot" aria-hidden="true"></span>
+        @if($maintenanceOn)<strong>Maintenance mode is on.</strong> Visitors see the maintenance page; admins can still browse.
+        @else<strong>Site is live.</strong> Maintenance mode is off.@endif
     </span>
-    <form method="POST" action="/admin/maintenance/toggle" class="ka-d-inline">
+    <form method="POST" action="/admin/maintenance/toggle"
+          data-confirm="{{ $maintenanceOn ? 'Turn maintenance mode off and make the site public again?' : 'Turn on maintenance mode? Visitors will see a maintenance page until you turn it off.' }}">
         @csrf
-        <button type="submit" class="ka-maint-toggle-btn">
-            {{ $maintenanceOn ? '✅ Disable Maintenance' : '🚧 Enable Maintenance' }}
-        </button>
+        <button type="submit" class="ka-btn ka-btn-light kx-btn-sm">{{ $maintenanceOn ? 'Turn off maintenance' : 'Turn on maintenance' }}</button>
     </form>
 </div>
-
-<div class="ka-stat-grid">
-    <article class="ka-stat-card ka-stat-card-blue">
-        <div class="ka-stat-card-icon">
-            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <span>Total Users</span>
-        <strong>{{ number_format($stats['users'] ?? 0) }}</strong>
-        <small>{{ number_format($stats['active_users'] ?? 0) }} active accounts</small>
-    </article>
-
-    <article class="ka-stat-card ka-stat-card-green">
-        <div class="ka-stat-card-icon">
-            <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        </div>
-        <span>Stores</span>
-        <strong>{{ number_format($stats['stores'] ?? 0) }}</strong>
-        <small>{{ number_format($stats['pending_stores'] ?? 0) }} pending approval</small>
-    </article>
-
-    <article class="ka-stat-card ka-stat-card-amber">
-        <div class="ka-stat-card-icon">
-            <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-        </div>
-        <span>Listings</span>
-        <strong>{{ number_format($stats['listings'] ?? 0) }}</strong>
-        <small>{{ number_format($stats['pending_listings'] ?? 0) }} pending approval</small>
-    </article>
-
-    <article class="ka-stat-card ka-stat-card-purple ka-stat-highlight">
-        <div class="ka-stat-card-icon">
-            <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        </div>
-        <span>Marketplace Value</span>
-        <strong>LKR {{ number_format($stats['total_value'] ?? 0) }}</strong>
-        <small>Approved listing value</small>
-    </article>
-</div>
-
-<div class="ka-grid-2">
-    <section class="ka-panel">
-        <div class="ka-panel-head">
-            <h2>Quick Actions</h2>
-            <span>Super Admin</span>
-        </div>
-
-        <div class="ka-shortcut-grid">
-            <a href="/admin/users">
-                <i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></i>
-                <div><b>Users</b><small>Roles &amp; access</small></div>
-            </a>
-            <a href="/admin/stores">
-                <i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></i>
-                <div><b>Stores</b><small>Approve &amp; feature</small></div>
-            </a>
-            <a href="/admin/listings">
-                <i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></i>
-                <div><b>Products / Ads</b><small>Moderate listings</small></div>
-            </a>
-            <a href="/admin/categories">
-                <i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></i>
-                <div><b>Categories</b><small>Manage taxonomy</small></div>
-            </a>
-            <a href="/admin/locations">
-                <i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></i>
-                <div><b>Locations</b><small>District / city / town</small></div>
-            </a>
-            <a href="/admin/settings">
-                <i><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></i>
-                <div><b>Settings</b><small>Platform config</small></div>
-            </a>
-        </div>
-    </section>
-
-    <section class="ka-panel">
-        <div class="ka-panel-head">
-            <h2>Approval Queue</h2>
-            <a href="/admin/listings">View all →</a>
-        </div>
-
-        @forelse($approvalQueue ?? [] as $listing)
-            <div class="ka-queue-row">
-                <div>
-                    <b>{{ $listing->title }}</b>
-                    <small>{{ $listing->category->name ?? 'General' }} · {{ ucfirst($listing->type ?? 'listing') }}</small>
-                </div>
-
-                <form method="post" action="/admin/listings/{{ $listing->id }}/approve">
-                    @csrf
-                    <button>Approve</button>
-                </form>
-            </div>
-        @empty
-            <div class="ka-empty-state">
-                <b>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                </b>
-                <p>All clear — no pending listings.</p>
-            </div>
-        @endforelse
-
-        <div class="ka-health">
-            <div><strong>{{ $stats['approved_listings'] ?? 0 }}</strong><span>Listings</span></div>
-            <div><strong>{{ $stats['approved_stores'] ?? 0 }}</strong><span>Stores</span></div>
-            <div><strong>{{ $stats['products'] ?? 0 }}</strong><span>Products</span></div>
-            <div><strong>{{ $stats['classified'] ?? 0 }}</strong><span>Classifieds</span></div>
-        </div>
-    </section>
-</div>
-
-{{-- ── 7-day Activity Charts ───────────────────────────────────────────── --}}
-@if(isset($chartData))
-<script src="/js/chart.umd.min.js"></script>
-<section class="ka-panel mb-1r5">
-    <div class="ka-panel-head">
-        <h2>7-Day Activity</h2>
-        <span class="fs-8rem-o6">Last 7 days</span>
-    </div>
-    <div class="grid-auto-260">
-        <div><span class="chart-label">New Listings</span><canvas id="chartListings" height="150"></canvas></div>
-        <div><span class="chart-label">New Users</span><canvas id="chartUsers"    height="150"></canvas></div>
-        <div><span class="chart-label">Listing Value (LKR)</span><canvas id="chartRevenue"  height="150"></canvas></div>
-    </div>
-</section>
-<script nonce="{{ $cspNonce ?? '' }}">
-(function(){
-    var D = @json($chartData);
-    var accent = getComputedStyle(document.documentElement).getPropertyValue('--ka-accent').trim() || '#00A76F';
-    function mkChart(id, label, data, color){
-        var ctx = document.getElementById(id);
-        if(!ctx) return;
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: D.labels,
-                datasets:[{ label: label, data: data,
-                    borderColor: color, backgroundColor: color+'22',
-                    fill: true, tension: 0.4, pointRadius: 4,
-                    pointBackgroundColor: color, borderWidth: 2
-                }]
-            },
-            options:{
-                plugins:{ legend:{ labels:{ color:'#888', font:{size:11} } } },
-                scales:{
-                    x:{ ticks:{ color:'#888' }, grid:{ color:'#f1f5f9' } },
-                    y:{ ticks:{ color:'#888', precision:0 }, grid:{ color:'#f1f5f9' }, beginAtZero:true }
-                },
-                responsive: true, maintainAspectRatio: true
-            }
-        });
-    }
-    mkChart('chartListings','New Listings', D.listings, accent);
-    mkChart('chartUsers',   'New Users',    D.users,    '#3B82F6');
-    mkChart('chartRevenue', 'Listing Value (LKR)', D.revenue, '#F59E0B');
-})();
-</script>
 @endif
 
-<script nonce="{{ $cspNonce ?? '' }}">
-document.querySelectorAll('.ka-cat-bar[data-w]').forEach(function(el){
-    el.style.width = el.dataset.w + 'px';
-});
-</script>
+{{-- KPI summary — every card opens the page behind the number --}}
+<div class="kx-kpis">
+    <a class="kx-kpi" href="/admin/approvals">
+        <span class="kx-kpi-label">Waiting for review</span>
+        <span class="kx-kpi-value">{{ number_format($pendingTotal) }}</span>
+        <span class="kx-kpi-meta">{{ $pendingTotal ? 'items across '.collect($pending)->where('count', '>', 0)->count().' queues' : 'All queues are clear' }}</span>
+    </a>
+    <a class="kx-kpi" href="/admin/users">
+        <span class="kx-kpi-label">New users · 7 days</span>
+        <span class="kx-kpi-value">{{ number_format($stats['users_7d']) }}</span>
+        <span class="kx-kpi-meta"><span class="kx-delta {{ $uC }}">{{ $uD }}</span> vs previous 7 days · {{ number_format($stats['users']) }} total</span>
+    </a>
+    <a class="kx-kpi" href="/admin/listings">
+        <span class="kx-kpi-label">New listings · 7 days</span>
+        <span class="kx-kpi-value">{{ number_format($stats['listings_7d']) }}</span>
+        <span class="kx-kpi-meta"><span class="kx-delta {{ $lC }}">{{ $lD }}</span> vs previous 7 days · {{ number_format($stats['live_listings']) }} live</span>
+    </a>
+    <a class="kx-kpi" href="/admin/payments">
+        <span class="kx-kpi-label">Membership revenue · 30 days</span>
+        <span class="kx-kpi-value">LKR {{ number_format($stats['revenue_30d']) }}</span>
+        <span class="kx-kpi-meta"><span class="kx-delta {{ $rC }}">{{ $rD }}</span> · {{ number_format($stats['paid_count_30d']) }} paid {{ \Illuminate\Support\Str::plural('payment', $stats['paid_count_30d']) }}</span>
+    </a>
+</div>
 
-@if(isset($pendingStores) && $pendingStores->isNotEmpty())
-<section class="ka-panel mb-1r5">
-    <div class="ka-panel-head">
-        <h2>Pending Stores ({{ $pendingStores->count() }})</h2>
-        <a href="/admin/stores">View all →</a>
-    </div>
-    @foreach($pendingStores as $store)
-        <div class="ka-queue-row">
-            <div>
-                <b>{{ $store->name }}</b>
-                <small>{{ optional($store->user)->email }}</small>
-            </div>
-            <form method="post" action="/admin/stores/{{ $store->id }}/approve">
-                @csrf
-                <button>Approve</button>
-            </form>
+<div class="kx-grid">
+    {{-- Work queues --}}
+    <section class="kx-card kx-col-4" aria-labelledby="kxTasksH">
+        <div class="kx-card-head">
+            <div><h2 id="kxTasksH">Pending tasks</h2><p>Open a queue to act on it.</p></div>
         </div>
-    @endforeach
-</section>
-@endif
-
-<div class="ka-grid-2">
-    <section class="ka-panel">
-        <div class="ka-panel-head">
-            <h2>Categories</h2>
-            <a href="/admin/categories">Manage →</a>
-        </div>
-
-        {{-- Category stats --}}
-        @if(isset($categoryStats))
-        <div class="grid-3-g10">
-            <div class="thumb-bg">
-                <div class="fs20-fw7-accent">{{ $categoryStats['main'] }}</div>
-                <div class="caption-muted">Main</div>
-            </div>
-            <div class="thumb-bg">
-                <div class="fs20-fw7-blue">{{ $categoryStats['total'] - $categoryStats['main'] }}</div>
-                <div class="caption-muted">Sub+Leaf</div>
-            </div>
-            <div class="thumb-bg">
-                <div class="fs20-fw7-text">{{ $categoryStats['total'] }}</div>
-                <div class="caption-muted">Total</div>
-            </div>
-        </div>
+        <ul class="kx-tasks" role="list">
+            @foreach(collect($pending)->sortByDesc('count') as $t)
+                <li>
+                    <a href="{{ $t['url'] }}" class="kx-task {{ $t['count'] ? '' : 'is-zero' }}">
+                        <span class="kx-task-count">{{ number_format($t['count']) }}</span>
+                        <span class="kx-task-label">{{ $t['label'] }}</span>
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+        @if(!$pendingTotal)
+            <p class="kx-allclear"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg> Nothing is waiting. Nice work.</p>
         @endif
+    </section>
 
-        {{-- Top categories by listings --}}
-        <div class="label-upper-xs">Top by Listings</div>
-        @foreach(($topCategories ?? collect())->take(8) as $cat)
-            <div class="ka-queue-row">
-                <div>
-                    <b>{{ $cat->name }}</b>
-                    <small>{{ $cat->parent ? $cat->parent->name.' › ' : '' }}{{ number_format($cat->listings_count) }} listings</small>
-                </div>
-                <div class="ka-cat-bar" data-w="{{ $topCategories->max('listings_count') > 0 ? round($cat->listings_count / $topCategories->max('listings_count') * 100) : 4 }}"></div>
-            </div>
-        @endforeach
-
-        {{-- Quick links by main cat --}}
-        <div class="mt14-bt">
-            <div class="label-upper-xs">Browse by Main</div>
-            <div class="flex-fw-g6">
-                @foreach(\App\Models\Category::whereNull('parent_id')->orderBy('sort_order')->take(10)->get(['id','name']) as $main)
-                <a class="pill-default" href="/admin/categories?parent_id={{ $main->id }}">{{ $main->name }}</a>
+    {{-- Listings awaiting approval, approvable in place --}}
+    <section class="kx-card kx-col-8" aria-labelledby="kxQueueH">
+        <div class="kx-card-head">
+            <div><h2 id="kxQueueH">Listings awaiting approval</h2><p>Newest first. Approve here or open the full review.</p></div>
+            <a href="/admin/approvals">Open approval center</a>
+        </div>
+        @if($approvalQueue->isEmpty())
+            <p class="kx-empty">No listings are waiting for approval.</p>
+        @else
+            <ul class="kx-rows" role="list">
+                @foreach($approvalQueue as $listing)
+                    <li class="kx-row">
+                        <div class="kx-row-main">
+                            <a class="kx-row-title" href="/admin/listings/{{ $listing->id }}/edit">{{ $listing->title }}</a>
+                            <span class="kx-row-meta">
+                                {{ $listing->category->name ?? 'Uncategorised' }} · {{ ucfirst($listing->type ?? 'listing') }}
+                                · {{ optional($listing->store)->name ?? optional($listing->user)->name ?? 'Unknown seller' }}
+                                · {{ $listing->created_at?->diffForHumans() }}
+                            </span>
+                        </div>
+                        <div class="kx-row-side">
+                            @if(!is_null($listing->price))<span class="kx-pill">LKR {{ number_format((float) $listing->price) }}</span>@endif
+                            @if($canApprove)
+                            <form method="post" action="/admin/listings/{{ $listing->id }}/approve">
+                                @csrf
+                                <button type="submit" class="ka-btn ka-btn-primary kx-btn-sm">Approve</button>
+                            </form>
+                            @endif
+                        </div>
+                    </li>
                 @endforeach
-                <a class="pill-accent" href="/admin/categories">All →</a>
-            </div>
+            </ul>
+        @endif
+    </section>
+
+    {{-- 14-day activity: inline SVG, no chart library --}}
+    <section class="kx-card kx-col-8" aria-labelledby="kxActH">
+        @php
+            $maxV = max(1, collect($activity)->max(fn ($d) => max($d['listings'], $d['users'])));
+            $W = 700; $H = 180; $pad = 24; $bw = ($W - $pad) / count($activity); $barW = max(4, ($bw - 6) / 2);
+            $sumL = collect($activity)->sum('listings'); $sumU = collect($activity)->sum('users');
+        @endphp
+        <div class="kx-card-head">
+            <div><h2 id="kxActH">Activity · last 14 days</h2><p>{{ number_format($sumL) }} new listings and {{ number_format($sumU) }} new users.</p></div>
+        </div>
+        <div class="kx-card-body">
+            <div class="kx-legend" aria-hidden="true"><span><i class="lg-l"></i>Listings</span><span><i class="lg-u"></i>Users</span></div>
+            <svg class="kx-chart" viewBox="0 0 {{ $W }} {{ $H + 22 }}" role="img" aria-label="Daily new listings and users for the last 14 days">
+                <line class="axis" x1="{{ $pad }}" y1="{{ $H }}" x2="{{ $W }}" y2="{{ $H }}"/>
+                <text x="0" y="12">{{ $maxV }}</text><text x="0" y="{{ $H }}">0</text>
+                @foreach($activity as $i => $d)
+                    @php $x = $pad + $i * $bw + 3; $hl = $d['listings'] / $maxV * ($H - 16); $hu = $d['users'] / $maxV * ($H - 16); @endphp
+                    <rect class="bar-l" x="{{ round($x, 1) }}" y="{{ round($H - $hl, 1) }}" width="{{ round($barW, 1) }}" height="{{ round($hl, 1) }}" rx="2"><title>{{ \Carbon\Carbon::parse($d['date'])->format('D j M') }}: {{ $d['listings'] }} listings</title></rect>
+                    <rect class="bar-u" x="{{ round($x + $barW, 1) }}" y="{{ round($H - $hu, 1) }}" width="{{ round($barW, 1) }}" height="{{ round($hu, 1) }}" rx="2"><title>{{ \Carbon\Carbon::parse($d['date'])->format('D j M') }}: {{ $d['users'] }} users</title></rect>
+                    @if($i % 2 === 0 || $loop->last)
+                        <text x="{{ round($x + $barW, 1) }}" y="{{ $H + 16 }}" text-anchor="middle">{{ \Carbon\Carbon::parse($d['date'])->format('j M') }}</text>
+                    @endif
+                @endforeach
+            </svg>
         </div>
     </section>
 
-    <section class="ka-panel">
-        <div class="ka-panel-head">
-            <h2>Latest Listings</h2>
-            <a href="/admin/listings">Manage →</a>
+    {{-- Stores waiting for approval --}}
+    <section class="kx-card kx-col-4" aria-labelledby="kxStoresH">
+        <div class="kx-card-head">
+            <div><h2 id="kxStoresH">Stores to approve</h2><p>{{ number_format($stats['live_stores']) }} of {{ number_format($stats['stores']) }} stores are live.</p></div>
+            <a href="/admin/stores?status=pending">View all</a>
         </div>
-        @forelse($latestListings ?? [] as $listing)
-            <div class="ka-queue-row">
-                <div>
-                    <b>{{ $listing->title }}</b>
-                    <small>{{ $listing->category->name ?? 'General' }} · <span class="ka-status {{ $listing->status }}">{{ ucfirst($listing->status) }}</span></small>
-                </div>
-                <a href="/listings/{{ $listing->slug }}" target="_blank" class="ka-link" class="flex-shrink-0">Open</a>
-            </div>
-        @empty
-            <div class="ka-empty-state"><p>No listings yet.</p></div>
-        @endforelse
+        @if($pendingStores->isEmpty())
+            <p class="kx-empty">No stores are waiting.</p>
+        @else
+            <ul class="kx-rows" role="list">
+                @foreach($pendingStores as $store)
+                    <li class="kx-row">
+                        <div class="kx-row-main">
+                            <a class="kx-row-title" href="/admin/stores/{{ $store->id }}/edit">{{ $store->name }}</a>
+                            <span class="kx-row-meta">{{ optional($store->user)->email ?? 'No owner email' }} · {{ $store->created_at?->diffForHumans() }}</span>
+                        </div>
+                        @if($u->hasPermission('stores'))
+                        <form method="post" action="/admin/stores/{{ $store->id }}/approve" class="kx-row-side">
+                            @csrf
+                            <button type="submit" class="ka-btn ka-btn-light kx-btn-sm">Approve</button>
+                        </form>
+                        @endif
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+    </section>
+
+    {{-- Recent listings --}}
+    <section class="kx-card kx-col-8" aria-labelledby="kxRecentH">
+        <div class="kx-card-head">
+            <div><h2 id="kxRecentH">Recently added listings</h2><p>{{ number_format($stats['products']) }} products · {{ number_format($stats['classified']) }} classifieds in total.</p></div>
+            <a href="/admin/listings">Manage listings</a>
+        </div>
+        @if($latestListings->isEmpty())
+            <p class="kx-empty">No listings yet.</p>
+        @else
+            <ul class="kx-rows" role="list">
+                @foreach($latestListings as $listing)
+                    <li class="kx-row">
+                        <div class="kx-row-main">
+                            <a class="kx-row-title" href="/admin/listings/{{ $listing->id }}/edit">{{ $listing->title }}</a>
+                            <span class="kx-row-meta">{{ $listing->category->name ?? 'Uncategorised' }} · {{ optional($listing->store)->name ?? 'No store' }} · {{ $listing->created_at?->format('j M Y') }}</span>
+                        </div>
+                        <span class="kx-pill {{ $statusPill($listing->status) }}">{{ ucfirst($listing->status ?? 'unknown') }}</span>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+    </section>
+
+    {{-- Category mix --}}
+    <section class="kx-card kx-col-4" aria-labelledby="kxCatsH">
+        <div class="kx-card-head">
+            <div><h2 id="kxCatsH">Top categories</h2><p>By number of listings.</p></div>
+            @if($u->hasPermission('categories'))<a href="/admin/categories">Manage</a>@endif
+        </div>
+        <div class="kx-card-body">
+            @php $catMax = max(1, (int) $topCategories->max('listings_count')); @endphp
+            @if($topCategories->isEmpty() || $topCategories->sum('listings_count') === 0)
+                <p class="kx-empty">No listings in any category yet.</p>
+            @else
+                <ul class="kx-bars" role="list">
+                    @foreach($topCategories as $cat)
+                        <li>
+                            <span>{{ $cat->name }}</span><b>{{ number_format($cat->listings_count) }}</b>
+                            <svg class="track" viewBox="0 0 100 6" preserveAspectRatio="none" aria-hidden="true"><rect class="fill" width="{{ max(1, round($cat->listings_count / $catMax * 100)) }}" height="6" rx="3"/></svg>
+                        </li>
+                    @endforeach
+                </ul>
+            @endif
+        </div>
     </section>
 </div>
-
-
 @endsection
-
-{{-- chart.js loaded inline above the chart section --}}

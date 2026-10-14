@@ -28,7 +28,7 @@
         <a href="/admin/explore-items/{{ $item->id }}/items">Items ({{ $item->sub_items_count }})</a>
         <a href="/admin/explore-items/{{ $item->id }}/edit">Edit</a>
         <form method="post" action="/admin/explore-items/{{ $item->id }}/toggle">@csrf<button>Toggle</button></form>
-        <form method="post" action="/admin/explore-items/{{ $item->id }}" onsubmit="return confirm('Delete this explore card?')">@csrf @method('DELETE')<button>Delete</button></form>
+        <form method="post" action="/admin/explore-items/{{ $item->id }}" data-confirm="Delete this explore card?" >@csrf @method('DELETE')<button>Delete</button></form>
     </td>
 </tr>
 @empty

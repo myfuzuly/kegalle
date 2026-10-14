@@ -72,11 +72,11 @@
                     </form>
                     @endif
                     @if($service->status !== 'rejected')
-                    <form method="post" action="/admin/services/{{ $service->id }}/reject" onsubmit="return confirm('Reject this service?')" class="ka-d-inline">@csrf
+                    <form method="post" action="/admin/services/{{ $service->id }}/reject" data-confirm="Reject this service?" class="ka-d-inline">@csrf
                         <button class="ka-btn" style="font-size:12px;padding:4px 10px;background:#fee2e2;color:#991b1b;border-color:#fecaca">✕</button>
                     </form>
                     @endif
-                    <form method="post" action="/admin/services/{{ $service->id }}" onsubmit="return confirm('Delete this service permanently?')" class="ka-d-inline">@csrf @method('DELETE')
+                    <form method="post" action="/admin/services/{{ $service->id }}" data-confirm="Delete this service permanently?" class="ka-d-inline">@csrf @method('DELETE')
                         <button class="ka-btn ka-btn-danger" style="font-size:12px;padding:4px 10px">🗑</button>
                     </form>
                 </div>

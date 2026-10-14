@@ -102,7 +102,7 @@
                 <td class="sa-actions-inline">
                     <a href="/admin/ad-banners/{{ $banner->id }}/edit" title="Edit">Edit</a>
                     <form method="post" action="/admin/ad-banners/{{ $banner->id }}/toggle">@csrf<button title="{{ $banner->is_active ? 'Deactivate' : 'Activate' }}">{{ $banner->is_active ? 'Off' : 'On' }}</button></form>
-                    <form method="post" action="/admin/ad-banners/{{ $banner->id }}" onsubmit="return confirm('Delete this ad banner?')">@csrf @method('DELETE')<button class="danger" title="Delete">Delete</button></form>
+                    <form method="post" action="/admin/ad-banners/{{ $banner->id }}" data-confirm="Delete this ad banner?" >@csrf @method('DELETE')<button class="danger" title="Delete">Delete</button></form>
                 </td>
             </tr>
             @empty

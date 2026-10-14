@@ -38,7 +38,7 @@
                 <form method="post" action="/admin/stores/{{ $store->id }}/approve">@csrf
                     <button class="ka-btn" class="btn-approve">↻ Reactivate</button>
                 </form>
-                <form method="post" action="/admin/stores/{{ $store->id }}" onsubmit="return confirm('Permanently DELETE store \'{{ addslashes($store->name) }}\'? This cannot be undone.')">@csrf @method('DELETE')
+                <form method="post" action="/admin/stores/{{ $store->id }}" data-confirm="Permanently DELETE store '{{ $store->name }}'? This cannot be undone." >@csrf @method('DELETE')
                     <button class="ka-btn btn-danger-sm">Delete</button>
                 </form>
             </div>
@@ -75,7 +75,7 @@
                 <form method="post" action="/admin/listings/{{ $listing->id }}/approve">@csrf
                     <button class="ka-btn" class="btn-approve">↻ Reactivate</button>
                 </form>
-                <form method="post" action="/admin/listings/{{ $listing->id }}" onsubmit="return confirm('Permanently DELETE listing \'{{ addslashes($listing->title) }}\' and its images? This cannot be undone.')">@csrf @method('DELETE')
+                <form method="post" action="/admin/listings/{{ $listing->id }}" data-confirm="Permanently DELETE listing '{{ $listing->title }}' and its images? This cannot be undone." >@csrf @method('DELETE')
                     <button class="ka-btn btn-danger-sm">Delete</button>
                 </form>
             </div>

@@ -79,7 +79,7 @@
                 <form method="post" action="/admin/stores/{{ $store->id }}/approve">@csrf
                     <button class="ka-btn btn-approve-green">✓ Approve</button>
                 </form>
-                <form method="post" action="/admin/stores/{{ $store->id }}/suspend" onsubmit="return confirm('Reject / suspend this store?')">@csrf
+                <form method="post" action="/admin/stores/{{ $store->id }}/suspend" data-confirm="Reject / suspend this store?" >@csrf
                     <button class="ka-btn btn-reject-red">✕ Reject</button>
                 </form>
             </div>
@@ -117,7 +117,7 @@
                 <form method="post" action="/admin/listings/{{ $listing->id }}/approve">@csrf
                     <button class="ka-btn btn-approve-green">✓ Approve</button>
                 </form>
-                <form method="post" action="/admin/listings/{{ $listing->id }}/reject" onsubmit="return confirm('Reject this listing?')">@csrf
+                <form method="post" action="/admin/listings/{{ $listing->id }}/reject" data-confirm="Reject this listing?" >@csrf
                     <button class="ka-btn btn-reject-red">✕ Reject</button>
                 </form>
             </div>
@@ -158,7 +158,7 @@
                 <form method="post" action="/admin/services/{{ $service->id }}/approve">@csrf
                     <button class="ka-btn btn-approve-green">✓ Approve</button>
                 </form>
-                <form method="post" action="/admin/services/{{ $service->id }}/reject" onsubmit="return confirm('Reject this service?')">@csrf
+                <form method="post" action="/admin/services/{{ $service->id }}/reject" data-confirm="Reject this service?" >@csrf
                     <button class="ka-btn btn-reject-red">✕ Reject</button>
                 </form>
             </div>
@@ -204,7 +204,7 @@
                 <form method="post" action="/admin/deals/{{ $deal->id }}/approve">@csrf
                     <button class="ka-btn btn-approve-green">✓ Approve</button>
                 </form>
-                <form method="post" action="/admin/deals/{{ $deal->id }}/reject" onsubmit="return confirm('Reject this deal?')">@csrf
+                <form method="post" action="/admin/deals/{{ $deal->id }}/reject" data-confirm="Reject this deal?" >@csrf
                     <button class="ka-btn btn-reject-red">✕ Reject</button>
                 </form>
             </div>
