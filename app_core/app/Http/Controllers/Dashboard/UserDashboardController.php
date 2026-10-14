@@ -46,8 +46,7 @@ class UserDashboardController extends Controller
 
             $emptyStores = Store::where('user_id', $uid)
                 ->where('status', 'approved')
-                ->withCount('listings')
-                ->having('listings_count', 0)
+                ->doesntHave('listings')
                 ->get();
 
             $store = Store::where('user_id', $uid)->first();

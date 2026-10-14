@@ -40,6 +40,11 @@ class Store extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function membershipPlan()
+    {
+        return $this->belongsTo(MembershipPlan::class);
+    }
+
     public function listings()
     {
         return $this->hasMany(Listing::class);

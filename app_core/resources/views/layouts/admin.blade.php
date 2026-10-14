@@ -10,7 +10,7 @@
 {{-- Apply the saved sidebar state before first paint so the layout never jumps --}}
 <script nonce="{{ $cspNonce ?? '' }}">try{if(localStorage.getItem('kx_sidebar')==='collapsed')document.documentElement.classList.add('kx-collapsed')}catch(e){}</script>
 <link rel="stylesheet" href="/css/kegalle-admin.css?v=18">
-<link rel="stylesheet" href="/css/kegalle-admin-ds.css?v=1">
+<link rel="stylesheet" href="/css/kegalle-admin-ds.css?v=2">
 @stack('styles')
 </head>
 @php
@@ -166,7 +166,7 @@
 
 <script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script defer src="/js/select2.min.js"></script>
-<script defer src="/js/kegalle-admin-ui.js?v=1"></script>
+<script defer src="/js/kegalle-admin-ui.js?v=2"></script>
 @stack('scripts')
 </body>
 </html>

@@ -3,142 +3,146 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>@yield('title','Dashboard') · kegalle</title>
+<title>@yield('title','Dashboard') · Kegalle Marketplace</title>
 <meta name="robots" content="noindex,nofollow">
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<meta name="theme-color" content="#0f172a">
+<meta name="theme-color" content="#ffffff">
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" href="/css/kegalle-dashboard.css?v=26" as="style">
+<script nonce="{{ $cspNonce ?? '' }}">try{if(localStorage.getItem('kx_sidebar')==='collapsed')document.documentElement.classList.add('kx-collapsed')}catch(e){}</script>
 <link rel="stylesheet" href="/css/kegalle-dashboard.css?v=26">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&display=swap" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&display=swap"></noscript>
-<script defer src="/js/kegalle-dashboard-panel.js?v=1"></script>
-{{-- @vite(['resources/css/dashboard.css', 'resources/js/dashboard.js'], 'vite-dist') --}}
+<link rel="stylesheet" href="/css/kegalle-admin-ds.css?v=2">
 @stack('styles')
-
 </head>
-<body class="kd-body">
-{{-- Mobile sidebar overlay --}}
-<div class="kdl-sidebar-overlay" id="kdlSidebarOverlay"></div>
+@php
+    $kxUser = auth()->user();
+    $kxUnread = 0;
+    try { $kxUnread = cache()->remember('sidebar_unread_notif_'.$kxUser->id, 30, fn () => \App\Models\UserNotification::where('user_id', $kxUser->id)->whereNull('read_at')->count()); } catch (\Throwable) {}
+@endphp
+<body class="kd-body kx-body kx-seller">
+<a href="#kxMain" class="kx-skip">Skip to content</a>
 
-<div class="kdl-shell">
+<div class="kx-shell">
+    @include('dashboard.partials.sidebar')
+    <div class="kx-overlay" id="kxOverlay" hidden></div>
 
-  {{-- Sidebar --}}
-  @include('dashboard.partials.sidebar')
+    <div class="kx-workspace">
+        <header class="kx-topbar">
+            <button type="button" class="kx-icon-btn kx-menu-btn" id="kxMenuBtn" aria-label="Open menu" aria-controls="kxSidebar" aria-expanded="false">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+            </button>
 
-  {{-- Main area --}}
-  <div class="kdl-main">
+            <nav class="kx-crumbs" aria-label="Breadcrumb">
+                <ol>
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    @if(trim($__env->yieldContent('eyebrow')) && trim($__env->yieldContent('eyebrow')) !== 'Dashboard' && trim($__env->yieldContent('eyebrow')) !== trim($__env->yieldContent('heading')))
+                        <li>@yield('eyebrow')</li>
+                    @endif
+                    @if(!request()->is('dashboard'))
+                        <li aria-current="page">@yield('heading', trim($__env->yieldContent('title')))</li>
+                    @endif
+                </ol>
+            </nav>
 
-    {{-- Topbar --}}
-    <header class="kdl-topbar">
-      <div class="kdl-topbar-left" style="display:flex;align-items:center">
-        <button type="button" class="kdl-hamburger" id="kdlHamburger" aria-label="Open menu">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        </button>
-        <div style="min-width:0">
-          <div class="kdl-breadcrumb">
-            <span>kegalle</span>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-            <span>@yield('eyebrow','Dashboard')</span>
-          </div>
-          <div class="kdl-topbar-title">@yield('heading','Dashboard')</div>
+            <div class="kx-top-actions">
+                <div class="kx-pop" id="kxNew">
+                    <button type="button" class="ka-btn ka-btn-primary kx-new-btn" aria-haspopup="true" aria-expanded="false">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>New</span>
+                    </button>
+                    <div class="kx-pop-panel kx-user-panel" hidden>
+                        <a href="/dashboard/listings/create" class="kx-menu-item">Post an ad</a>
+                        <a href="/dashboard/deals/create" class="kx-menu-item">Post a deal</a>
+                        <a href="/dashboard/services/create" class="kx-menu-item">Post a service</a>
+                        <a href="/dashboard/stores/create" class="kx-menu-item">Create a store</a>
+                    </div>
+                </div>
+
+                <a href="/dashboard/notifications" class="kx-icon-btn" aria-label="Notifications{{ $kxUnread ? ', '.$kxUnread.' unread' : '' }}">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    @if($kxUnread)<span class="kx-dot">{{ $kxUnread > 99 ? '99+' : $kxUnread }}</span>@endif
+                </a>
+
+                <div class="kx-pop" id="kxUser">
+                    <button type="button" class="kx-user-btn" aria-haspopup="true" aria-expanded="false">
+                        <span class="kx-avatar" aria-hidden="true">{{ strtoupper(substr($kxUser->name ?? 'U', 0, 1)) }}</span>
+                        <span class="kx-user-name">{{ $kxUser->name ?? 'My account' }}</span>
+                        <svg class="kx-caret" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+                    </button>
+                    <div class="kx-pop-panel kx-user-panel" hidden>
+                        <div class="kx-pop-head kx-user-head">
+                            <strong>{{ $kxUser->name }}</strong>
+                            <small>{{ $kxUser->email }}</small>
+                        </div>
+                        <a href="/dashboard/profile" class="kx-menu-item">Profile settings</a>
+                        <a href="/dashboard/membership" class="kx-menu-item">Membership</a>
+                        <a href="/" target="_blank" rel="noopener" class="kx-menu-item">View marketplace</a>
+                        @if(in_array($kxUser->role ?? '', ['admin', 'super_admin']))<a href="/admin" class="kx-menu-item">Admin panel</a>@endif
+                        <form method="POST" action="/logout">@csrf<button type="submit" class="kx-menu-item kx-menu-danger">Log out</button></form>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="kx-flash" aria-live="polite">
+            @if(session('success'))
+                <div class="kx-alert kx-alert-success" role="status">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>
+                    <span>{{ session('success') }}</span>
+                    <button type="button" class="kx-alert-x" aria-label="Dismiss">&times;</button>
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="kx-alert kx-alert-danger" role="alert">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                    <span>{{ session('error') }}</span>
+                    <button type="button" class="kx-alert-x" aria-label="Dismiss">&times;</button>
+                </div>
+            @endif
+            @if($errors->any())
+                <div class="kx-alert kx-alert-danger" role="alert">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                    <div>
+                        <strong>Please fix {{ $errors->count() === 1 ? 'this problem' : 'these '.$errors->count().' problems' }}:</strong>
+                        <ul>@foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
+                    </div>
+                    <button type="button" class="kx-alert-x" aria-label="Dismiss">&times;</button>
+                </div>
+            @endif
         </div>
-      </div>
-      <div class="kdl-topbar-right">
-        @yield('actions')
-        <a href="/dashboard/notifications" class="kdl-tb-btn-icon" title="Notifications">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
-        </a>
-        <div class="kdl-userchip">
-          <div class="kdl-userchip-av">{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}</div>
-          <span class="kdl-userchip-name">{{ auth()->user()->name ?? 'User' }}</span>
-        </div>
-        <form method="POST" action="/logout" style="margin:0">
-          @csrf
-          <button type="submit" class="kdl-tb-btn kdl-tb-btn-logout">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"/></svg>
-            <span class="kdl-signout-label">Sign Out</span>
-          </button>
-        </form>
-      </div>
-    </header>
 
-    {{-- Hello banner --}}
-    <div class="kdl-welcome-banner">
-      <div class="kdl-wb-blob kdl-wb-blob-1"></div>
-      <div class="kdl-wb-blob kdl-wb-blob-2"></div>
-      <div class="kdl-wb-inner">
-        <div class="kdl-wb-title">Hello, {{ auth()->user()->name ?? 'there' }} 👋</div>
-        <div class="kdl-wb-sub">@yield('banner_sub', 'Here\'s a summary of your kegalle Marketplace activity.')</div>
-      </div>
-      <div class="kdl-wb-actions">
-        <a href="/dashboard/listings/create" class="kdl-wb-btn-primary">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-          Post New Ad
-        </a>
-        <a href="/dashboard/stores/create" class="kdl-wb-btn-ghost">🏪 Create Store</a>
-        @if(in_array(auth()->user()->role ?? '', ['admin','super_admin']))
-        <a href="/admin" class="kdl-wb-btn-admin">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
-          Admin Panel
-        </a>
-        @endif
-      </div>
-    </div>
+        <main class="kdl-content kx-content" id="kxMain" tabindex="-1">
+            <div class="kx-page-head">
+                <div class="kx-page-titles">
+                    <h1>
+                        @if(request()->is('dashboard'))Hello, {{ \Illuminate\Support\Str::of($kxUser->name ?? 'there')->before(' ') }}
+                        @else @yield('heading', trim($__env->yieldContent('title')) ?: 'Dashboard') @endif
+                    </h1>
+                    @if(trim($__env->yieldContent('subheading')))<p>@yield('subheading')</p>
+                    @elseif(trim($__env->yieldContent('banner_sub')))<p>@yield('banner_sub')</p>
+                    @elseif(request()->is('dashboard'))<p>Here's what's happening with your listings and buyers.</p>@endif
+                </div>
+                @hasSection('actions')
+                <div class="kx-page-actions">@yield('actions')</div>
+                @endif
+            </div>
 
-    {{-- Flash messages --}}
-    @if(session('success'))
-    <div class="kdl-alert kdl-alert-success">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-      {{ session('success') }}
+            @yield('content')
+        </main>
     </div>
-    @endif
-    @if(session('error'))
-    <div class="kdl-alert kdl-alert-danger">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      {{ session('error') }}
-    </div>
-    @endif
-    @if($errors->any())
-    <div class="kdl-alert kdl-alert-danger">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      {{ $errors->first() }}
-    </div>
-    @endif
-
-    {{-- Page content --}}
-    <main class="kdl-content">@yield('content')</main>
-
-  </div>
 </div>
+
+<div class="kx-dialog-backdrop" id="kxConfirm" hidden>
+    <div class="kx-dialog" role="alertdialog" aria-modal="true" aria-labelledby="kxConfirmTitle" aria-describedby="kxConfirmMsg">
+        <h2 id="kxConfirmTitle">Are you sure?</h2>
+        <p id="kxConfirmMsg"></p>
+        <div class="kx-dialog-actions">
+            <button type="button" class="ka-btn ka-btn-light" data-kx-cancel>Cancel</button>
+            <button type="button" class="ka-btn ka-btn-danger" data-kx-ok>Confirm</button>
+        </div>
+    </div>
+</div>
+
+<script defer src="/js/kegalle-dashboard-panel.js?v=1"></script>
+<script defer src="/js/kegalle-admin-ui.js?v=2"></script>
 @stack('scripts')
-<script nonce="{{ $cspNonce ?? '' }}">
-(function(){
-  var btn=document.getElementById('kdlHamburger');
-  var sidebar=document.querySelector('.ksp');
-  var overlay=document.getElementById('kdlSidebarOverlay');
-  function openSidebar(){sidebar&&sidebar.classList.add('open');overlay&&overlay.classList.add('open');document.body.style.overflow='hidden';}
-  function closeSidebar(){sidebar&&sidebar.classList.remove('open');overlay&&overlay.classList.remove('open');document.body.style.overflow='';}
-  btn&&btn.addEventListener('click',openSidebar);
-  overlay&&overlay.addEventListener('click',closeSidebar);
-
-  // Global data-confirm handler for delete/action forms
-  document.addEventListener('submit',function(e){
-    var f=e.target;
-    var msg=f.getAttribute('data-confirm');
-    if(!msg) return;
-    if(!window.confirm(msg)) e.preventDefault();
-  },true);
-
-  // Global data-confirm handler for buttons (non-form)
-  document.addEventListener('click',function(e){
-    var btn=e.target.closest('[data-confirm]');
-    if(!btn||btn.tagName==='FORM') return;
-    if(!window.confirm(btn.getAttribute('data-confirm'))) e.preventDefault();
-  },true);
-})();
-</script>
 </body>
 </html>

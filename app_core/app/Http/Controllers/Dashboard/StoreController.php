@@ -87,7 +87,21 @@ class StoreController extends Controller
             'views'    => (int) $agg->views,
         ];
 
-        return view('dashboard.stores.show', compact('store', 'products', 'stats'));
+        $safe = static function (callable $q) { try { return $q(); } catch (\Throwable) { return 0; } };
+        $stats['offers_pending'] = (int) $safe(fn () => \App\Models\Offer::whereHas('listing', fn ($q) => $q->where('store_id', $store->id))->where('status', 'pending')->count());
+        $stats['reviews'] = (int) $safe(fn () => \App\Models\Review::where('store_id', $store->id)->where('status', 'approved')->count());
+        $stats['rating'] = round((float) $safe(fn () => \App\Models\Review::where('store_id', $store->id)->where('status', 'approved')->avg('rating')), 1);
+
+        // Profile completeness: what buyers see on the public store page.
+        $profileChecks = [
+            ['Logo', !empty($store->logo)],
+            ['Cover banner', !empty($store->banner) || !empty($store->cover_image)],
+            ['Description', mb_strlen(trim(strip_tags((string) $store->description))) >= 40],
+            ['Phone or WhatsApp', !empty($store->phone) || !empty($store->whatsapp)],
+            ['At least one live product', $stats['approved'] > 0],
+        ];
+
+        return view('dashboard.stores.show', compact('store', 'products', 'stats', 'profileChecks'));
     }
 
     public function edit(Store $store)
