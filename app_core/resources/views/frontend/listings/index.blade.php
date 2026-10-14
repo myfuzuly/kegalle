@@ -891,7 +891,7 @@ function setView(mode){
         return '<a class="k-rv-chip" href="'+item.url+'"><img src="'+(item.img&&item.img!=='undefined'?item.img:'')+'" onerror="this.style.display=\'none\'"><span>'+item.title+'</span></a>';
     }).filter(Boolean).join('');
     wrap.querySelector('.k-rv-list').innerHTML = html;
-    wrap.style.display = '';
+    if (html) wrap.classList.add('is-shown');
 })();
 </script>
 @endpush

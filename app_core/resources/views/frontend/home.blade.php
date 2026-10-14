@@ -234,7 +234,7 @@ $hClassified=($featuredClassified ?? collect())->merge($latestClassified ?? coll
             @endif
 
             <!-- Ad Banner -->
-            @include('frontend.partials.ad-banner', ['location' => 'home_top', 'style' => 'top'])
+            @include('frontend.partials.ad-banner', ['location' => 'home_top', 'style' => 'top', 'hidePlaceholder' => true])
 
             <!-- Featured Stores — premium card carousel -->
             <div class="k-section">

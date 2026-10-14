@@ -11,7 +11,7 @@
             <span class="k-ad-dynamic-title">{{ $banner->title }}</span>
         @endif
     </a>
-@else
+@elseif(!($hidePlaceholder ?? false))
     @if(($style ?? 'box') === 'top')
         <div class="k-ad-banner mt-20">
             <div class="k-ad-text">

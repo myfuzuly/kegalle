@@ -25,6 +25,7 @@
     $searchValue = request('search', request('q'));
 @endphp
 <body class="ka-admin-body kx-body">
+@include('partials.csp-hidden')
 <a href="#kxMain" class="kx-skip">Skip to content</a>
 
 <div class="kx-shell">

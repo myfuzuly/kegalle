@@ -473,3 +473,7 @@ html body .k-deal-card-store{display:flex!important;align-items:center!important
 html body .k-footer a{min-width:44px!important;justify-content:center!important}
 html body main p a,html body main li>a:only-child:not([class]),html body main dd a{padding-top:10px!important;padding-bottom:10px!important;margin-top:-10px!important;margin-bottom:-10px!important}
 }
+/* Store search: the input sits inside a bordered wrapper, so it needs no border of its own */
+html body .kfs-search-wrap .kfs-search-input{border:0!important;box-shadow:none!important;background:transparent!important;outline:0!important}
+html body .kfs-search-wrap:focus-within{border-color:var(--k-primary,#1b5e20)!important;box-shadow:0 0 0 3px rgba(27,94,32,.15)!important}
+html body .k-rv-bar:not(.is-shown){display:none!important}

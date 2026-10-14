@@ -72,6 +72,7 @@
 <style nonce="{{ $cspNonce ?? '' }}">#k-preloader{position:fixed;inset:0;z-index:99999;background:#0f1a12;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}#k-preloader .k-preloader-logo-img{width:160px;height:auto}</style>
 </head>
 <body>
+@include('partials.csp-hidden')
 <div id="k-preloader" aria-hidden="true">
   <div class="k-preloader-logo">
     <img src="/images/kegalle-logo.png" alt="Kegalle.com" class="k-preloader-logo-img" loading="eager" fetchpriority="high" decoding="sync">

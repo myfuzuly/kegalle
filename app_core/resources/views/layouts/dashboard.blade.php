@@ -19,6 +19,7 @@
     try { $kxUnread = cache()->remember('sidebar_unread_notif_'.$kxUser->id, 30, fn () => \App\Models\UserNotification::where('user_id', $kxUser->id)->whereNull('read_at')->count()); } catch (\Throwable) {}
 @endphp
 <body class="kd-body kx-body kx-seller">
+@include('partials.csp-hidden')
 <a href="#kxMain" class="kx-skip">Skip to content</a>
 
 <div class="kx-shell">
