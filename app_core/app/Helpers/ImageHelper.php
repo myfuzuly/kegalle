@@ -4,9 +4,26 @@ namespace App\Helpers;
 
 class ImageHelper
 {
+    /**
+     * Path of the WebP twin of a stored image, or the original path when no WebP copy exists,
+     * so <source type="image/webp"> never points at a missing file.
+     */
     public static function webpPath(string $originalPath): string
     {
-        return preg_replace('/\.(jpe?g|png)$/i', '.webp', $originalPath);
+        $webp = preg_replace('/\.(jpe?g|png)$/i', '.webp', $originalPath);
+        if ($webp === $originalPath) {
+            return $originalPath;
+        }
+
+        static $seen = [];
+        if (!array_key_exists($webp, $seen)) {
+            $rel = ltrim(preg_replace('#^/?storage/#', '', $webp), '/');
+            $seen[$webp] = is_file(public_path('storage/'.$rel))
+                || is_file(base_path('../public_html/storage/'.$rel))
+                || is_file(storage_path('app/public/'.$rel));
+        }
+
+        return $seen[$webp] ? $webp : $originalPath;
     }
 
     public static function loadImage(string $absolutePath): ?\GdImage
