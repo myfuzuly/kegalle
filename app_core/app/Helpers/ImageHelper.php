@@ -293,8 +293,11 @@ class ImageHelper
      */
     public static function finalize(string $relativePath, bool|string $watermark = true, int $maxDim = 1400): string
     {
-        $absolutePath = storage_path('app/public/' . $relativePath);
+        // Resolve through the disk the file was stored on: the 'public' disk root is configured
+        // per server (public_html/storage in production), so a hardcoded storage_path() misses it.
+        $absolutePath = \Illuminate\Support\Facades\Storage::disk('public')->path($relativePath);
         if (!file_exists($absolutePath)) {
+            \Illuminate\Support\Facades\Log::warning('ImageHelper::finalize could not find uploaded file', ['path' => $absolutePath]);
             return $relativePath;
         }
 

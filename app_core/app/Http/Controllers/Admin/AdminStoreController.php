@@ -73,7 +73,7 @@ class AdminStoreController extends Controller
             $ext = strtolower($request->file('banner')->getClientOriginalExtension()) ?: 'jpg';
             $data['banner'] = $request->file('banner')->storeAs('stores', $storeSlug . '-banner-' . time() . '.' . $ext, 'public');
             $posY = (int) $request->input('banner_position_y', 50);
-            \App\Helpers\ImageHelper::cropToAspect(storage_path('app/public/' . $data['banner']), 820, 312, $posY);
+            \App\Helpers\ImageHelper::cropToAspect(\Illuminate\Support\Facades\Storage::disk('public')->path($data['banner']), 820, 312, $posY);
             $data['banner'] = \App\Helpers\ImageHelper::finalize($data['banner'], false, 1600);
         }
 
@@ -125,7 +125,7 @@ class AdminStoreController extends Controller
             $ext = strtolower($request->file('banner')->getClientOriginalExtension()) ?: 'jpg';
             $data['banner'] = $request->file('banner')->storeAs('stores', $storeSlug . '-banner-' . time() . '.' . $ext, 'public');
             $posY = (int) $request->input('banner_position_y', 50);
-            \App\Helpers\ImageHelper::cropToAspect(storage_path('app/public/' . $data['banner']), 820, 312, $posY);
+            \App\Helpers\ImageHelper::cropToAspect(\Illuminate\Support\Facades\Storage::disk('public')->path($data['banner']), 820, 312, $posY);
             $data['banner'] = \App\Helpers\ImageHelper::finalize($data['banner'], false, 1600);
         } elseif ($request->boolean('remove_banner') && $store->banner) {
             Storage::disk('public')->delete($store->banner);

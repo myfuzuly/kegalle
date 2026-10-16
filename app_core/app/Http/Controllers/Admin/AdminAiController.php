@@ -20,7 +20,7 @@ class AdminAiController extends Controller
             $listing = Listing::with('images')->findOrFail($request->integer('listing_id'));
             foreach ($listing->images->take(4) as $image) {
                 $relativePath = ltrim($image->path, '/\\');
-                $fullPath = storage_path('app/public/' . $relativePath);
+                $fullPath = \Illuminate\Support\Facades\Storage::disk('public')->path($relativePath);
                 if (!file_exists($fullPath)) continue;
                 $mime = mime_content_type($fullPath);
                 if (!in_array($mime, ['image/jpeg','image/png','image/gif','image/webp'])) continue;
