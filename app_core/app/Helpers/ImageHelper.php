@@ -63,14 +63,15 @@ class ImageHelper
         imagealphablending($image, true);
 
         $docRoot = rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/');
-        $wmFile = $docRoot . '/images/watermark2.png';
+        // Faint watermark (~38% opacity, like ikman); fall back to the solid one if missing.
+        $wmFile = file_exists($docRoot . '/images/watermark-light.png') ? $docRoot . '/images/watermark-light.png' : $docRoot . '/images/watermark2.png';
         if (file_exists($wmFile)) {
             $wm   = @imagecreatefrompng($wmFile);
             if ($wm) {
                 $wmW  = imagesx($wm);
                 $wmH  = imagesy($wm);
-                // Scale watermark to 35% of the base image width
-                $dstW = (int) round($w * 0.35);
+                // Scale watermark to 32% of the base image width
+                $dstW = (int) round($w * 0.32);
                 $dstH = (int) round($wmH * ($dstW / $wmW));
                 $dstX = (int) (($w - $dstW) / 2);
                 $dstY = (int) (($h - $dstH) / 2);
@@ -133,7 +134,8 @@ class ImageHelper
         imagealphablending($image, true);
 
         $docRoot = rtrim($_SERVER['DOCUMENT_ROOT'] ?? '', '/');
-        $wmFile = $docRoot . '/images/watermark2.png';
+        // Faint watermark (~38% opacity, like ikman); fall back to the solid one if missing.
+        $wmFile = file_exists($docRoot . '/images/watermark-light.png') ? $docRoot . '/images/watermark-light.png' : $docRoot . '/images/watermark2.png';
         if (file_exists($wmFile)) {
             $wm = @imagecreatefrompng($wmFile);
             if ($wm) {
