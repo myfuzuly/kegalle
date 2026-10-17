@@ -458,3 +458,7 @@ a.kx-row-title:hover{color:var(--kx-primary)!important}
   @media (max-width:1023px){.kx-workspace{padding-left:env(safe-area-inset-left)}}
   @media (max-width:767px){.kx-topbar{height:auto}}
 }
+
+/* Utility hide must beat component display rules declared later (e.g. .ksd-item{display:flex}),
+   otherwise searchable dropdowns "filter" but nothing disappears. */
+.kx-body .k-hidden{display:none!important}
