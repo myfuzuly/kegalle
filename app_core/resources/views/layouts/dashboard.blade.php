@@ -2,7 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Kegalle">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <title>@yield('title','Dashboard') · Kegalle Marketplace</title>
 <meta name="robots" content="noindex,nofollow">
 <meta name="csrf-token" content="{{ csrf_token() }}">

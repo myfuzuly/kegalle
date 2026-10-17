@@ -2,7 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Kegalle">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 @php $gsvCode = \App\Models\Setting::where('key','google_site_verification')->value('value'); @endphp
 @if($gsvCode)<meta name="google-site-verification" content="{{ $gsvCode }}">@endif
@@ -53,7 +58,6 @@
 <link rel="icon" type="image/x-icon" href="/favicon-v2.ico">
 <link rel="icon" type="image/png" href="/images/favicon.png?v=2">
 <link rel="icon" type="image/png" sizes="192x192" href="/images/favicon.png?v=2">
-<link rel="apple-touch-icon" href="/images/favicon.png?v=2">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1B5E20">
 @stack('schema')

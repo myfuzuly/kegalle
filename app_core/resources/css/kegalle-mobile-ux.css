@@ -477,3 +477,26 @@ html body main p a,html body main li>a:only-child:not([class]),html body main dd
 html body .kfs-search-wrap .kfs-search-input{border:0!important;box-shadow:none!important;background:transparent!important;outline:0!important}
 html body .kfs-search-wrap:focus-within{border-color:var(--k-primary,#1b5e20)!important;box-shadow:0 0 0 3px rgba(27,94,32,.15)!important}
 html body .k-rv-bar:not(.is-shown){display:none!important}
+/* ── iPhone / iPad (viewport-fit=cover) ──────────────────────────────── */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{-webkit-tap-highlight-color:rgba(27,94,32,.12)}
+@supports (padding:env(safe-area-inset-left)){
+  body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+  html body .k-drawer{padding-left:env(safe-area-inset-left);padding-bottom:env(safe-area-inset-bottom)}
+  html body .k-sticky-header{padding-top:env(safe-area-inset-top)}
+}
+/* Touch screens of any size (iPad, touch laptops): comfortable tap targets */
+@media (pointer:coarse){
+html body .k-footer-col a,html body .k-footer-bottom a,html body .k-footer-dev-link{display:inline-flex!important;align-items:center!important;min-height:44px!important}
+html body .k-breadcrumb a,html body .k-back-link,html body .k-hiw-browse-link{display:inline-flex!important;align-items:center!important;min-height:44px!important}
+html body .kpc-heart,html body .kpc-wa,html body .hs-arrow{min-width:44px!important;min-height:44px!important}
+html body .k-section-link,html body .hero-trend-tag,html body .k-faq-pill,html body .svc-pill,html body .cat-leaf-tag{min-height:44px!important}
+html body .k-drawer-link{min-height:48px!important}
+}
+/* Tablet footer: five columns don't fit between ~760px and 1100px */
+@media (min-width:761px) and (max-width:1100px){
+html body .k-footer-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:28px 24px!important}
+html body .k-footer-grid>*{min-width:0!important;max-width:100%!important}
+html body .k-footer-grid>.k-footer-brand,html body .k-footer-grid>.k-footer-col:last-child{grid-column:1/-1!important}
+html body .k-footer-grid>.k-footer-col:last-child form{max-width:480px}
+}
