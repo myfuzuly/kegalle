@@ -500,3 +500,9 @@ html body .k-footer-grid>*{min-width:0!important;max-width:100%!important}
 html body .k-footer-grid>.k-footer-brand,html body .k-footer-grid>.k-footer-col:last-child{grid-column:1/-1!important}
 html body .k-footer-grid>.k-footer-col:last-child form{max-width:480px}
 }
+@media (pointer:coarse){
+/* Bigger hit area without changing the visible dot/link size */
+html body .hs-dot{position:relative}
+html body .hs-dot::after{content:'';position:absolute;left:50%;top:50%;width:44px;height:44px;transform:translate(-50%,-50%)}
+html body .k-footer a{min-width:44px!important;justify-content:center}
+}
