@@ -506,3 +506,4 @@ html body .hs-dot{position:relative}
 html body .hs-dot::after{content:'';position:absolute;left:50%;top:50%;width:44px;height:44px;transform:translate(-50%,-50%)}
 html body .k-footer a{min-width:44px!important;justify-content:center}
 }
+@media (pointer:coarse){html body .k-nav-wa-btn{min-width:44px!important;min-height:44px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important}}
