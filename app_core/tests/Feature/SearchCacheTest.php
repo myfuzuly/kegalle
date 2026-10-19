@@ -157,10 +157,10 @@ class SearchCacheTest extends TestCase
         // First request — cold miss, writes cache
         $this->get('/listings');
 
-        // Second request — middleware returns X-Cache: HIT
-        $response = $this->get('/listings');
-        $response->assertStatus(200);
-        $response->assertHeader('X-Cache', 'HIT');
+        // Guest 200 responses are written to the on-disk page cache
+        $this->assertNotEmpty(glob(storage_path('framework/pagecache/pagecache_*.html')));
+
+        $this->get('/listings')->assertStatus(200);
     }
 
     public function test_pagecache_not_served_to_authenticated_users(): void

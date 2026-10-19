@@ -132,8 +132,8 @@ class ChatFlowTest extends TestCase
         [$buyer, $seller, , $listing] = $this->twoUsersWithThread();
 
         // Delete thread so we can test creation
-        \App\Models\ChatThread::truncate();
-        \App\Models\ChatMessage::truncate();
+        \App\Models\ChatMessage::query()->delete();
+        \App\Models\ChatThread::query()->delete(); // delete, not truncate: MySQL refuses TRUNCATE on FK-referenced tables
 
         $this->actingAs($buyer)
             ->post('/dashboard/chat', [
