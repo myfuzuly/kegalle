@@ -14,7 +14,7 @@ class ListingTest extends TestCase
 
     private function sellerWithStore(): array
     {
-        $user = User::factory()->create(['status' => 'active', 'role' => 'user']);
+        $user = User::factory()->create(['status' => 'active', 'role' => 'user', 'phone' => '0771234567', 'phone_verified_at' => now()]);
         $store = Store::factory()->create(['user_id' => $user->id, 'status' => 'approved']);
         return [$user, $store];
     }
@@ -38,7 +38,7 @@ class ListingTest extends TestCase
 
         $response = $this->actingAs($user)->post('/dashboard/listings', [
             'title' => 'Samsung Galaxy S24',
-            'description' => 'Brand new phone for sale',
+            'description' => 'Brand new phone for sale, sealed box with warranty',
             'price' => 150000,
             'store_id' => $store->id,
         ]);
@@ -109,7 +109,7 @@ class ListingTest extends TestCase
 
         $response = $this->actingAs($other)->put("/dashboard/listings/{$listing->id}", [
             'title' => 'Hacked',
-            'description' => 'Hacked description',
+            'description' => 'Hacked description that is long enough to validate',
         ]);
 
         $response->assertStatus(403);

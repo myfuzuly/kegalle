@@ -14,6 +14,8 @@ class ReportController extends Controller
             'details' => 'nullable|string|max:1000',
         ]);
 
+        $listingId = \App\Models\Listing::findOrFail($listingId)->id;
+
         $existing = Report::where('user_id', auth()->id())
             ->where('listing_id', $listingId)
             ->first();

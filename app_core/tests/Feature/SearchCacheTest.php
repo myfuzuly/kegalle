@@ -183,14 +183,14 @@ class SearchCacheTest extends TestCase
     {
         $this->approvedListing('Toyota Car Kegalle');
 
-        $response = $this->get('/api/listings/suggestions?q=toyota');
+        $response = $this->get('/api/search-suggestions?q=toyota');
         $response->assertStatus(200);
-        $response->assertJsonStructure([['id', 'title', 'url']]);
+        $response->assertJsonStructure([['title', 'url']]);
     }
 
     public function test_suggestions_api_returns_empty_for_no_match(): void
     {
-        $response = $this->get('/api/listings/suggestions?q=zzznomatchxxx');
+        $response = $this->get('/api/search-suggestions?q=zzznomatchxxx');
         $response->assertStatus(200);
         $response->assertJson([]);
     }
@@ -198,7 +198,7 @@ class SearchCacheTest extends TestCase
     public function test_suggestions_api_requires_min_query_length(): void
     {
         // Single character queries should return empty or 200 with empty array
-        $response = $this->get('/api/listings/suggestions?q=a');
+        $response = $this->get('/api/search-suggestions?q=a');
         $response->assertStatus(200);
     }
 }

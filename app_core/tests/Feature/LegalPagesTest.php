@@ -51,7 +51,7 @@ class LegalPagesTest extends TestCase
         $response = $this->get('/cookie-policy');
         $response->assertStatus(200);
         // Page must explain what cookies are used
-        $response->assertSeeText('cookie', false);
+        $response->assertSee('cookies');  // assertSeeText's strip_tags chokes on inline scripts
     }
 
     public function test_terms_page_has_content(): void
@@ -102,25 +102,26 @@ class LegalPagesTest extends TestCase
         }
     }
 
-    // ── robots.txt ────────────────────────────────────────────────────────────
+    // ── robots.txt (static file served by the web server, not Laravel) ─────────
+
+    private function robots(): string
+    {
+        return (string) file_get_contents(base_path('../public_html/robots.txt'));
+    }
 
     public function test_robots_txt_is_accessible(): void
     {
-        $response = $this->get('/robots.txt');
-        $response->assertStatus(200);
-        $response->assertSee('User-agent');
+        $this->assertStringContainsString('User-agent', $this->robots());
     }
 
     public function test_robots_txt_blocks_admin(): void
     {
-        $content = $this->get('/robots.txt')->getContent();
-        $this->assertStringContainsString('/admin/', $content);
-        $this->assertStringContainsString('/dashboard/', $content);
+        $this->assertStringContainsString('Disallow: /admin', $this->robots());
+        $this->assertStringContainsString('Disallow: /dashboard', $this->robots());
     }
 
     public function test_robots_txt_points_to_sitemap(): void
     {
-        $content = $this->get('/robots.txt')->getContent();
-        $this->assertStringContainsString('sitemap.xml', $content);
+        $this->assertStringContainsString('sitemap.xml', $this->robots());
     }
 }

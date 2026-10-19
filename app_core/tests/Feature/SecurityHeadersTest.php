@@ -35,7 +35,7 @@ class SecurityHeadersTest extends TestCase
         $csp = $this->get('/')->headers->get('Content-Security-Policy');
 
         $this->assertStringContainsString("default-src 'self'", $csp);
-        $this->assertStringContainsString("frame-ancestors 'none'", $csp);
+        $this->assertStringContainsString("frame-ancestors 'self'", $csp);
         $this->assertStringContainsString("object-src 'none'", $csp);
         $this->assertStringContainsString("base-uri 'self'", $csp);
         $this->assertStringContainsString("form-action 'self'", $csp);

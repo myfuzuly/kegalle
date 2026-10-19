@@ -60,7 +60,7 @@ class User extends Authenticatable
         }
 
         $role = $this->roleModel;
-        if ($role) {
+        if ($role && $role->permissions !== null) {
             return $role->allows($permission);
         }
 

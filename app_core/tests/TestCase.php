@@ -10,6 +10,13 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // CachePublicResponse writes pages to disk; stale copies would leak between tests
+        array_map('unlink', glob(storage_path('framework/pagecache/*')) ?: []);
+    }
+
     /** Create a Location row so location_id FK constraints pass in tests. */
     protected function createLocation(array $attrs = []): Location
     {

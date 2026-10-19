@@ -28,86 +28,62 @@ class ReportListingTest extends TestCase
         ]);
     }
 
-    // ── Guest can report (no auth required) ──────────────────────────────────
-
-    public function test_guest_can_submit_report(): void
+    public function test_guest_report_redirects_to_login(): void
     {
-        Mail::fake();
         $listing = $this->publishedListing();
 
-        $response = $this->post("/listings/{$listing->id}/report", [
-            'reason'  => 'spam',
-            'details' => 'This looks like a scam listing.',
-        ]);
-
-        $response->assertRedirect();
-        $response->assertSessionHas('success');
+        $this->post("/listings/{$listing->id}/report", ['reason' => 'spam'])
+            ->assertRedirect('/login');
     }
 
-    public function test_report_sends_email_notification(): void
+    public function test_authenticated_user_can_report(): void
     {
-        Mail::fake();
+        $user    = User::factory()->create(['status' => 'active']);
         $listing = $this->publishedListing();
 
-        $this->post("/listings/{$listing->id}/report", [
-            'reason'  => 'misleading',
-            'details' => 'The price is completely wrong.',
-        ]);
+        $this->actingAs($user)
+            ->postJson("/listings/{$listing->id}/report", ['reason' => 'counterfeit', 'details' => 'Looks fake.'])
+            ->assertOk();
 
-        // The route sends a raw mail (not a Mailable class) — check the mail log
-        // by asserting a redirect with success flash (mail is fire-and-forget)
-        $this->assertTrue(true); // email is verified via the session flash above
+        $this->assertDatabaseHas('reports', ['user_id' => $user->id, 'listing_id' => $listing->id, 'reason' => 'counterfeit']);
+    }
+
+    public function test_duplicate_report_is_rejected(): void
+    {
+        $user    = User::factory()->create(['status' => 'active']);
+        $listing = $this->publishedListing();
+
+        $this->actingAs($user)->postJson("/listings/{$listing->id}/report", ['reason' => 'spam'])->assertOk();
+        $this->actingAs($user)->postJson("/listings/{$listing->id}/report", ['reason' => 'spam'])->assertStatus(422);
     }
 
     public function test_report_requires_reason(): void
     {
+        $user    = User::factory()->create(['status' => 'active']);
         $listing = $this->publishedListing();
 
-        $response = $this->post("/listings/{$listing->id}/report", [
-            'details' => 'Some details without a reason',
-        ]);
-
-        $response->assertSessionHasErrors('reason');
+        $this->actingAs($user)
+            ->postJson("/listings/{$listing->id}/report", ['details' => 'No reason'])
+            ->assertJsonValidationErrors('reason');
     }
 
     public function test_report_for_nonexistent_listing_returns_404(): void
     {
-        $this->post('/listings/999999/report', ['reason' => 'spam'])
-            ->assertStatus(404);
-    }
+        $user = User::factory()->create(['status' => 'active']);
 
-    // ── Throttle ─────────────────────────────────────────────────────────────
+        $this->actingAs($user)->postJson('/listings/999999/report', ['reason' => 'spam'])->assertStatus(404);
+    }
 
     public function test_report_is_throttled(): void
     {
-        Mail::fake();
-        $listing = $this->publishedListing();
-
-        // The route has throttle:5,10 — 5 requests per 10 minutes
-        for ($i = 0; $i < 5; $i++) {
-            $this->post("/listings/{$listing->id}/report", ['reason' => 'spam']);
-        }
-
-        // 6th request should be throttled (429)
-        $response = $this->post("/listings/{$listing->id}/report", ['reason' => 'spam']);
-        $response->assertStatus(429);
-    }
-
-    // ── Authenticated user report ─────────────────────────────────────────────
-
-    public function test_authenticated_user_can_report(): void
-    {
-        Mail::fake();
         $user    = User::factory()->create(['status' => 'active']);
         $listing = $this->publishedListing();
 
-        $response = $this->actingAs($user)
-            ->post("/listings/{$listing->id}/report", [
-                'reason'  => 'counterfeit',
-                'details' => 'This item looks fake.',
-            ]);
+        // throttle:5,10 — the 6th request in 10 minutes is refused
+        for ($i = 0; $i < 5; $i++) {
+            $this->actingAs($user)->postJson("/listings/{$listing->id}/report", ['reason' => 'spam']);
+        }
 
-        $response->assertRedirect();
-        $response->assertSessionHas('success');
+        $this->actingAs($user)->postJson("/listings/{$listing->id}/report", ['reason' => 'spam'])->assertStatus(429);
     }
 }

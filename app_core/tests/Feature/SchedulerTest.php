@@ -72,7 +72,8 @@ class SchedulerTest extends TestCase
         }
 
         $expiredId = DB::table('deals')->insertGetId([
-            'title'      => 'Expired Deal',
+            'user_id'    => \App\Models\User::factory()->create()->id,
+            'deal_price' => 1000,
             'status'     => 'approved',
             'ends_at'    => now()->subDay()->toDateTimeString(),
             'created_at' => now(),
@@ -81,10 +82,10 @@ class SchedulerTest extends TestCase
 
         // Run schedule:run (only tasks that are due fire)
         // Instead, invoke the callback directly via the artisan kernel
+        $this->travelTo(now()->addDay()->startOfDay()); // daily() task is due at 00:00
         Artisan::call('schedule:run');
 
-        $deal = DB::table('deals')->find($expiredId);
-        $this->assertEquals('expired', $deal->status ?? 'expired');
+        $this->assertEquals('expired', DB::table('deals')->find($expiredId)->status);
     }
 
     // ── Renewal reminders: no crash with zero expiring listings ──────────────

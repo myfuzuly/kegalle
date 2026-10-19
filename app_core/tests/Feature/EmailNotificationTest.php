@@ -255,8 +255,7 @@ class EmailNotificationTest extends TestCase
             'message' => 'I have a question about the site.',
         ]);
 
-        // ContactMessageMail uses ->send() not ->queue(), so use assertSent
-        Mail::assertSent(ContactMessageMail::class);
+        Mail::assertQueued(ContactMessageMail::class);
     }
 
     // ── 7. Store approval ─────────────────────────────────────────────────────

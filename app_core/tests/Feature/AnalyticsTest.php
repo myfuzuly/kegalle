@@ -39,7 +39,7 @@ class AnalyticsTest extends TestCase
         config(['services.analytics.ga_id' => 'G-TESTID1234']);
 
         $html = $this->get('/')->getContent();
-        $this->assertStringContainsString("gtag('config', 'G-TESTID1234')", $html);
+        $this->assertStringContainsString("gtag('config','G-TESTID1234')", $html);
     }
 
     public function test_ga_loads_on_all_public_pages(): void
