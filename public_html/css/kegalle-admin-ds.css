@@ -462,3 +462,20 @@ a.kx-row-title:hover{color:var(--kx-primary)!important}
 /* Utility hide must beat component display rules declared later (e.g. .ksd-item{display:flex}),
    otherwise searchable dropdowns "filter" but nothing disappears. */
 .kx-body .k-hidden{display:none!important}
+
+/* Thumb tables: Location was soaking up ~210px and pushing the actions past the card edge */
+.kx-body .sa-table-with-thumb th:nth-child(3),.kx-body .sa-table-with-thumb td:nth-child(3){min-width:0;width:130px}  /* col 3 is Location here, not the name; kegalle-admin.css:171 forces 210px */
+.kx-body .sa-table-listings th:nth-child(4),.kx-body .sa-table-listings td:nth-child(4){min-width:104px}
+/* Categories table has 7 columns but kegalle-admin.css sizes 8, so Actions inherited the 7% "Sort" width and clipped */
+.kx-body .sa-table-categories th:last-child,.kx-body .sa-table-categories td:last-child{width:220px;min-width:220px;text-align:left}
+.kx-body .sa-table-categories{min-width:0;table-layout:fixed}
+.kx-body .sa-table-categories :is(th,td):nth-child(1){width:60px}
+.kx-body .sa-table-categories :is(th,td):nth-child(2){width:170px;min-width:0}
+.kx-body .sa-table-categories :is(th,td):nth-child(3){width:110px;min-width:0}
+.kx-body .sa-table-categories :is(th,td):nth-child(4){width:70px}
+.kx-body .sa-table-categories :is(th,td):nth-child(5){width:84px}
+.kx-body .sa-table-categories :is(th,td):nth-child(6){width:64px}
+/* kegalle-admin.css:171 forces 210px on every table's 3rd column (Amount, Owner, Location...) and pushes actions off-card */
+.kx-body .sa-table :is(th,td):nth-child(3){min-width:0}
+.kx-body .sa-table-payments :is(th,td):first-child{width:200px;min-width:0}
+.kx-body .sa-table-payments :is(th,td):last-child{width:230px;min-width:0}

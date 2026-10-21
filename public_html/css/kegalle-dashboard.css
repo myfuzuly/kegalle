@@ -863,6 +863,8 @@ input[type=hidden]{display:none!important;min-height:0!important}
 @media(max-width:520px){.kdpg-info{display:none}.kdpg-nav{justify-content:center}}
 @media(max-width:720px){.lp-price-col{display:none}.lp-btn-view,.lp-btn-sold{display:none}.lp-stat{min-width:calc(50% - 6px)}}
 @media(max-width:520px){.lp-row{padding:12px 16px;gap:10px}.lp-thumb{width:42px;height:42px}.lp-filter-tabs{overflow-x:auto}}
+/* Phones: title keeps the line beside the thumb; price/stock/actions drop to a second line */
+@media(max-width:640px){.lp-row{flex-wrap:wrap;row-gap:10px}.lp-info{flex:1 1 calc(100% - 66px)}.lp-price-col{text-align:left;min-width:0;margin-left:56px}.lp-actions{margin-left:auto;flex-wrap:wrap;justify-content:flex-end}}
 .mem-coming-sub a{color:#92400e;font-weight:600}
 .mem-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
 .mem-card{background:#fff;border:1.5px solid #e8edf3;border-radius:18px;padding:22px;display:flex;flex-direction:column;position:relative;transition:box-shadow .2s,border-color .2s}
