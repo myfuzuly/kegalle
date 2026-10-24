@@ -56,7 +56,7 @@ class DealsController extends Controller
                 try {
                     return Deal::active()
                         ->flash()
-                        ->with(['listing.images', 'listing.category', 'store'])
+                        ->with(['listing.images', 'listing.category', 'listing.locationModel', 'store'])
                         ->orderBy('ends_at')
                         ->take(5)
                         ->get();
@@ -67,7 +67,7 @@ class DealsController extends Controller
 
             // Featured/filtered deals — cache only unfiltered requests
             try {
-                $query = Deal::active()->with(['listing.images', 'listing.category', 'store']);
+                $query = Deal::active()->with(['listing.images', 'listing.category', 'listing.locationModel', 'store']);
 
                 if ($request->filled('q')) {
                     $q = $request->q;
@@ -116,11 +116,11 @@ class DealsController extends Controller
 
         if (!$useRealDeals) {
             $featuredListings = Cache::remember('deals_featured_listings', 600, fn() =>
-                Listing::published()->with(['images', 'store', 'category'])
+                Listing::published()->with(['images', 'store', 'category', 'locationModel'])
                     ->where('is_featured', 1)->latest()->take(8)->get()
             );
             $latestListings = Cache::remember('deals_latest_listings', 600, fn() =>
-                Listing::published()->with(['images', 'store', 'category'])
+                Listing::published()->with(['images', 'store', 'category', 'locationModel'])
                     ->latest()->take(12)->get()
             );
         }

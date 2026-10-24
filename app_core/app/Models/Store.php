@@ -65,16 +65,39 @@ class Store extends Model
         return $this->hasMany(Review::class)->where('status', 'approved');
     }
 
+    /** Stats for every store loaded in this request, fetched together on first use (was 3 queries per card). */
+    private static array $statsCache = [];
+    private static array $seenIds = [];
+
+    private function stats(): array
+    {
+        if (! isset(self::$statsCache[$this->id])) {
+            $ids = array_keys(array_diff_key(self::$seenIds + [$this->id => true], self::$statsCache));
+            $listings = Listing::whereIn('store_id', $ids)->groupBy('store_id')
+                ->selectRaw('store_id, count(*) as n')->pluck('n', 'store_id');
+            $reviews = Review::whereIn('store_id', $ids)->where('status', 'approved')->groupBy('store_id')
+                ->selectRaw('store_id, count(*) as n, avg(rating) as avg')->get()->keyBy('store_id');
+            foreach ($ids as $id) {
+                self::$statsCache[$id] = [
+                    'listings' => (int) ($listings[$id] ?? 0),
+                    'reviews'  => (int) ($reviews[$id]->n ?? 0),
+                    'rating'   => round((float) ($reviews[$id]->avg ?? 0), 1),
+                ];
+            }
+        }
+        return self::$statsCache[$this->id];
+    }
+
     public function getAverageRatingAttribute()
     {
-        return round($this->approvedReviews()->avg('rating') ?? 0, 1);
+        return $this->stats()['rating'];
     }
 
     public function getRankAttribute()
     {
-        $listingsCount = $this->listings_count ?? $this->listings()->count();
+        $listingsCount = $this->listings_count ?? $this->stats()['listings'];
         $avgRating = $this->average_rating;
-        $reviewsCount = $this->approved_reviews_count ?? $this->approvedReviews()->count();
+        $reviewsCount = $this->approved_reviews_count ?? $this->stats()['reviews'];
 
         if ($listingsCount >= 20 && $avgRating >= 4.5 && $reviewsCount >= 10) return 'platinum';
         if ($listingsCount >= 10 && $avgRating >= 4.0 && $reviewsCount >= 5)  return 'gold';
@@ -111,7 +134,7 @@ class Store extends Model
         if ($this->is_verified) return true; // admin can force-grant
 
         $ownerVerified = (bool) optional($this->user)->phone_verified_at;
-        $enoughReviews = $this->approvedReviews()->count() >= 3;
+        $enoughReviews = $this->stats()['reviews'] >= 3;
         $oldEnough     = $this->created_at && $this->created_at->diffInDays(now()) >= 30;
 
         return $ownerVerified && $enoughReviews && $oldEnough;
@@ -129,6 +152,13 @@ class Store extends Model
 
     protected static function booted()
     {
+        static::retrieved(function (Store $store) {
+            if (count(self::$seenIds) > 2000) { // long-running workers: don't grow forever or serve stale stats
+                self::$seenIds = self::$statsCache = [];
+            }
+            self::$seenIds[$store->id] = true;
+        });
+
         static::created(function (Store $store) {
             AdminNotification::log(
                 'store_created',

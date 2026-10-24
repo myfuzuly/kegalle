@@ -70,10 +70,10 @@ class HomeController extends Controller
             User::count()
         );
 
-        $featuredStores = Cache::remember('home_featured_stores_v2', 300, function () {
+        $featuredStores = Cache::remember('home_featured_stores_v3', 300, function () {
             $publishedOnly = fn ($q) => $q->where('status', 'approved');
             $stores = Store::query()
-                ->withCount(['listings as listings_count' => $publishedOnly])
+                ->with('user')->withCount(['listings as listings_count' => $publishedOnly])
                 ->whereIn('status', ['approved', 'active', 'published'])
                 ->where('is_featured', 1)
                 ->orderByDesc('listings_count')
@@ -81,7 +81,7 @@ class HomeController extends Controller
                 ->take(10)->get();
             if ($stores->isEmpty()) {
                 $stores = Store::query()
-                    ->withCount(['listings as listings_count' => $publishedOnly])
+                    ->with('user')->withCount(['listings as listings_count' => $publishedOnly])
                     ->whereIn('status', ['approved', 'active', 'published'])
                     ->orderByDesc('listings_count')
                     ->orderBy('name')
@@ -104,11 +104,11 @@ class HomeController extends Controller
 
         // Time-sensitive — shorter TTL or uncached
         $featuredListings = Cache::remember('home_featured_listings', 120, fn () =>
-            Listing::published()->with(['images', 'store'])->where('is_featured', 1)->latest()->take(10)->get()
+            Listing::published()->with(['images', 'store.user', 'category', 'locationModel'])->where('is_featured', 1)->latest()->take(10)->get()
         );
 
         $latestListings = Cache::remember('home_latest_listings_8', 60, fn () =>
-            Listing::published()->with(['images', 'store'])->latest()->take(8)->get()
+            Listing::published()->with(['images', 'store.user', 'category', 'locationModel'])->latest()->take(8)->get()
         );
 
         $randomAds = collect();
@@ -126,16 +126,16 @@ class HomeController extends Controller
             }
             $ids = array_values(array_diff($ids, $excludeIds));
             if ($ids) {
-                $randomAds = Listing::published()->with(['images', 'store'])->whereIn('id', $ids)->get()->sortBy(fn($l) => array_search($l->id, $ids))->values();
+                $randomAds = Listing::published()->with(['images', 'store.user', 'category', 'locationModel'])->whereIn('id', $ids)->get()->sortBy(fn($l) => array_search($l->id, $ids))->values();
             }
         } catch (\Throwable $e) { Log::error('HomeController randomAds failed: ' . $e->getMessage()); }
 
         $featuredClassified = Cache::remember('home_featured_classified', 120, fn () =>
-            Listing::published()->with('images')->where('type', 'classified')->where('is_featured', 1)->latest()->take(5)->get()
+            Listing::published()->with(['images', 'category', 'locationModel'])->where('type', 'classified')->where('is_featured', 1)->latest()->take(5)->get()
         );
 
         $latestClassified = Cache::remember('home_latest_classified', 60, fn () =>
-            Listing::published()->with('images')->where('type', 'classified')->latest()->take(5)->get()
+            Listing::published()->with(['images', 'category', 'locationModel'])->where('type', 'classified')->latest()->take(5)->get()
         );
 
         $homeDeals = collect();
@@ -144,7 +144,7 @@ class HomeController extends Controller
             $homeDeals = Cache::remember('home_deals', 120, fn () =>
                 Deal::active()
                     ->whereHas('listing', fn ($q) => $q->published())
-                    ->with(['listing.images', 'listing.store', 'listing.category'])
+                    ->with(['listing.images', 'listing.store.user', 'listing.category', 'listing.locationModel'])
                     ->latest()->take(20)->get()
                     ->filter(fn ($d) => $d->listing !== null)
                     ->unique('listing_id')->take(10)->values()

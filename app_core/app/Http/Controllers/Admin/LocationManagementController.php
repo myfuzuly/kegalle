@@ -27,7 +27,7 @@ class LocationManagementController extends Controller
             ->paginate(30)
             ->withQueryString();
 
-        $parents = Location::where('is_active', true)
+        $parents = Location::with('parent')->where('is_active', true)
             ->orderByRaw('parent_id IS NOT NULL')
             ->orderBy('parent_id')
             ->orderBy('sort_order')
@@ -72,7 +72,7 @@ class LocationManagementController extends Controller
 
     public function edit(Location $location)
     {
-        $parents = Location::where('id', '!=', $location->id)
+        $parents = Location::with('parent')->where('id', '!=', $location->id)
             ->where('is_active', true)
             ->orderByRaw('parent_id IS NOT NULL')
             ->orderBy('parent_id')

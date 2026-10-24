@@ -108,4 +108,19 @@ class AuditFixesTest extends TestCase
         $this->assertNotEmpty($tags[1]);
         $this->assertSame([$h[1]], array_values(array_unique($tags[1])));
     }
+
+    public function test_listing_pages_do_not_query_per_card(): void
+    {
+        $owner = User::factory()->create(['status' => 'active']);
+        foreach (Store::factory()->count(5)->create(['user_id' => $owner->id, 'status' => 'approved']) as $store) {
+            Listing::factory()->count(4)->create(['user_id' => $owner->id, 'store_id' => $store->id, 'status' => 'approved']);
+        }
+
+        DB::enableQueryLog();
+        $this->get('/listings?fresh=1')->assertOk();
+        $queries = count(DB::getQueryLog());
+
+        // 20 cards across 5 stores used to cost ~3 store-stat queries per card
+        $this->assertLessThan(40, $queries, "listings page ran {$queries} queries");
+    }
 }
