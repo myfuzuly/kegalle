@@ -12,7 +12,7 @@
 @section('content')
 
 {{-- Placement overview --}}
-<section class="sa-card" class="mb-18">
+<section class="sa-card mb-18">
     <div class="sa-card-head"><h2>Ad Placement Slots</h2><span>{{ count(\App\Models\AdBanner::LOCATIONS) }} locations</span></div>
     <div class="kaa-slots">
         @foreach(\App\Models\AdBanner::LOCATIONS as $key => $label)

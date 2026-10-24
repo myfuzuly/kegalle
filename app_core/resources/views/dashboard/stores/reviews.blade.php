@@ -132,7 +132,7 @@
 
     {{-- Rating summary --}}
     <div class="flex-col gap-20">
-        <section class="dbi-card" class="text-center">
+        <section class="dbi-card text-center">
             <div class="dbi-card-head justify-center"><h3>Rating Summary</h3></div>
             <div class="drv-avg-num">{{ number_format($stats['avg'], 1) }}</div>
             <div class="drv-avg-stars justify-center">

@@ -22,7 +22,7 @@
 @php $permGroups = collect($permissions)->groupBy(fn($p) => $p['group']); @endphp
 
 {{-- Create new role --}}
-<div class="rol-card" class="mb-24">
+<div class="rol-card mb-24">
     <div class="rol-card-head">
         <div class="rol-card-icon green">✚</div>
         <span class="rol-card-title">Create New Role</span>
@@ -102,7 +102,7 @@
                 <input name="name" value="{{ $role->name }}" required {{ $role->is_protected ? 'readonly' : '' }} class="rol-input" {{ $role->is_protected ? 'style=background:#f8fafc' : '' }}>
                 <input name="description" value="{{ $role->description }}" placeholder="Description" class="rol-input">
             </div>
-            <div class="rol-perm-grid" class="mb-14">
+            <div class="rol-perm-grid mb-14">
                 @foreach($permGroups as $group => $perms)
                 <div class="rol-perm-group">
                     <div class="rol-perm-group-title">{{ $group }}</div>
@@ -116,7 +116,7 @@
                 @endforeach
             </div>
             <div class="flex-g10">
-                <button type="submit" class="rol-btn-primary" class="fs-13">💾 Save Changes</button>
+                <button type="submit" class="rol-btn-primary fs-13">💾 Save Changes</button>
                 @if(!$role->is_protected)
                 <button type="submit" form="delRole{{ $role->id }}" class="rol-btn-danger" class="fs-13">🗑 Delete Role</button>
                 @endif

@@ -100,7 +100,7 @@
         <div class="flex-row gap-10">
             <div class="abr-card-icon green sq28-fs13">📂</div>
             <div>
-                <p class="abr-card-title" class="fs-13">Categories</p>
+                <p class="abr-card-title fs-13">Categories</p>
                 <p class="abr-card-sub">Select all that apply — brands appear in all selected categories</p>
             </div>
         </div>
@@ -124,7 +124,7 @@
         </label>
         @endforeach
     </div>
-    @error('category_ids')<span class="abr-error" class="mt-12">{{ $message }}</span>@enderror
+    @error('category_ids')<span class="abr-error mt-12">{{ $message }}</span>@enderror
 </div>
 
 </form>

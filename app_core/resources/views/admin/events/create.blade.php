@@ -75,7 +75,7 @@ $oldEventType  = old('event_type', 'offline');
                                      data-label="{{ $user->name }}"
                                      data-search="{{ strtolower($user->name.' '.$user->email) }}">{{ $user->name }} — {{ $user->email }}</div>
                                 @endforeach
-                                <div class="ksd-empty" id="aevUserEmpty" class="hidden">No users match</div>
+                                <div class="ksd-empty" id="aevUserEmpty" style="display:none">No users match</div>
                             </div>
                         </div>
                     </div>
@@ -127,7 +127,7 @@ $oldEventType  = old('event_type', 'offline');
                 <p class="aev-card-sub">Title and description</p>
             </div>
         </div>
-        <div class="aev-field aev-full" class="mb-14">
+        <div class="aev-field aev-full mb-14">
             <label class="aev-label">Event Title <span class="aev-req">*</span></label>
             <input name="title" required class="aev-input" value="{{ old('title') }}" placeholder="e.g. Kegalle Music Festival 2025">
         </div>
@@ -219,7 +219,7 @@ $oldEventType  = old('event_type', 'offline');
                                      data-group="{{ $parentLoc->id }}">{{ $loc->name }}</div>
                                 @endforeach
                             @endforeach
-                            <div class="ksd-empty" id="aevLocEmpty" class="hidden">No locations match</div>
+                            <div class="ksd-empty" id="aevLocEmpty" style="display:none">No locations match</div>
                         </div>
                     </div>
                 </div>
@@ -246,7 +246,7 @@ $oldEventType  = old('event_type', 'offline');
                 <input type="number" name="capacity" class="aev-input" value="{{ old('capacity') }}" placeholder="Max attendees">
             </div>
         </div>
-        <div class="aev-checks" class="mt-14">
+        <div class="aev-checks mt-14">
             <label class="aev-check">
                 <input type="checkbox" name="is_free" value="1" @checked(old('is_free'))>
                 🎟️ Free Event
@@ -328,7 +328,7 @@ $oldEventType  = old('event_type', 'offline');
                              data-label="{{ $cat->name }}"
                              data-search="{{ strtolower($cat->name) }}">{{ $cat->icon ?? '📦' }} {{ $cat->name }}</div>
                         @endforeach
-                        <div class="ksd-empty" id="aevCatEmpty" class="hidden">No categories match</div>
+                        <div class="ksd-empty" id="aevCatEmpty" style="display:none">No categories match</div>
                     </div>
                 </div>
             </div>

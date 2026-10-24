@@ -48,7 +48,7 @@
                             {{ $parent->name }} <span class="fs-11 text-muted">({{ ucfirst($parent->type) }})</span>
                         </div>
                         @endforeach
-                        <div class="ksd-empty" id="locParentEmpty" class="hidden">No results</div>
+                        <div class="ksd-empty" id="locParentEmpty" style="display:none">No results</div>
                     </div>
                 </div>
             </div>
@@ -113,7 +113,7 @@
             <div class="flex-jsb"><span class="text-subtle">Parent</span><span>{{ optional($location->parent)->name ?? '—' }}</span></div>
             <div class="flex-jsb"><span class="text-subtle">Sort</span><span>{{ $location->sort_order }}</span></div>
             <div class="flex-jsb"><span class="text-subtle">Status</span>
-                <span class="sa-status {{ $location->is_active ? 'active':'suspended' }}" class="fs-11">{{ $location->is_active ? 'Active':'Inactive' }}</span>
+                <span class="sa-status {{ $location->is_active ? 'active':'suspended' }} fs-11">{{ $location->is_active ? 'Active':'Inactive' }}</span>
             </div>
         </div>
     </div>

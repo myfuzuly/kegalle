@@ -34,7 +34,7 @@
   <div class="ntf-stat border-green200-bg">
     <div class="dot-8-green"></div>
     <div>
-      <div class="ntf-stat-n" id="ntfUnread" class="text-green">{{ $unreadCount }}</div>
+      <div class="ntf-stat-n text-green" id="ntfUnread">{{ $unreadCount }}</div>
       <div class="ntf-stat-l text-green700">Unread</div>
     </div>
   </div>

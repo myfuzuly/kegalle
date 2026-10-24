@@ -8,7 +8,7 @@
 @section('content')
 
 @if(session('success'))
-<div class="prf-alert prf-alert-success" class="mb-20">{{ session('success') }}</div>
+<div class="prf-alert prf-alert-success mb-20">{{ session('success') }}</div>
 @endif
 
 <section class="sa-card">

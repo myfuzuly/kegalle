@@ -54,7 +54,7 @@
         </div>
 
         {{-- Input bar --}}
-        <div id="chatError" class="hidden" class="chat-error"></div>
+        <div id="chatError" class="hidden chat-error"></div>
         <form id="chatForm" class="chat-input-bar" autocomplete="off">
             @csrf
             <textarea

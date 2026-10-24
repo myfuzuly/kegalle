@@ -50,13 +50,13 @@
                             @foreach($locations as $key => $label)
                             <div class="ksd-item {{ old('location')===$key ? 'ksd-selected':'' }}" data-value="{{ $key }}" data-label="{{ $label }}" data-search="{{ strtolower($label) }}">{{ $label }}</div>
                             @endforeach
-                            <div class="ksd-empty" id="adbLocEmpty" class="hidden">No placements match</div>
+                            <div class="ksd-empty" id="adbLocEmpty" style="display:none">No placements match</div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="adb-field">
-                <label class="adb-label">Click-through Link <span class="adb-hint" class="fw-400">(optional)</span></label>
+                <label class="adb-label">Click-through Link <span class="adb-hint fw-400">(optional)</span></label>
                 <input type="url" name="link_url" class="adb-input" value="{{ old('link_url') }}" placeholder="https://...">
             </div>
             <div class="adb-field">
@@ -89,11 +89,11 @@
         </div>
         <div class="adb-body">
             <div class="adb-field">
-                <label class="adb-label">Starts On <span class="adb-hint" class="fw-400">(optional)</span></label>
+                <label class="adb-label">Starts On <span class="adb-hint fw-400">(optional)</span></label>
                 <input type="date" name="starts_at" class="adb-input" value="{{ old('starts_at') }}">
             </div>
             <div class="adb-field">
-                <label class="adb-label">Ends On <span class="adb-hint" class="fw-400">(optional)</span></label>
+                <label class="adb-label">Ends On <span class="adb-hint fw-400">(optional)</span></label>
                 <input type="date" name="ends_at" class="adb-input" value="{{ old('ends_at') }}">
                 <span class="adb-hint">Leave both dates empty to run indefinitely.</span>
             </div>

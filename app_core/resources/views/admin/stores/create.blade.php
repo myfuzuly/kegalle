@@ -91,7 +91,7 @@ $oldStatus = old('status','approved');
                              data-label="{{ $user->name }}"
                              data-search="{{ strtolower($user->name.' '.$user->email) }}">{{ $user->name }} — {{ $user->email }}</div>
                         @endforeach
-                        <div class="ksd-empty" id="ascUserEmpty" class="hidden">No users match</div>
+                        <div class="ksd-empty" id="ascUserEmpty" style="display:none">No users match</div>
                     </div>
                 </div>
             </div>
@@ -108,7 +108,7 @@ $oldStatus = old('status','approved');
                 <p class="asc-card-sub">Name and contact information</p>
             </div>
         </div>
-        <div class="asc-field asc-full" class="mb-14">
+        <div class="asc-field asc-full mb-14">
             <label class="asc-label">Store Name <span class="asc-req">*</span></label>
             <input name="name" required class="asc-input" value="{{ old('name') }}" placeholder="e.g. Kegalle Auto Parts">
         </div>
@@ -169,7 +169,7 @@ $oldStatus = old('status','approved');
                                      data-group="{{ $parentLoc->id }}">{{ $loc->name }}</div>
                                 @endforeach
                             @endforeach
-                            <div class="ksd-empty" id="ascCityEmpty" class="hidden">No locations match</div>
+                            <div class="ksd-empty" id="ascCityEmpty" style="display:none">No locations match</div>
                         </div>
                     </div>
                 </div>

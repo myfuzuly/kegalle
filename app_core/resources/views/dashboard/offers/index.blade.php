@@ -68,7 +68,7 @@
     </div>
     <div class="oi-meta-cell">
       <div class="oi-label">Payment</div>
-      <div class="oi-meta-val" class="fs-13h">{{ $offer->payment_icon ?? '' }} {{ $offer->payment_label ?? ucfirst($offer->payment_method ?? '—') }}</div>
+      <div class="oi-meta-val fs-13h">{{ $offer->payment_icon ?? '' }} {{ $offer->payment_label ?? ucfirst($offer->payment_method ?? '—') }}</div>
     </div>
     <div class="oi-meta-cell">
       <div class="oi-label">Sent</div>

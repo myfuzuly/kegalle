@@ -12,7 +12,7 @@
 @endif
 
 {{-- Inactive Stores --}}
-<section class="sa-card" class="mb-24">
+<section class="sa-card mb-24">
     <div class="sa-card-head">
         <h2>Inactive Stores</h2>
         <span>{{ $inactiveStores->count() }} items</span>
@@ -36,7 +36,7 @@
             <div class="flex-gap8-ns">
                 <a href="/admin/stores/{{ $store->id }}/edit" class="ka-btn ka-btn-light" class="fs-12 btn-sm-pad">View</a>
                 <form method="post" action="/admin/stores/{{ $store->id }}/approve">@csrf
-                    <button class="ka-btn" class="btn-approve">↻ Reactivate</button>
+                    <button class="ka-btn btn-approve">↻ Reactivate</button>
                 </form>
                 <form method="post" action="/admin/stores/{{ $store->id }}" data-confirm="Permanently DELETE store '{{ $store->name }}'? This cannot be undone." >@csrf @method('DELETE')
                     <button class="ka-btn btn-danger-sm">Delete</button>
@@ -73,7 +73,7 @@
             <div class="flex-gap8-ns">
                 <a href="/admin/listings/{{ $listing->id }}/edit" class="ka-btn ka-btn-light" class="fs-12 btn-sm-pad">Edit</a>
                 <form method="post" action="/admin/listings/{{ $listing->id }}/approve">@csrf
-                    <button class="ka-btn" class="btn-approve">↻ Reactivate</button>
+                    <button class="ka-btn btn-approve">↻ Reactivate</button>
                 </form>
                 <form method="post" action="/admin/listings/{{ $listing->id }}" data-confirm="Permanently DELETE listing '{{ $listing->title }}' and its images? This cannot be undone." >@csrf @method('DELETE')
                     <button class="ka-btn btn-danger-sm">Delete</button>

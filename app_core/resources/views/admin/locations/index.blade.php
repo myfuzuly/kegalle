@@ -51,7 +51,7 @@
                                 <span class="fs11-muted-ml4">({{ ucfirst($parent->type) }})</span>
                             </div>
                             @endforeach
-                            <div class="ksd-empty" id="locParentEmpty" class="hidden">No results</div>
+                            <div class="ksd-empty" id="locParentEmpty" style="display:none">No results</div>
                         </div>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                 </div>
             </div>
             <div class="flex-end-gap12">
-                <div class="loc-field" class="flex-1">
+                <div class="loc-field flex-1">
                     <label class="loc-label">Type <span class="loc-req">*</span></label>
                     <div class="loc-type-group" id="locAddTypeGroup">
                         @foreach(['province','district','city','town'] as $t)
@@ -82,7 +82,7 @@
                     <label class="loc-label">Sort Order</label>
                     <input name="sort_order" type="number" class="loc-input" value="{{ old('sort_order',0) }}">
                 </div>
-                <div class="loc-field" class="flex-shrink-0">
+                <div class="loc-field flex-shrink-0">
                     <label class="loc-label">&nbsp;</label>
                     <label class="loc-check">
                         <input type="checkbox" name="is_active" value="1" checked>

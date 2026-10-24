@@ -55,11 +55,11 @@
             <div class="fw8-fs14-mb4">🔍 SEO Settings</div>
             <p class="fs12-gray-mb14">Falls back to the article title and excerpt if left blank.</p>
 
-            <div class="ka-field" class="mb-10">
+            <div class="ka-field mb-10">
                 <label>SEO Meta Title <span class="text-light-gray" id="metaTitleCount"></span></label>
                 <input id="metaTitleInput" name="meta_title" value="{{ old('meta_title', $post->meta_title) }}" maxlength="180" placeholder="{{ $post->title }}">
             </div>
-            <div class="ka-field" class="mb-14">
+            <div class="ka-field mb-14">
                 <label>SEO Meta Description <span class="text-light-gray" id="metaDescCount"></span></label>
                 <textarea class="textarea-70h" id="metaDescInput" name="meta_description" maxlength="320" placeholder="{{ $post->excerpt }}">{{ old('meta_description', $post->meta_description) }}</textarea>
             </div>

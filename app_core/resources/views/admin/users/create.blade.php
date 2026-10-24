@@ -33,7 +33,7 @@
                 <p class="auc-card-sub">Basic account information</p>
             </div>
         </div>
-        <div class="auc-avatar-row" class="mb-18">
+        <div class="auc-avatar-row mb-18">
             <input type="file" name="avatar" id="aucAvatarInput" accept="image/jpeg,image/png,image/webp" class="hidden">
             <div class="auc-avatar-zone" id="aucAvatarZone">
                 <div class="auc-zone-icon">🙂</div>
@@ -95,7 +95,7 @@
                                  data-search="{{ strtolower($parent->name.' '.$loc->name) }}">{{ $loc->name }}</div>
                             @endforeach
                         @endforeach
-                        <div class="ksd-empty" id="aucLocEmpty" class="hidden">No locations match</div>
+                        <div class="ksd-empty" id="aucLocEmpty" style="display:none">No locations match</div>
                     </div>
                 </div>
             </div>
@@ -124,7 +124,7 @@
                 <div class="auc-strength-txt text-rose600" id="aucPwdMatch"></div>
             </div>
         </div>
-        <p class="auc-hint" class="mt-8">The user can change this after logging in. You should share it securely.</p>
+        <p class="auc-hint mt-8">The user can change this after logging in. You should share it securely.</p>
     </div>
 
 </div>

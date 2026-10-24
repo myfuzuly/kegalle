@@ -124,7 +124,7 @@
 </section>
 
 @if($category->children()->count() > 0)
-<section class="sa-card" class="mt-20">
+<section class="sa-card mt-20">
 <div class="sa-card-head"><h2>Sub-Categories ({{ $category->children()->count() }})</h2>
 <a href="/admin/categories?parent_id={{ $category->id }}" class="ka-btn ka-btn-light" class="fs-13">Manage →</a>
 </div>

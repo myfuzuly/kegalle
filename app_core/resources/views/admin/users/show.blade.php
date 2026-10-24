@@ -95,7 +95,7 @@
                                  data-value="{{ $loc->id }}" data-label="{{ $parent->name }} — {{ $loc->name }}" data-search="{{ strtolower($parent->name.' '.$loc->name) }}">{{ $loc->name }}</div>
                             @endforeach
                         @endforeach
-                        <div class="ksd-empty" id="aucLocEmpty" class="hidden">No locations match</div>
+                        <div class="ksd-empty" id="aucLocEmpty" style="display:none">No locations match</div>
                     </div>
                 </div>
             </div>

@@ -126,7 +126,7 @@
 </div>
 
 {{-- Recent Activity --}}
-<section class="dbi-card" class="mt-20">
+<section class="dbi-card mt-20">
     <div class="dbi-card-head"><h3>Recent Activity</h3></div>
     @forelse($recentActivity as $listing)
     @php

@@ -18,10 +18,10 @@
 
 {{-- Flash messages --}}
 @if(session('success'))
-<div class="sa-alert sa-alert-success" class="mb-16">{{ session('success') }}</div>
+<div class="sa-alert sa-alert-success mb-16">{{ session('success') }}</div>
 @endif
 @if(session('error'))
-<div class="sa-alert sa-alert-danger" class="mb-16">{{ session('error') }}</div>
+<div class="sa-alert sa-alert-danger mb-16">{{ session('error') }}</div>
 @endif
 
 {{-- Stat cards --}}
@@ -63,7 +63,7 @@
 </div>
 
 {{-- Category Table --}}
-<section class="sa-card" class="mb-24">
+<section class="sa-card mb-24">
 <div class="sa-card-head">
     <h2>
         @if($search) Search Results for "{{ $search }}"
@@ -160,7 +160,7 @@
     @endif
 
     {{-- Sort --}}
-    <td class="kaa-num" class="text-muted">{{ $cat->sort_order ?? 0 }}</td>
+    <td class="kaa-num text-muted">{{ $cat->sort_order ?? 0 }}</td>
 
     {{-- Actions --}}
     <td>
@@ -221,7 +221,7 @@
             </select>
             <span class="kaa-field-hint">Leave blank to create a top-level main category</span>
         </div>
-        <div class="kaa-field" id="subCatWrap" class="hidden">
+        <div class="kaa-field" id="subCatWrap" style="display:none">
             <label for="subCatSelect">Sub Category <span class="kaa-label-opt">optional — select to add a Leaf</span></label>
             <select name="parent_id" id="subCatSelect">
                 <option value="">— None (add Sub directly under Main) —</option>

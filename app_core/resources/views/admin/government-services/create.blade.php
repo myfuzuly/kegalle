@@ -39,7 +39,7 @@
             </div>
             <div class="gsv-grid">
                 <div class="gsv-field">
-                    <label class="gsv-label">Icon <span class="gsv-hint" class="fw-400">(emoji, used when no image)</span></label>
+                    <label class="gsv-label">Icon <span class="gsv-hint fw-400">(emoji, used when no image)</span></label>
                     <input name="icon" class="gsv-input" value="{{ old('icon','🏛️') }}" maxlength="10" id="gsvIcon">
                 </div>
                 <div class="gsv-field">
@@ -58,7 +58,7 @@
         </div>
         <div class="gsv-body">
             <div class="gsv-field">
-                <label class="gsv-label">Service Icon Image <span class="gsv-hint" class="fw-400">(optional — JPG/PNG/WEBP, max 3MB)</span></label>
+                <label class="gsv-label">Service Icon Image <span class="gsv-hint fw-400">(optional — JPG/PNG/WEBP, max 3MB)</span></label>
                 <input type="file" name="image" class="gsv-input p8-13" accept="image/jpeg,image/png,image/webp">
                 <span class="gsv-hint">If left empty, the icon emoji + gradient colors are used.</span>
             </div>
@@ -67,14 +67,14 @@
                     <label class="gsv-label">Icon Background Start</label>
                     <div class="gsv-color-row">
                         <input type="color" name="icon_bg_start" class="gsv-color-input" value="{{ old('icon_bg_start','#1e6b3a') }}" id="gsvBgStart">
-                        <input class="gsv-input" value="{{ old('icon_bg_start','#1e6b3a') }}" class="flex-1" readonly id="gsvBgStartText">
+                        <input class="gsv-input flex-1" value="{{ old('icon_bg_start','#1e6b3a') }}" readonly id="gsvBgStartText">
                     </div>
                 </div>
                 <div class="gsv-field">
                     <label class="gsv-label">Icon Background End</label>
                     <div class="gsv-color-row">
                         <input type="color" name="icon_bg_end" class="gsv-color-input" value="{{ old('icon_bg_end','#2e9b5a') }}" id="gsvBgEnd">
-                        <input class="gsv-input" value="{{ old('icon_bg_end','#2e9b5a') }}" class="flex-1" readonly id="gsvBgEndText">
+                        <input class="gsv-input flex-1" value="{{ old('icon_bg_end','#2e9b5a') }}" readonly id="gsvBgEndText">
                     </div>
                 </div>
             </div>
@@ -89,7 +89,7 @@
         </div>
         <div class="gsv-body">
             <div class="gsv-field">
-                <label class="gsv-label">Content <span class="gsv-hint" class="fw-400">(HTML supported)</span></label>
+                <label class="gsv-label">Content <span class="gsv-hint fw-400">(HTML supported)</span></label>
                 <textarea name="content" class="gsv-textarea" rows="8" placeholder="Detailed information about this service — HTML is supported">{{ old('content') }}</textarea>
                 <span class="gsv-hint">Shown on the individual service page (e.g. /government-services/ds-office).</span>
             </div>
@@ -118,7 +118,7 @@
                 <input name="address" class="gsv-input" value="{{ old('address') }}" placeholder="Main Street, Kegalle">
             </div>
             <div class="gsv-field">
-                <label class="gsv-label">Google Maps Embed URL <span class="gsv-hint" class="fw-400">(optional)</span></label>
+                <label class="gsv-label">Google Maps Embed URL <span class="gsv-hint fw-400">(optional)</span></label>
                 <input name="map_url" class="gsv-input" value="{{ old('map_url') }}" placeholder="https://www.google.com/maps/embed?pb=...">
             </div>
         </div>

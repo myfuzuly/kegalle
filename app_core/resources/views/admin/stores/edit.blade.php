@@ -11,7 +11,7 @@
 @endif
 
 {{-- Store Details --}}
-<section class="sa-card" class="mb-24">
+<section class="sa-card mb-24">
 <div class="sa-card-head"><h2>Store Details</h2></div>
 <form class="ka-premium-form" method="post" action="/admin/stores/{{ $store->id }}" enctype="multipart/form-data">
 @csrf

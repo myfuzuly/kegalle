@@ -8,7 +8,7 @@
 
 <div class="rv-stats">
   <div class="rv-stat">
-    <div class="rv-stat-n" class="text-green">{{ $totalReviews ?? 0 }}</div>
+    <div class="rv-stat-n text-green">{{ $totalReviews ?? 0 }}</div>
     <div class="rv-stat-l">Total Reviews</div>
   </div>
   <div class="rv-stat">

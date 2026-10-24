@@ -61,7 +61,7 @@ $oldStatus = old('status', $deal->status);
                 <p class="ade-card-sub">Deal price must be below LKR {{ number_format($origPrice) }}</p>
             </div>
         </div>
-        <div class="ade-grid" class="mb-14">
+        <div class="ade-grid mb-14">
             <div class="ade-field">
                 <label class="ade-label">Deal Price (LKR) <span class="ade-req">*</span></label>
                 <input name="deal_price" id="adeDealPrice" type="number" step="1" min="1" required class="ade-input" value="{{ old('deal_price', $deal->deal_price) }}">

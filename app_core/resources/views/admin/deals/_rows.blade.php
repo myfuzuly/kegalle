@@ -40,7 +40,7 @@
         @if($deal->is_featured)<span class="badge-green-xs">★ Featured</span> @endif
         @if(!$deal->is_flash && !$deal->is_featured)<small class="text-gray-lgt">Standard</small>@endif
     </td>
-    <td><span class="sa-status {{ $statusYes ? 'active' : ($statusPending ? 'pending' : 'suspended') }}" class="fs-11">{{ ucfirst($deal->status) }}</span></td>
+    <td><span class="sa-status {{ $statusYes ? 'active' : ($statusPending ? 'pending' : 'suspended') }} fs-11">{{ ucfirst($deal->status) }}</span></td>
     <td class="sa-actions-inline">
         @if($deal->listing)<a href="/listings/{{ $deal->listing->slug }}" target="_blank">View</a>@endif
         <a href="/admin/deals/{{ $deal->id }}/edit">Edit</a>

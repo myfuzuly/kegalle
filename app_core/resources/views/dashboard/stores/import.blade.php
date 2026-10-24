@@ -51,7 +51,7 @@
     </details>
 </section>
 
-<section class="kd-card" class="mt-16">
+<section class="kd-card mt-16">
     <div class="kd-card-head"><h2>Upload CSV</h2></div>
     <form method="POST" action="{{ route('dashboard.stores.import.post', $store->id) }}" enctype="multipart/form-data">
         @csrf

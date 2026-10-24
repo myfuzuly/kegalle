@@ -15,7 +15,7 @@
 @section('content')
 
 {{-- ── Active / Approved + Pending ── --}}
-<section class="sa-card" class="mb-28">
+<section class="sa-card mb-28">
 
     {{-- Header --}}
     <div class="flex-row justify-between ka-card-head-row">

@@ -34,7 +34,7 @@
             </div>
             <div class="exp-grid">
                 <div class="exp-field">
-                    <label class="exp-label">Icon <span class="exp-hint" class="fw-400">(emoji — used when no photo)</span></label>
+                    <label class="exp-label">Icon <span class="exp-hint fw-400">(emoji — used when no photo)</span></label>
                     <input name="icon" class="exp-input" value="{{ old('icon','📍') }}" maxlength="10" id="expIcon">
                 </div>
                 <div class="exp-field">
@@ -53,7 +53,7 @@
                 </div>
             </div>
             <div class="exp-field">
-                <label class="exp-label">Bullet Points <span class="exp-hint" class="fw-400">(one per line)</span></label>
+                <label class="exp-label">Bullet Points <span class="exp-hint fw-400">(one per line)</span></label>
                 <textarea name="items" class="exp-textarea" placeholder="Hiking &amp; Trekking&#10;Water Activities&#10;Camping &amp; Outdoor">{{ old('items') }}</textarea>
             </div>
         </div>
@@ -66,7 +66,7 @@
         </div>
         <div class="exp-body">
             <div class="exp-field">
-                <label class="exp-label">Card Photo <span class="exp-hint" class="fw-400">(optional — JPG/PNG/WEBP, max 3MB)</span></label>
+                <label class="exp-label">Card Photo <span class="exp-hint fw-400">(optional — JPG/PNG/WEBP, max 3MB)</span></label>
                 <input type="file" name="image" class="exp-input p8-13" accept="image/jpeg,image/png,image/webp">
                 <span class="exp-hint">If left empty, the icon + gradient below is used instead.</span>
             </div>
@@ -75,14 +75,14 @@
                     <label class="exp-label">Gradient Start</label>
                     <div class="exp-color-row">
                         <input type="color" name="gradient_start" class="exp-color-input" value="{{ old('gradient_start','#1B5E20') }}" id="expGradStart">
-                        <input class="exp-input" value="{{ old('gradient_start','#1B5E20') }}" class="flex-1" placeholder="#1B5E20" id="expGradStartText" readonly>
+                        <input class="exp-input flex-1" value="{{ old('gradient_start','#1B5E20') }}" placeholder="#1B5E20" id="expGradStartText" readonly>
                     </div>
                 </div>
                 <div class="exp-field">
                     <label class="exp-label">Gradient End</label>
                     <div class="exp-color-row">
                         <input type="color" name="gradient_end" class="exp-color-input" value="{{ old('gradient_end','#388E3C') }}" id="expGradEnd">
-                        <input class="exp-input" value="{{ old('gradient_end','#388E3C') }}" class="flex-1" placeholder="#388E3C" id="expGradEndText" readonly>
+                        <input class="exp-input flex-1" value="{{ old('gradient_end','#388E3C') }}" placeholder="#388E3C" id="expGradEndText" readonly>
                     </div>
                 </div>
             </div>

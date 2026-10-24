@@ -59,13 +59,13 @@
                         <svg class="ksd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
                     <div class="ksd-dropdown" id="alcUserDropdown">
-                        <div class="ksd-search-row"><input type="text" class="ksd-search" id="alcUserSearch" placeholder="Search user�" autocomplete="off"></div>
+                        <div class="ksd-search-row"><input type="text" class="ksd-search" id="alcUserSearch" placeholder="Search user…" autocomplete="off"></div>
                         <div class="ksd-list" id="alcUserList">
                             <div class="ksd-item {{ !$oldUserId?'ksd-selected':'' }}" data-value="" data-label="Select user…" data-search="">— No User —</div>
                             @foreach($users as $user)
-                            <div class="ksd-item {{ $oldUserId==$user->id?'ksd-selected':'' }}" data-value="{{ $user->id }}" data-label="{{ $user->name }} � {{ $user->email }}" data-search="{{ strtolower($user->name.' '.$user->email) }}">{{ $user->name }} � {{ $user->email }}</div>
+                            <div class="ksd-item {{ $oldUserId==$user->id?'ksd-selected':'' }}" data-value="{{ $user->id }}" data-label="{{ $user->name }} — {{ $user->email }}" data-search="{{ strtolower($user->name.' '.$user->email) }}">{{ $user->name }} — {{ $user->email }}</div>
                             @endforeach
-                            <div class="ksd-empty" id="alcUserEmpty" class="hidden">No users match</div>
+                            <div class="ksd-empty" id="alcUserEmpty" style="display:none">No users match</div>
                         </div>
                     </div>
                 </div>
@@ -80,9 +80,9 @@
                         <svg class="ksd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
                     <div class="ksd-dropdown" id="alcStoreDropdown">
-                        <div class="ksd-search-row"><input type="text" class="ksd-search" id="alcStoreSearch" placeholder="Search store�" autocomplete="off"></div>
+                        <div class="ksd-search-row"><input type="text" class="ksd-search" id="alcStoreSearch" placeholder="Search store…" autocomplete="off"></div>
                         <div class="ksd-list" id="alcStoreList">
-                            <div class="ksd-empty" id="alcStoreEmpty">Select a user first�</div>
+                            <div class="ksd-empty" id="alcStoreEmpty">Select a user first…</div>
                         </div>
                     </div>
                 </div>
@@ -128,13 +128,13 @@
                 <input type="hidden" name="cf_brand_id" id="ksd-brand-val" value="{{ $existBrandId }}">
                 <div class="ksd-wrap">
                     <button type="button" class="ksd-trigger {{ $existBrandId?'ksd-has-value':'' }}" id="ksdBrandTrigger">
-                        <span class="ksd-trigger-text {{ $existBrandId?'':'placeholder' }}" id="ksdBrandLabel">{{ $existBrandId?'Loading�':'Select Brand�' }}</span>
+                        <span class="ksd-trigger-text {{ $existBrandId?'':'placeholder' }}" id="ksdBrandLabel">{{ $existBrandId?'Loading…':'Select Brand…' }}</span>
                         <svg class="ksd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
                     <div class="ksd-dropdown" id="ksdBrandDropdown">
-                        <div class="ksd-search-row"><input type="text" class="ksd-search" id="ksdBrandSearch" placeholder="Search brand�" autocomplete="off"></div>
+                        <div class="ksd-search-row"><input type="text" class="ksd-search" id="ksdBrandSearch" placeholder="Search brand…" autocomplete="off"></div>
                         <div class="ksd-list csp5-315" id="ksdBrandList">
-                            <div class="ksd-empty" id="ksdBrandEmpty">Select a category first�</div>
+                            <div class="ksd-empty" id="ksdBrandEmpty">Select a category first…</div>
                         </div>
                     </div>
                 </div>
@@ -156,7 +156,7 @@
         @php
             $selLocId=old('location_id',$listing->location_id??'');
             $selLocLabel='';
-            if($selLocId){ $selLoc=$locations->firstWhere('id',$selLocId); if($selLoc){ if($selLoc->parent_id){ $selLocParent=$locations->firstWhere('id',$selLoc->parent_id); $selLocLabel=($selLocParent?$selLocParent->name.' � ':'').$selLoc->name; } else { $selLocLabel=$selLoc->name.' (All)'; } } }
+            if($selLocId){ $selLoc=$locations->firstWhere('id',$selLocId); if($selLoc){ if($selLoc->parent_id){ $selLocParent=$locations->firstWhere('id',$selLoc->parent_id); $selLocLabel=($selLocParent?$selLocParent->name.' — ':'').$selLoc->name; } else { $selLocLabel=$selLoc->name.' (All)'; } } }
         @endphp
         <div class="alc-grid">
             <div class="alc-field">
@@ -164,21 +164,21 @@
                 <input type="hidden" name="location_id" id="ksd-loc-val" value="{{ $selLocId }}">
                 <div class="ksd-wrap">
                     <button type="button" class="ksd-trigger {{ $selLocLabel?'ksd-has-value':'' }}" id="ksdLocTrigger">
-                        <span class="ksd-trigger-text {{ $selLocLabel?'':'placeholder' }}" id="ksdLocLabel">{{ $selLocLabel?:'� No Location �' }}</span>
+                        <span class="ksd-trigger-text {{ $selLocLabel?'':'placeholder' }}" id="ksdLocLabel">{{ $selLocLabel?:'— No Location —' }}</span>
                         <svg class="ksd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
-                    <div class="ksd-dropdown" id="ksdLocDropdown" class="hidden">
-                        <div class="ksd-search-row"><input type="text" class="ksd-search" id="ksdLocSearch" placeholder="Type to search�" autocomplete="off"></div>
+                    <div class="ksd-dropdown" id="ksdLocDropdown" style="display:none">
+                        <div class="ksd-search-row"><input type="text" class="ksd-search" id="ksdLocSearch" placeholder="Type to search…" autocomplete="off"></div>
                         <div class="ksd-list" id="ksdLocList">
-                            <div class="ksd-item {{ !$selLocId?'ksd-selected':'' }}" data-value="" data-label="� No Location �" data-search="" data-group="">� No Location �</div>
+                            <div class="ksd-item {{ !$selLocId?'ksd-selected':'' }}" data-value="" data-label="— No Location —" data-search="" data-group="">— No Location —</div>
                             @foreach($locations->whereNull('parent_id') as $parentLoc)
                                 <div class="ksd-group-label" data-group="{{ $parentLoc->id }}">{{ strtoupper($parentLoc->name) }}</div>
                                 <div class="ksd-item ksd-indent {{ $selLocId==$parentLoc->id?'ksd-selected':'' }}" data-value="{{ $parentLoc->id }}" data-label="{{ $parentLoc->name }} (All)" data-search="{{ strtolower($parentLoc->name) }}" data-group="{{ $parentLoc->id }}">📍 {{ $parentLoc->name }} (All)</div>
                                 @foreach($locations->where('parent_id',$parentLoc->id) as $loc)
-                                    <div class="ksd-item ksd-indent {{ $selLocId==$loc->id?'ksd-selected':'' }}" data-value="{{ $loc->id }}" data-label="{{ $parentLoc->name }} � {{ $loc->name }}" data-search="{{ strtolower($parentLoc->name.' '.$loc->name) }}" data-group="{{ $parentLoc->id }}">{{ $loc->name }}</div>
+                                    <div class="ksd-item ksd-indent {{ $selLocId==$loc->id?'ksd-selected':'' }}" data-value="{{ $loc->id }}" data-label="{{ $parentLoc->name }} — {{ $loc->name }}" data-search="{{ strtolower($parentLoc->name.' '.$loc->name) }}" data-group="{{ $parentLoc->id }}">{{ $loc->name }}</div>
                                 @endforeach
                             @endforeach
-                            <div class="ksd-empty" id="ksdLocEmpty" class="hidden">No locations match</div>
+                            <div class="ksd-empty" id="ksdLocEmpty" style="display:none">No locations match</div>
                         </div>
                     </div>
                 </div>
@@ -228,13 +228,13 @@
                             <span class="ksd-trigger-text" id="alcPlLabel">{{ $plMap[$plVal]??'Fixed Price' }}</span>
                             <svg class="ksd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
                         </button>
-                        <div class="ksd-dropdown" id="alcPlDropdown" class="hidden">
+                        <div class="ksd-dropdown" id="alcPlDropdown" style="display:none">
                             <div class="ksd-search-row"><input type="text" class="ksd-search" id="alcPlSearch" placeholder="Search…" autocomplete="off"></div>
                             <div class="ksd-list" id="alcPlList">
                                 @foreach($plMap as $v=>$l)
                                 <div class="ksd-item {{ $plVal===$v?'ksd-selected':'' }}" data-value="{{ $v }}" data-label="{{ $l }}" data-search="{{ strtolower($l) }}">{{ $l }}</div>
                                 @endforeach
-                                <div class="ksd-empty" id="alcPlEmpty" class="hidden">No match</div>
+                                <div class="ksd-empty" id="alcPlEmpty" style="display:none">No match</div>
                             </div>
                         </div>
                     </div>
@@ -287,7 +287,7 @@
                         @foreach($alcTypeMap as $v=>$l)
                         <div class="ksd-item {{ $alcTypeVal===$v?'ksd-selected':'' }}" data-value="{{ $v }}" data-label="{{ $l }}" data-search="{{ strtolower($l) }}">{{ $l }}</div>
                         @endforeach
-                        <div class="ksd-empty" id="alcTypeEmpty" class="hidden">No match</div>
+                        <div class="ksd-empty" id="alcTypeEmpty" style="display:none">No match</div>
                     </div>
                 </div>
             </div>
@@ -307,7 +307,7 @@
                         @foreach($alcStatMap as $v=>$l)
                         <div class="ksd-item {{ $alcStatVal===$v?'ksd-selected':'' }}" data-value="{{ $v }}" data-label="{{ $l }}" data-search="{{ strtolower($v) }}">{{ $l }}</div>
                         @endforeach
-                        <div class="ksd-empty" id="alcStatEmpty" class="hidden">No match</div>
+                        <div class="ksd-empty" id="alcStatEmpty" style="display:none">No match</div>
                     </div>
                 </div>
             </div>
@@ -394,10 +394,10 @@ function initKsd(opts) {
     trigger.addEventListener('click',function(e){ e.stopPropagation(); open?closeBrand():openBrand(); });
     document.addEventListener('click',function(e){ if(open&&!trigger.contains(e.target)&&!dropdown.contains(e.target)) closeBrand(); });
     search.addEventListener('input',function(){ filterBrands(this.value.toLowerCase()); });
-    function filterBrands(q){ var items=list.querySelectorAll('.ksd-item'); var any=false; items.forEach(function(i){ var m=!q||i.dataset.search.indexOf(q)!==-1; i.style.display=m?'':'none'; if(m)any=true; }); emptyEl.style.display=any?'none':''; emptyEl.textContent=any?'':(q?'No brands match':'Select a category first�'); }
+    function filterBrands(q){ var items=list.querySelectorAll('.ksd-item'); var any=false; items.forEach(function(i){ var m=!q||i.dataset.search.indexOf(q)!==-1; i.style.display=m?'':'none'; if(m)any=true; }); emptyEl.style.display=any?'none':''; emptyEl.textContent=any?'':(q?'No brands match':'Select a category first…'); }
     window.loadKsdBrands=function(catId,preselect){
         if(!catId) return;
-        emptyEl.textContent='Loading�'; emptyEl.style.display='';
+        emptyEl.textContent='Loading…'; emptyEl.style.display='';
         list.querySelectorAll('.ksd-item').forEach(function(i){i.remove();});
         fetch('/api/brands/by-category/'+catId)
             .then(function(r){return r.json();})
@@ -432,7 +432,7 @@ function initKsd(opts) {
     userItems.forEach(function(item){
         item.addEventListener('click',function(){
             var val=this.dataset.value, lbl=this.dataset.label||this.textContent;
-            userHidden.value=val; userLabel.textContent=val?lbl:'Select user�';
+            userHidden.value=val; userLabel.textContent=val?lbl:'Select user…';
             userLabel.classList.toggle('placeholder',!val); userTrigger.classList.toggle('ksd-has-value',!!val);
             userItems.forEach(function(i){i.classList.remove('ksd-selected');}); this.classList.add('ksd-selected');
             closeUser(); renderStores(val);
@@ -456,9 +456,9 @@ function initKsd(opts) {
     function renderStores(userId){
         storeList.querySelectorAll('.ksd-item').forEach(function(i){i.remove();}); storeHidden.value=''; storeLabel.textContent='No Store'; storeLabel.classList.add('placeholder'); storeTrigger.classList.remove('ksd-has-value');
         var filtered=userId?allStores.filter(function(s){return String(s.user_id)===String(userId);}):[];
-        if(!filtered.length){ storeEmpty.textContent=userId?'No stores for this user':'Select a user first�'; storeEmpty.style.display=''; return; }
+        if(!filtered.length){ storeEmpty.textContent=userId?'No stores for this user':'Select a user first…'; storeEmpty.style.display=''; return; }
         storeEmpty.textContent='No stores match'; storeEmpty.style.display='none';
-        var none=document.createElement('div'); none.className='ksd-item'; none.dataset.value=''; none.dataset.label='No Store'; none.dataset.search=''; none.textContent='� No Store �'; storeList.insertBefore(none,storeEmpty);
+        var none=document.createElement('div'); none.className='ksd-item'; none.dataset.value=''; none.dataset.label='No Store'; none.dataset.search=''; none.textContent='… No Store …'; storeList.insertBefore(none,storeEmpty);
         filtered.forEach(function(s){ var item=document.createElement('div'); item.className='ksd-item'; item.dataset.value=String(s.id); item.dataset.label=s.name; item.dataset.search=s.name.toLowerCase(); item.textContent=s.name; storeList.insertBefore(item,storeEmpty); });
         // Pre-select current store
         var curStore=storeHidden.value; if(curStore){ var sm=storeList.querySelector('.ksd-item[data-value="'+curStore+'"]'); if(sm){sm.classList.add('ksd-selected');storeLabel.textContent=sm.dataset.label;storeLabel.classList.remove('placeholder');storeTrigger.classList.add('ksd-has-value');} }
@@ -486,7 +486,7 @@ function initKsd(opts) {
 })();
 
 // -- Location ksd ---------------------------------------------------------
-initKsd({ triggerId:'ksdLocTrigger', dropdownId:'ksdLocDropdown', searchId:'ksdLocSearch', listId:'ksdLocList', hiddenId:'ksd-loc-val', labelId:'ksdLocLabel', emptyId:'ksdLocEmpty', placeholder:'� No Location �' });
+initKsd({ triggerId:'ksdLocTrigger', dropdownId:'ksdLocDropdown', searchId:'ksdLocSearch', listId:'ksdLocList', hiddenId:'ksd-loc-val', labelId:'ksdLocLabel', emptyId:'ksdLocEmpty', placeholder:'— No Location —' });
 
 // -- Category-fields integration -------------------------------------------
 (function(){
@@ -554,7 +554,7 @@ function aiSuggestListing(listingId){
 document.addEventListener('DOMContentLoaded',function(){
     if(typeof Quill==='undefined'||!document.getElementById('descEditor')) return;
     var hidden=document.getElementById('descHidden');
-    var quill=new Quill('#descEditor',{theme:'snow',placeholder:'Describe condition, size, colour, reason for selling�',modules:{toolbar:[['bold','italic','underline'],['link'],['clean']]}});
+    var quill=new Quill('#descEditor',{theme:'snow',placeholder:'Describe condition, size, colour, reason for selling…',modules:{toolbar:[['bold','italic','underline'],['link'],['clean']]}});
     window._quillDesc=quill;
     if(hidden&&hidden.value.trim()) quill.clipboard.dangerouslyPasteHTML(hidden.value);
     var form=document.getElementById('alcForm');

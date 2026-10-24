@@ -78,7 +78,7 @@ var adcAllListings = @json($adcListingsJson);
                                      data-value="{{ $user->id }}" data-label="{{ $user->name }}"
                                      data-search="{{ strtolower($user->name.' '.$user->email) }}">{{ $user->name }} — {{ $user->email }}</div>
                                 @endforeach
-                                <div class="ksd-empty" id="adcUserEmpty" class="hidden">No users match</div>
+                                <div class="ksd-empty" id="adcUserEmpty" style="display:none">No users match</div>
                             </div>
                         </div>
                     </div>
@@ -94,7 +94,7 @@ var adcAllListings = @json($adcListingsJson);
                         <div class="ksd-dropdown" id="adcStoreDropdown">
                             <div class="ksd-search-row"><input type="text" class="ksd-search" id="adcStoreSearch" placeholder="Search store…" autocomplete="off"></div>
                             <div class="ksd-list" id="adcStoreList">
-                                <div class="ksd-empty" id="adcStoreEmpty" class="hidden">No stores match</div>
+                                <div class="ksd-empty" id="adcStoreEmpty" style="display:none">No stores match</div>
                             </div>
                         </div>
                     </div>
@@ -130,7 +130,7 @@ var adcAllListings = @json($adcListingsJson);
                 <p class="adc-card-sub">Link a listing or enter a manual title</p>
             </div>
         </div>
-        <div class="adc-field" class="mb-14">
+        <div class="adc-field mb-14">
             <label class="adc-label">Link to Existing Listing <span class="fs-115-hint">(optional — fills original price automatically)</span></label>
             <input type="hidden" name="listing_id" id="adcListingVal" value="{{ $oldListingId }}">
             <div class="ksd-wrap">
@@ -152,7 +152,7 @@ var adcAllListings = @json($adcListingsJson);
                             <span class="green-fw7-ml4">LKR {{ number_format($l->price) }}</span>
                         </div>
                         @endforeach
-                        <div class="ksd-empty" id="adcListingEmpty" class="hidden">No listings match</div>
+                        <div class="ksd-empty" id="adcListingEmpty" style="display:none">No listings match</div>
                     </div>
                 </div>
             </div>
@@ -177,7 +177,7 @@ var adcAllListings = @json($adcListingsJson);
                 <p class="adc-card-sub">Original price and discounted deal price</p>
             </div>
         </div>
-        <div class="adc-grid" class="mb-14">
+        <div class="adc-grid mb-14">
             <div class="adc-field">
                 <label class="adc-label">Original Price (LKR) <span class="adc-req">*</span></label>
                 <input name="original_price" id="adcOrigPrice" type="number" step="1" min="0" class="adc-input" value="{{ old('original_price') }}" placeholder="0">

@@ -54,7 +54,7 @@
 </div>
 
 {{-- Pending Stores --}}
-<section class="sa-card" class="mb-24">
+<section class="sa-card mb-24">
     <div class="sa-card-head">
         <h2>Stores Waiting for Approval</h2>
         <span>{{ $pendingStores->count() }} pending</span>
@@ -90,7 +90,7 @@
 </section>
 
 {{-- Pending Listings --}}
-<section class="sa-card" class="mb-24">
+<section class="sa-card mb-24">
     <div class="sa-card-head">
         <h2>Listings Waiting for Approval</h2>
         <span>{{ $pendingListings->count() }} pending</span>
@@ -128,7 +128,7 @@
 </section>
 
 {{-- Pending Services --}}
-<section class="sa-card" class="mb-24">
+<section class="sa-card mb-24">
     <div class="sa-card-head">
         <h2>Services Waiting for Approval</h2>
         <span>{{ $pendingServices->count() }} pending</span>

@@ -32,7 +32,7 @@
     </div>
     <div class="be-stat">
         <span class="be-stat-val fs14-pt4">
-            <span class="sa-status {{ $brand->is_active ? 'active' : 'suspended' }}" class="fs-12">{{ $brand->is_active ? 'Active' : 'Inactive' }}</span>
+            <span class="sa-status {{ $brand->is_active ? 'active' : 'suspended' }} fs-12">{{ $brand->is_active ? 'Active' : 'Inactive' }}</span>
         </span>
         <span class="be-stat-key">Status</span>
     </div>

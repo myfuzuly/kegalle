@@ -85,7 +85,7 @@
         </div>
         <div class="alc-field">
             <label class="alc-label">Ad Title <span class="alc-req">*</span></label>
-            <input name="title" id="aiTitleField" required class="alc-input" value="{{ old('title',$listing->title) }}" maxlength="180" placeholder="e.g. Honda CB125 2019 � Good Condition">
+            <input name="title" id="aiTitleField" required class="alc-input" value="{{ old('title',$listing->title) }}" maxlength="180" placeholder="e.g. Honda CB125 2019 — Good Condition">
         </div>
     </div>
 
@@ -115,13 +115,13 @@
                 <input type="hidden" name="brand_id" id="admin-brand-val" value="{{ old('brand_id',$currentBrandId??'') }}">
                 <div class="ksd-wrap">
                     <button type="button" class="ksd-trigger {{ ($currentBrandId??'')?'ksd-has-value':'' }}" id="adminBrandTrigger">
-                        <span class="ksd-trigger-text {{ ($currentBrandId??'')?'':'placeholder' }}" id="adminBrandLabel">{{ ($currentBrandId??'')?'Loading�':'Select category first�' }}</span>
+                        <span class="ksd-trigger-text {{ ($currentBrandId??'')?'':'placeholder' }}" id="adminBrandLabel">{{ ($currentBrandId??'')?'Loading…':'Select category first…' }}</span>
                         <svg class="ksd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
                     <div class="ksd-dropdown" id="adminBrandDropdown">
-                        <div class="ksd-search-row"><input type="text" class="ksd-search" id="adminBrandSearch" placeholder="Search brand�" autocomplete="off"></div>
+                        <div class="ksd-search-row"><input type="text" class="ksd-search" id="adminBrandSearch" placeholder="Search brand…" autocomplete="off"></div>
                         <div class="ksd-list" id="adminBrandList">
-                            <div class="ksd-empty" id="adminBrandEmpty">Select a category first�</div>
+                            <div class="ksd-empty" id="adminBrandEmpty">Select a category first…</div>
                         </div>
                     </div>
                 </div>
@@ -143,7 +143,7 @@
         @php
             $selLocId=old('location_id',$listing->location_id??'');
             $selLocLabel='';
-            if($selLocId){ $selLoc=$locations->firstWhere('id',$selLocId); if($selLoc){ if($selLoc->parent_id){ $selLocParent=$locations->firstWhere('id',$selLoc->parent_id); $selLocLabel=($selLocParent?$selLocParent->name.' � ':'').$selLoc->name; } else { $selLocLabel=$selLoc->name.' (All)'; } } }
+            if($selLocId){ $selLoc=$locations->firstWhere('id',$selLocId); if($selLoc){ if($selLoc->parent_id){ $selLocParent=$locations->firstWhere('id',$selLoc->parent_id); $selLocLabel=($selLocParent?$selLocParent->name.' — ':'').$selLoc->name; } else { $selLocLabel=$selLoc->name.' (All)'; } } }
         @endphp
         <div class="alc-grid">
             <div class="alc-field">
@@ -151,21 +151,21 @@
                 <input type="hidden" name="location_id" id="ksd-loc-val" value="{{ $selLocId }}">
                 <div class="ksd-wrap">
                     <button type="button" class="ksd-trigger {{ $selLocLabel?'ksd-has-value':'' }}" id="ksdLocTrigger">
-                        <span class="ksd-trigger-text {{ $selLocLabel?'':'placeholder' }}" id="ksdLocLabel">{{ $selLocLabel?:'� No Location �' }}</span>
+                        <span class="ksd-trigger-text {{ $selLocLabel?'':'placeholder' }}" id="ksdLocLabel">{{ $selLocLabel?:'— No Location —' }}</span>
                         <svg class="ksd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
-                    <div class="ksd-dropdown" id="ksdLocDropdown" class="hidden">
-                        <div class="ksd-search-row"><input type="text" class="ksd-search" id="ksdLocSearch" placeholder="Type to search�" autocomplete="off"></div>
+                    <div class="ksd-dropdown" id="ksdLocDropdown" style="display:none">
+                        <div class="ksd-search-row"><input type="text" class="ksd-search" id="ksdLocSearch" placeholder="Type to search…" autocomplete="off"></div>
                         <div class="ksd-list" id="ksdLocList">
-                            <div class="ksd-item {{ !$selLocId?'ksd-selected':'' }}" data-value="" data-label="� No Location �" data-search="" data-group="">� No Location �</div>
+                            <div class="ksd-item {{ !$selLocId?'ksd-selected':'' }}" data-value="" data-label="— No Location —" data-search="" data-group="">— No Location —</div>
                             @foreach($locations->whereNull('parent_id') as $parentLoc)
                                 <div class="ksd-group-label" data-group="{{ $parentLoc->id }}">{{ strtoupper($parentLoc->name) }}</div>
                                 <div class="ksd-item ksd-indent {{ $selLocId==$parentLoc->id?'ksd-selected':'' }}" data-value="{{ $parentLoc->id }}" data-label="{{ $parentLoc->name }} (All)" data-search="{{ strtolower($parentLoc->name) }}" data-group="{{ $parentLoc->id }}">📍 {{ $parentLoc->name }} (All)</div>
                                 @foreach($locations->where('parent_id',$parentLoc->id) as $loc)
-                                    <div class="ksd-item ksd-indent {{ $selLocId==$loc->id?'ksd-selected':'' }}" data-value="{{ $loc->id }}" data-label="{{ $parentLoc->name }} � {{ $loc->name }}" data-search="{{ strtolower($parentLoc->name.' '.$loc->name) }}" data-group="{{ $parentLoc->id }}">{{ $loc->name }}</div>
+                                    <div class="ksd-item ksd-indent {{ $selLocId==$loc->id?'ksd-selected':'' }}" data-value="{{ $loc->id }}" data-label="{{ $parentLoc->name }} — {{ $loc->name }}" data-search="{{ strtolower($parentLoc->name.' '.$loc->name) }}" data-group="{{ $parentLoc->id }}">{{ $loc->name }}</div>
                                 @endforeach
                             @endforeach
-                            <div class="ksd-empty" id="ksdLocEmpty" class="hidden">No locations match</div>
+                            <div class="ksd-empty" id="ksdLocEmpty" style="display:none">No locations match</div>
                         </div>
                     </div>
                 </div>
@@ -183,7 +183,7 @@
             <div class="alc-card-icon slate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
             <div>
                 <p class="alc-card-title">Description</p>
-                <p class="alc-card-sub">English � Sinhala � Tamil</p>
+                <p class="alc-card-sub">English — Sinhala — Tamil</p>
             </div>
         </div>
 
@@ -252,13 +252,13 @@
                         <span class="ksd-trigger-text" id="alcPlLabel">{{ $plMap[$plVal]??'Fixed Price' }}</span>
                         <svg class="ksd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
-                    <div class="ksd-dropdown" id="alcPlDropdown" class="hidden">
+                    <div class="ksd-dropdown" id="alcPlDropdown" style="display:none">
                         <div class="ksd-search-row"><input type="text" class="ksd-search" id="alcPlSearch" placeholder="Search…" autocomplete="off"></div>
                         <div class="ksd-list" id="alcPlList">
                             @foreach($plMap as $v=>$l)
                             <div class="ksd-item {{ $plVal===$v?'ksd-selected':'' }}" data-value="{{ $v }}" data-label="{{ $l }}" data-search="{{ strtolower($l) }}">{{ $l }}</div>
                             @endforeach
-                            <div class="ksd-empty" id="alcPlEmpty" class="hidden">No match</div>
+                            <div class="ksd-empty" id="alcPlEmpty" style="display:none">No match</div>
                         </div>
                     </div>
                 </div>
@@ -320,7 +320,7 @@
                         @foreach($alcStatMap as $v=>$l)
                         <div class="ksd-item {{ $alcStatVal===$v?'ksd-selected':'' }}" data-value="{{ $v }}" data-label="{{ $l }}" data-search="{{ strtolower($v) }}">{{ $l }}</div>
                         @endforeach
-                        <div class="ksd-empty" id="alcStatEmpty" class="hidden">No match</div>
+                        <div class="ksd-empty" id="alcStatEmpty" style="display:none">No match</div>
                     </div>
                 </div>
             </div>
@@ -388,8 +388,8 @@ window.cfExistingValues = {!! json_encode(['brand_id'=>$currentBrandId??null]+($
         var cur=hidden.value; if(cur){ var m=list.querySelector('.ksd-item[data-value="'+cur+'"]'); if(m){m.classList.add('ksd-selected');label.textContent=m.textContent;label.classList.remove('placeholder');trigger.classList.add('ksd-has-value');} }
     }
     window.adminLoadBrands=function(catId){
-        if(!catId){ emptyEl.textContent='Select a category first�'; emptyEl.style.display=''; list.querySelectorAll('.ksd-item').forEach(function(i){i.remove();}); return; }
-        hidden.value=''; label.textContent='Select Brand�'; label.classList.add('placeholder'); trigger.classList.remove('ksd-has-value');
+        if(!catId){ emptyEl.textContent='Select a category first…'; emptyEl.style.display=''; list.querySelectorAll('.ksd-item').forEach(function(i){i.remove();}); return; }
+        hidden.value=''; label.textContent='Select Brand…'; label.classList.add('placeholder'); trigger.classList.remove('ksd-has-value');
         fetch('/api/brands/by-category/'+catId).then(function(r){return r.json();}).then(renderBrands).catch(function(){emptyEl.textContent='Failed to load'; emptyEl.style.display='';});
     };
     // Auto-load brands for current category
@@ -425,7 +425,7 @@ window.cfExistingValues = {!! json_encode(['brand_id'=>$currentBrandId??null]+($
     trigger.addEventListener('click',function(e){ e.stopPropagation(); open?closeD():openD(); });
     document.addEventListener('click',function(e){ if(open&&!trigger.contains(e.target)&&!dropdown.contains(e.target)) closeD(); });
     search.addEventListener('input',function(){ filterItems(this.value.toLowerCase()); });
-    items.forEach(function(item){ item.addEventListener('click',function(){ var val=this.dataset.value,lbl=this.dataset.label; hidden.value=val; label.textContent=lbl||'� No Location �'; label.classList.toggle('placeholder',!val); trigger.classList.toggle('ksd-has-value',!!val); items.forEach(function(i){i.classList.remove('ksd-selected');}); this.classList.add('ksd-selected'); closeD(); }); });
+    items.forEach(function(item){ item.addEventListener('click',function(){ var val=this.dataset.value,lbl=this.dataset.label; hidden.value=val; label.textContent=lbl||'— No Location —'; label.classList.toggle('placeholder',!val); trigger.classList.toggle('ksd-has-value',!!val); items.forEach(function(i){i.classList.remove('ksd-selected');}); this.classList.add('ksd-selected'); closeD(); }); });
     function filterItems(q){ var vis={}; items.forEach(function(i){ var m=!q||i.dataset.search.indexOf(q)!==-1||(i.dataset.label||'').toLowerCase().indexOf(q)!==-1; i.style.display=m?'':'none'; if(m&&i.dataset.group) vis[i.dataset.group]=true; }); groups.forEach(function(g){ g.style.display=(!q||vis[g.dataset.group])?'':'none'; }); if(emptyEl) emptyEl.style.display=Array.from(items).some(function(i){return i.style.display!=='none';})?'none':''; }
 })();
 
@@ -503,11 +503,11 @@ document.addEventListener('DOMContentLoaded',function(){
 
     // English
     var hidden=document.getElementById('descHidden');
-    var quill=new Quill('#descEditor',{theme:'snow',placeholder:'Describe condition, size, colour, reason for selling�',modules:{toolbar:toolbar}});
+    var quill=new Quill('#descEditor',{theme:'snow',placeholder:'Describe condition, size, colour, reason for selling…',modules:{toolbar:toolbar}});
     window._quillDesc=quill;
     if(hidden&&hidden.value.trim()) quill.clipboard.dangerouslyPasteHTML(hidden.value);
 
-    // Sinhala & Tamil � lazy init
+    // Sinhala & Tamil — lazy init
     var hiddenSi=document.getElementById('descSiHidden');
     var hiddenTa=document.getElementById('descTaHidden');
     var quillSi=null, quillTa=null;
@@ -541,12 +541,12 @@ document.addEventListener('DOMContentLoaded',function(){
         toggleBtn.style.color=open?'#374151':'#64748b';
         if(open){
             if(lang==='si'&&!quillSi){
-                quillSi=new Quill('#descSiEditor',{theme:'snow',placeholder:'????? ???????�',modules:{toolbar:toolbar}});
+                quillSi=new Quill('#descSiEditor',{theme:'snow',placeholder:'தமிழ் விளக்கம்…',modules:{toolbar:toolbar}});
                 window._quillSi=quillSi;
                 if(hiddenSi&&hiddenSi.value.trim()) quillSi.clipboard.dangerouslyPasteHTML(hiddenSi.value);
             }
             if(lang==='ta'&&!quillTa){
-                quillTa=new Quill('#descTaEditor',{theme:'snow',placeholder:'????? ????????�',modules:{toolbar:toolbar}});
+                quillTa=new Quill('#descTaEditor',{theme:'snow',placeholder:'தமிழ் விளக்கம்…',modules:{toolbar:toolbar}});
                 window._quillTa=quillTa;
                 if(hiddenTa&&hiddenTa.value.trim()) quillTa.clipboard.dangerouslyPasteHTML(hiddenTa.value);
             }
@@ -580,7 +580,7 @@ document.addEventListener('DOMContentLoaded',function(){
         if(panel&&(panel.style.display==='none'||panel.style.display==='')) toggleLang(langShort);
         var plain=quill.root.innerText.trim();
         if(!plain){alert('Please write the English description first.');return;}
-        btn.disabled=true;lbl.textContent='Translating�';btn.style.opacity='.65';
+        btn.disabled=true;lbl.textContent='Translating…';btn.style.opacity='.65';
         fetch('/admin/ai/translate-text',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-TOKEN':getToken()},body:JSON.stringify({text:plain,language:language})})
         .then(function(r){return r.json();})
         .then(function(d){

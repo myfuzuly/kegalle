@@ -144,7 +144,7 @@
                         <span class="ksd-trigger-text {{ $selLocId ? '' : 'placeholder' }}" id="prdLocLabel">{{ $selLocLabel ?: '— No Location —' }}</span>
                         <svg class="ksd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
-                    <div class="ksd-dropdown" id="prdLocDropdown" class="hidden">
+                    <div class="ksd-dropdown" id="prdLocDropdown" style="display:none">
                         <div class="ksd-search-row"><input type="text" class="ksd-search" id="prdLocSearch" placeholder="Type to search…" autocomplete="off"></div>
                         <div class="ksd-list" id="prdLocList">
                             <div class="ksd-item {{ !$selLocId ? 'ksd-selected' : '' }}" data-value="" data-label="— No Location —" data-search="" data-group="">— No Location —</div>
@@ -155,7 +155,7 @@
                                     <div class="ksd-item ksd-indent {{ $selLocId==$loc->id ? 'ksd-selected' : '' }}" data-value="{{ $loc->id }}" data-label="{{ $parentLoc->name }} — {{ $loc->name }}" data-search="{{ strtolower($parentLoc->name.' '.$loc->name) }}" data-group="{{ $parentLoc->id }}">{{ $loc->name }}</div>
                                 @endforeach
                             @endforeach
-                            <div class="ksd-empty" id="prdLocEmpty" class="hidden">No locations match</div>
+                            <div class="ksd-empty" id="prdLocEmpty" style="display:none">No locations match</div>
                         </div>
                     </div>
                 </div>
@@ -238,13 +238,13 @@
                         <span class="ksd-trigger-text" id="prdPlLabel">{{ $plMap[$plVal]??'Fixed Price' }}</span>
                         <svg class="ksd-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
                     </button>
-                    <div class="ksd-dropdown" id="prdPlDropdown" class="hidden">
+                    <div class="ksd-dropdown" id="prdPlDropdown" style="display:none">
                         <div class="ksd-search-row"><input type="text" class="ksd-search" id="prdPlSearch" placeholder="Search…" autocomplete="off"></div>
                         <div class="ksd-list" id="prdPlList">
                             @foreach($plMap as $v=>$l)
                             <div class="ksd-item {{ $plVal===$v?'ksd-selected':'' }}" data-value="{{ $v }}" data-label="{{ $l }}" data-search="{{ strtolower($l) }}">{{ $l }}</div>
                             @endforeach
-                            <div class="ksd-empty" id="prdPlEmpty" class="hidden">No match</div>
+                            <div class="ksd-empty" id="prdPlEmpty" style="display:none">No match</div>
                         </div>
                     </div>
                 </div>

@@ -51,7 +51,7 @@
       <span id="dcdLabel" class="dcd-placeholder">Search and choose a listing…</span>
       <svg class="dcd-chevron" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
     </div>
-    <div class="dcd-dropdown" id="dcdDropdown" class="hidden">
+    <div class="dcd-dropdown" id="dcdDropdown" style="display:none">
       <div class="dcd-search-row">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" class="flex-shrink-0"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
         <input type="text" class="dcd-search-input" id="dcdSearch" placeholder="Search by title or store…" autocomplete="off">
@@ -70,17 +70,17 @@
           <div class="dcd-item-price">LKR {{ number_format($listing->price ?? 0) }}</div>
         </div>
         @endforeach
-        <div class="dcd-empty" id="dcdEmpty" class="hidden">No listings match your search</div>
+        <div class="dcd-empty" id="dcdEmpty" style="display:none">No listings match your search</div>
       </div>
     </div>
   </div>
-  <div class="dc-hint" class="mt-8">Only approved listings are shown. <a class="text-green-fw6" href="/dashboard/listings/create">Post a new listing →</a></div>
+  <div class="dc-hint mt-8">Only approved listings are shown. <a class="text-green-fw6" href="/dashboard/listings/create">Post a new listing →</a></div>
 </div>
 
 {{-- Section 2: Pricing --}}
 <div class="dc-card">
   <div class="dc-card-title"><span>💰</span> Deal Pricing</div>
-  <div class="dc-grid" class="mb-18">
+  <div class="dc-grid mb-18">
     <div>
       <label class="dc-label">Original Price</label>
       <input type="text" id="dealOrigPrice" readonly class="dc-input" placeholder="Select a listing first">
@@ -91,7 +91,7 @@
     </div>
   </div>
   {{-- Discount preview --}}
-  <div class="dc-discount-preview" id="dealDiscountPreview" class="hidden">
+  <div class="dc-discount-preview" id="dealDiscountPreview" style="display:none">
     <div class="dc-discount-badge" id="dealDiscountPct">0%</div>
     <div class="dc-discount-text">OFF — buyers save <strong id="dealSaveAmt">LKR 0</strong></div>
   </div>
@@ -110,7 +110,7 @@
       <input type="date" name="ends_at" required value="{{ old('ends_at', date('Y-m-d', strtotime('+7 days'))) }}" class="dc-input">
     </div>
   </div>
-  <div class="dc-hint" class="mt-10">Deal won't show after the end date even if still approved.</div>
+  <div class="dc-hint mt-10">Deal won't show after the end date even if still approved.</div>
 </div>
 
 {{-- Section 4: Options --}}
