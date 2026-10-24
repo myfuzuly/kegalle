@@ -8,7 +8,7 @@
 @section('content')
 
 @if(session('success'))
-<div class="prf-alert prf-alert-success" style="margin-bottom:20px">
+<div class="prf-alert prf-alert-success ks-301969">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
   {{ session('success') }}
 </div>

@@ -52,6 +52,7 @@
 <link rel="preload" href="/fonts/pjs-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/css/kegalle-fonts.css?v=1">
 @vite(['resources/css/app.css', 'resources/js/app.js'], 'vite-dist')
+<link rel="stylesheet" href="/css/kegalle-migrated.css?v=1">
 @if(request()->is('/'))
 @endif
 <link rel="shortcut icon" href="/favicon-v2.ico">
@@ -523,6 +524,7 @@ if(b2){b2.textContent=c;b2.style.display='inline';}
         var panelId = 'kFpanel-' + Math.random().toString(36).slice(2);
         var panel = document.createElement('div');
         panel.id = panelId;
+        panel.className = 'k-footer-panel';
         links.forEach(function(el){ panel.appendChild(el); });
         col.appendChild(panel);
         h.setAttribute('aria-controls', panelId);

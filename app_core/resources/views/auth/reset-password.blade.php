@@ -16,14 +16,14 @@
                 <div class="k-auth-visual">🔐✅🎉</div>
             </div>
             <div class="k-auth-right">
-                <div style="text-align:center;margin-bottom:24px">
-                    <div style="width:56px;height:56px;background:var(--k-primary-xlight);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 14px">🔐</div>
+                <div class="ks-b06c29">
+                    <div class="ks-842dc4">🔐</div>
                     <h3>Set New Password</h3>
                     <p class="subtitle">Enter your new password below.</p>
                 </div>
 
                 @if($errors->any())
-                    <div class="k-alert" style="background:var(--k-red-light);color:var(--k-red);padding:12px 16px;border-radius:var(--k-radius);margin-bottom:16px;font-size:13px">{{ $errors->first() }}</div>
+                    <div class="k-alert ks-7b7704">{{ $errors->first() }}</div>
                 @endif
 
                 <form method="POST" action="{{ route('password.update') }}">
@@ -44,10 +44,10 @@
                             <input id="confirm-password" type="password" name="password_confirmation" class="k-form-control with-icon" placeholder="Confirm new password" required>
                         </div>
                     </div>
-                    <button type="submit" class="k-btn k-btn-primary k-btn-lg w-full" style="justify-content:center;margin-bottom:16px;border:none;cursor:pointer">Reset Password</button>
+                    <button type="submit" class="k-btn k-btn-primary k-btn-lg w-full ks-36bd0a">Reset Password</button>
                 </form>
 
-                <p style="text-align:center;font-size:13px;color:var(--k-text-secondary)"><a href="/login" style="color:var(--k-primary);font-weight:700;text-decoration:none">← Back to Login</a></p>
+                <p class="ks-1decac"><a href="/login" class="ks-f16752">← Back to Login</a></p>
             </div>
         </div>
     </div>

@@ -80,7 +80,7 @@
     </div>
 
     @if($parents->isEmpty())
-        <div class="kcat-no-results" style="display:flex;padding:64px 0">
+        <div class="kcat-no-results ks-d72816">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
             <p>No locations found. <a href="/listings">Browse all listings</a></p>
         </div>

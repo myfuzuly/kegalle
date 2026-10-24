@@ -72,7 +72,7 @@
             contentEl.innerHTML = html;
         })
         .catch(function() {
-            loadingEl.innerHTML = '<p style="color:var(--k-red)">Failed to load saved listings. Please try again.</p>';
+            loadingEl.innerHTML = '<p class="ks-9815b2">Failed to load saved listings. Please try again.</p>';
         });
 
     function buildCard(l) {

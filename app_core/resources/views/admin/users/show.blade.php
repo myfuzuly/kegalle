@@ -36,7 +36,7 @@
         </div>
 
         {{-- Avatar --}}
-        <div class="auc-avatar-row" style="margin-bottom:18px">
+        <div class="auc-avatar-row ks-be2540">
             <input type="file" name="avatar" id="aucAvatarInput" accept="image/jpeg,image/png,image/webp" class="hidden">
             <div class="auc-avatar-zone ka-pos-relative" id="aucAvatarZone">
                 @if($user->avatar)
@@ -263,21 +263,21 @@
             @csrf
             <div class="ka-flex-row-8">
                 <input type="number" name="store_limit" value="{{ $user->store_limit ?? 1 }}" min="1" max="999" class="auc-input" style="width:80px">
-                <button type="submit" class="ka-btn ka-btn-primary" style="white-space:nowrap">Set Limit</button>
+                <button type="submit" class="ka-btn ka-btn-primary ks-4ddbe9">Set Limit</button>
             </div>
         </form>
     </div>
 
     {{-- Danger Zone --}}
     @if($user->id !== auth()->id())
-    <div class="auc-card" style="border-color:#fca5a5">
+    <div class="auc-card ks-5b9366">
         <div class="auc-card-header">
-            <div class="auc-card-icon" style="background:#fee2e2">⚠️</div>
+            <div class="auc-card-icon ks-17285e">⚠️</div>
             <div><p class="auc-card-title ka-text-danger">Danger Zone</p><p class="auc-card-sub">Irreversible actions</p></div>
         </div>
         <form method="POST" action="/admin/users/{{ $user->id }}" data-confirm="Delete {{ $user->name }}? This cannot be undone." >
             @csrf @method('DELETE')
-            <button type="submit" class="ka-btn" style="background:#dc2626;color:#fff;width:100%">🗑 Delete User</button>
+            <button type="submit" class="ka-btn ks-823b10">🗑 Delete User</button>
         </form>
     </div>
     @endif
@@ -288,15 +288,15 @@
 
 {{-- ── DANGER ZONE ─────────────────────────────────────────────────────── --}}
 @if($user->id !== auth()->id() && !in_array($user->role, ['super_admin']))
-<div class="dz-box ka-danger-zone" style="margin-top:32px">
+<div class="dz-box ka-danger-zone ks-4b015f">
     <div class="ka-danger-zone-head">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         <span class="ka-danger-zone-title">Danger Zone</span>
     </div>
     <p class="ka-danger-zone-desc">These actions are permanent and cannot be undone. All listings, stores and data belonging to this user will be deleted.</p>
     <div class="ka-danger-zone-actions">
-        <button type="button" id="dzDeleteBtn" class="ka-btn" style="background:#dc2626;color:#fff;border-color:#dc2626;font-weight:700;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        <button type="button" id="dzDeleteBtn" class="ka-btn ks-a82a78">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ks-e5876b"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
             Delete User & All Data
         </button>
     </div>
@@ -321,7 +321,7 @@
             <button type="button" id="dzCancelBtn" class="ka-modal-btn-cancel">Cancel</button>
             <form method="POST" action="/admin/users/{{ $user->id }}" id="dzDeleteForm" style="flex:1;">
                 @csrf @method('DELETE')
-                <button type="submit" id="dzConfirmBtn" class="ka-modal-btn-danger" style="opacity:.4;pointer-events:none;">Delete Permanently</button>
+                <button type="submit" id="dzConfirmBtn" class="ka-modal-btn-danger ks-ffa199">Delete Permanently</button>
             </form>
         </div>
     </div>

@@ -28,8 +28,8 @@
                 <button class="kg-btn kg-btn-primary kg-auth-btn" type="submit">Resend Verification Email</button>
             </form>
             @else
-            <p style="font-size:14px;color:var(--k-text-secondary);margin-top:8px">
-                Once verified, <a href="/login" style="color:var(--k-primary)">login to your account</a>.
+            <p class="ks-479ec4">
+                Once verified, <a href="/login" class="ks-6be76e">login to your account</a>.
             </p>
             @endauth
         </div>

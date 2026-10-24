@@ -40,7 +40,7 @@
                         @if($service->image)
                             <img src="{{ asset('storage/'.$service->image) }}" alt="">
                         @else
-                            <span style="font-size:18px">🛠️</span>
+                            <span class="ks-bf83cf">🛠️</span>
                         @endif
                     </div>
                     <div>
@@ -68,16 +68,16 @@
                     <a href="/services/{{ $service->slug }}" target="_blank" class="ka-btn ka-btn-light" style="font-size:12px;padding:4px 10px">View</a>
                     @if($service->status !== 'approved')
                     <form method="post" action="/admin/services/{{ $service->id }}/approve" class="ka-d-inline">@csrf
-                        <button class="ka-btn" style="font-size:12px;padding:4px 10px;background:#dcfce7;color:#166534;border-color:#bbf7d0">✓</button>
+                        <button class="ka-btn ks-de709d">✓</button>
                     </form>
                     @endif
                     @if($service->status !== 'rejected')
                     <form method="post" action="/admin/services/{{ $service->id }}/reject" data-confirm="Reject this service?" class="ka-d-inline">@csrf
-                        <button class="ka-btn" style="font-size:12px;padding:4px 10px;background:#fee2e2;color:#991b1b;border-color:#fecaca">✕</button>
+                        <button class="ka-btn ks-bdb4d5">✕</button>
                     </form>
                     @endif
                     <form method="post" action="/admin/services/{{ $service->id }}" data-confirm="Delete this service permanently?" class="ka-d-inline">@csrf @method('DELETE')
-                        <button class="ka-btn ka-btn-danger" style="font-size:12px;padding:4px 10px">🗑</button>
+                        <button class="ka-btn ka-btn-danger ks-433164">🗑</button>
                     </form>
                 </div>
             </td>

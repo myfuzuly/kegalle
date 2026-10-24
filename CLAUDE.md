@@ -13,7 +13,8 @@ Laravel 11 app for kegalle.com (classifieds + stores for the Kegalle district). 
 | Business logic | `app/Services/` — controllers stay thin |
 
 Static CSS: `kegalle-admin-ds.css` (admin + seller design system, newest rules win), `kegalle-dashboard.css`, `kegalle-frontend.css`.
-Static JS: `kegalle-admin-ui.js` (admin/seller behaviours), `kegalle-ad-form.js` (post-ad form), `kegalle-main.js` (public site).
+Static JS: `kegalle-admin-ui.js` (admin/seller behaviours), `kegalle-actions.js` (public-site `data-*` behaviours: autosubmit, data-call, image fallbacks…), `kegalle-ad-form.js` (post-ad form).
+`kegalle-migrated.css` holds former inline styles (generated, linked from all three layouts); `resources/css/kegalle-components.css` holds shared public components (push prompt, footer accordion).
 Bump the `?v=N` on the `<link>`/`<script>` tag in the layout whenever a static file changes.
 
 ## Rules

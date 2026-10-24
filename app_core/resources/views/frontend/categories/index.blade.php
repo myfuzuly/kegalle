@@ -78,7 +78,7 @@
     </div>
 
     {{-- ── Popular Categories ──────────────────────────────────────────────── --}}
-    <div class="k-section" style="margin-bottom:32px">
+    <div class="k-section ks-4d06b8">
         <div class="kcat-popular-head">
             <h2 class="kcat-popular-title">Popular Categories</h2>
             <a href="/listings" class="kcat-popular-link">View all listings →</a>

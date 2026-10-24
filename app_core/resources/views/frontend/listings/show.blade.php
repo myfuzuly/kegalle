@@ -681,7 +681,7 @@
                             <span class="k-mf-caption">Details (optional)</span>
                             <textarea name="details" rows="3" maxlength="500" placeholder="Any extra details that will help us investigate…" class="k-mf-textarea"></textarea>
                         </label>
-                        <div id="kReportMsg" style="display:none;padding:8px 12px;border-radius:8px;font-size:13px;margin-bottom:8px"></div>
+                        <div id="kReportMsg" class="ks-2e8d28" style="display:none"></div>
                         <div class="k-mf-btn-row">
                             <button type="submit" id="kReportSubmitBtn" class="k-btn k-btn-primary k-mf-btn-submit">Submit Report</button>
                             <button type="button" id="kReportCancelBtn" class="k-btn k-mf-btn-cancel">Cancel</button>
@@ -738,9 +738,9 @@
         <div>
             <div class="k-seller-card mb-16">
                 <div class="k-seller-card-top" @if(optional($listing->store)->banner) style="background-image:url('{{ asset('storage/'.ltrim($listing->store->banner,'/')) }}');background-size:cover;background-position:center;background-color:#1a5c1f;" @endif>
-                    @if(optional($listing->store)->banner)<div style="position:absolute;inset:0;background:linear-gradient(145deg,rgba(15,40,18,0.72),rgba(20,60,22,0.58));z-index:0;"></div>@endif
-                    <div class="k-seller-card-label" style="position:relative;z-index:1;">Seller Information</div>
-                    <div class="k-seller-card-header" style="position:relative;z-index:1;">
+                    @if(optional($listing->store)->banner)<div class="ks-105ab9"></div>@endif
+                    <div class="k-seller-card-label ks-4dad77">Seller Information</div>
+                    <div class="k-seller-card-header ks-4dad77">
                         <div class="k-seller-avatar">
                             @if(optional($listing->store)->logo)
                                 <img src="{{ asset('storage/'.ltrim($listing->store->logo,'/')) }}" alt="{{ $sellerName }}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">
@@ -790,7 +790,7 @@
                     @auth
                     @if(auth()->id() !== $listing->user_id)
                     @php $isBlocked = \App\Models\UserBlock::where('blocker_id',auth()->id())->where('blocked_id',$listing->user_id)->exists(); @endphp
-                    <div style="margin-top:10px;text-align:center">
+                    <div class="ks-2fc7ec">
                         <button id="kBlockBtn" data-uid="{{ $listing->user_id }}" style="font-size:11px;background:none;border:none;color:{{ $isBlocked?'#ef4444':'#94a3b8' }};cursor:pointer;text-decoration:underline;padding:0">
                             {{ $isBlocked ? '🚫 Unblock User' : '🚫 Block User' }}
                         </button>
@@ -931,8 +931,8 @@
             </div>
         </div>
     @elseif(isset($listing->category) && $listing->category)
-    <div class="k-section k-section--mt" style="text-align:center;padding:2rem 1rem;">
-        <p style="color:var(--k-muted);margin-bottom:1rem;">Browse more listings in <strong>{{ $listing->category->name }}</strong></p>
+    <div class="k-section k-section--mt ks-24c487">
+        <p class="ks-e7ebf8">Browse more listings in <strong>{{ $listing->category->name }}</strong></p>
         <a href="/listings?category={{ $listing->category->slug ?? $listing->category_id }}" class="k-btn k-btn-secondary">View all {{ $listing->category->name }} ads →</a>
     </div>
     @endif
@@ -1370,27 +1370,27 @@ function togglePriceAlert(btn) {
     <div class="k-modal-panel k-modal-panel-sm">
         <button type="button" id="kGuestEnquiryCloseBtn" class="k-modal-close" aria-label="Close enquiry form">×</button>
         <h2 id="kGeqTitle" class="k-modal-title">💬 Send Enquiry</h2>
-        <p class="k-modal-sub" style="margin-bottom:16px">{{ Str::limit($listing->title, 60) }}</p>
+        <p class="k-modal-sub ks-8e8697">{{ Str::limit($listing->title, 60) }}</p>
         <form id="kGeqForm" data-onsubmit="kGeqSubmit">
             @csrf
-            <label class="k-mf-label" style="display:block;margin-bottom:12px">
+            <label class="k-mf-label ks-372871">
                 <span class="k-mf-caption">Your Name *</span>
                 <input type="text" id="kGeqName" name="name" required class="k-mf-input" maxlength="80" autocomplete="name">
             </label>
-            <label class="k-mf-label" style="display:block;margin-bottom:12px">
+            <label class="k-mf-label ks-372871">
                 <span class="k-mf-caption">Phone or Email *</span>
                 <input type="text" id="kGeqContact" name="contact" required class="k-mf-input" maxlength="100" placeholder="+94 7X XXX XXXX or your@email.com">
             </label>
-            <label class="k-mf-label" style="display:block;margin-bottom:16px">
+            <label class="k-mf-label ks-e8799f">
                 <span class="k-mf-caption">Message *</span>
                 <textarea id="kGeqMsg" name="message" required class="k-mf-input" rows="3" maxlength="500" placeholder="Hi, is this item still available?"></textarea>
             </label>
             <button type="submit" id="kGeqBtn" class="k-btn k-btn-primary k-btn-full">Send Message</button>
         </form>
-        <div id="kGeqSuccess" style="display:none;text-align:center;padding:24px 0">
-            <div style="font-size:40px">✅</div>
-            <p style="font-weight:700;font-size:16px;margin-top:12px">Message Sent!</p>
-            <p style="color:#64748b;font-size:14px">The seller will get in touch with you directly.</p>
+        <div id="kGeqSuccess" class="ks-88ebca" style="display:none">
+            <div class="ks-42da83">✅</div>
+            <p class="ks-581f9d">Message Sent!</p>
+            <p class="ks-f16312">The seller will get in touch with you directly.</p>
         </div>
     </div>
 </div>

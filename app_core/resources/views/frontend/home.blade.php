@@ -321,10 +321,10 @@ $hClassified=($featuredClassified ?? collect())->merge($latestClassified ?? coll
                                     @if($svcImg)
                                         <img src="{{ $svcImg }}" alt="{{ $svc->title }}" loading="lazy">
                                     @else
-                                        <div class="k-listing-ph" style="font-size:2rem;display:flex;align-items:center;justify-content:center;height:100%;background:var(--k-bg-2);">🛠️</div>
+                                        <div class="k-listing-ph ks-1c28e2">🛠️</div>
                                     @endif
                                     @if($svc->service_type)
-                                        <span class="k-badge k-badge-blue" style="position:absolute;top:8px;left:8px;font-size:11px;">{{ ucwords(str_replace('_',' ',$svc->service_type)) }}</span>
+                                        <span class="k-badge k-badge-blue ks-076ddf">{{ ucwords(str_replace('_',' ',$svc->service_type)) }}</span>
                                     @endif
                                 </div>
                                 <div class="k-listing-body">
@@ -771,7 +771,7 @@ $hClassified=($featuredClassified ?? collect())->merge($latestClassified ?? coll
                 @endforeach
             @else
                 <a href="/listings?category=activities" class="kex-card kex-card--hero k-no-underline">
-                    <div class="kex-card-bg kex-ph-activities" style="background:linear-gradient(135deg,rgba(27,94,32,.55),rgba(46,125,50,.4)),center/cover no-repeat url('/images/kegalle-hero-clocktower-v3.png')"></div>
+                    <div class="kex-card-bg kex-ph-activities ks-9be523"></div>
                     <div class="kex-card-overlay"><div class="kex-card-body">
                         <div class="kex-card-pill">🚶 Activities</div>
                         <h4 class="kex-card-title">Activities</h4>
@@ -798,7 +798,7 @@ $hClassified=($featuredClassified ?? collect())->merge($latestClassified ?? coll
                     </div></div>
                 </a>
                 <a href="/listings?category=history" class="kex-card k-no-underline">
-                    <div class="kex-card-bg" style="background:center/cover no-repeat url('/images/kegalle-hero-clocktower-v3.png')"></div>
+                    <div class="kex-card-bg ks-bb3e79"></div>
                     <div class="kex-card-overlay"><div class="kex-card-body">
                         <div class="kex-card-pill">🏛️ History</div>
                         <h4 class="kex-card-title">Historic Places</h4>

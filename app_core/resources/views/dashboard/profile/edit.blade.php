@@ -42,16 +42,16 @@
       <h2>Personal Information</h2>
     </div>
     <div class="prf-card-body">
-      <div class="prf-avatar-wrap" id="avatarWrap" style="cursor:pointer;display:inline-block;position:relative;margin-bottom:16px">
+      <div class="prf-avatar-wrap ks-9deaaf" id="avatarWrap">
         @if(auth()->user()->avatar)
           <img id="avatarPreview" src="{{ auth()->user()->avatar }}" alt="" style="width:80px;height:80px;border-radius:50%;object-fit:cover;display:block;border:3px solid #e5e7eb">
         @else
           <div id="avatarInitial" class="prf-avatar">{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}</div>
-          <img id="avatarPreview" src="" alt="" style="width:80px;height:80px;border-radius:50%;object-fit:cover;display:none;border:3px solid #e5e7eb">
+          <img id="avatarPreview" src="" alt="" class="ks-a53476" style="display:none">
         @endif
-        <span style="position:absolute;bottom:0;right:0;background:#16a34a;color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:13px">✎</span>
+        <span class="ks-8211ed">✎</span>
       </div>
-      <div style="font-size:12px;color:#6b7280;margin-bottom:16px">Click photo to change · JPG/PNG/WEBP · max 2 MB</div>
+      <div class="ks-4032dc">Click photo to change · JPG/PNG/WEBP · max 2 MB</div>
       <form method="POST" action="/dashboard/profile" class="d-block" enctype="multipart/form-data">
         @csrf
         @method('PUT')

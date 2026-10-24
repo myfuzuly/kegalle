@@ -183,7 +183,7 @@ if ($_selId) {
             bc.style.display='flex';
             $id('BreadcrumbLabel').textContent=(_main.icon||'')+' '+_main.name;
             var allRow=document.createElement('div'); allRow.className='kcp-sub-item';
-            allRow.innerHTML='<span class="kcp-si-dot" style="background:#94a3b8"></span><span class="kcp-si-name" style="color:#64748b">All '+_esc(_main.name)+'</span>';
+            allRow.innerHTML='<span class="kcp-si-dot ks-72be4b"></span><span class="kcp-si-name ks-d2abea">All '+_esc(_main.name)+'</span>';
             allRow.addEventListener('click',function(){ _select(_main.id,'All '+_main.name,_main.name,_main.icon); });
             lEl.appendChild(allRow);
             _main.subs.forEach(function(s){

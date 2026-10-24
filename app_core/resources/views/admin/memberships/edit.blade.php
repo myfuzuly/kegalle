@@ -41,28 +41,28 @@ $accent = match(strtolower($plan->slug ?? '')) {
 
         <div class="ka-grid-2">
             <div class="ka-grid-col-full">
-                <label class="ka-label">Plan Name <span style="color:#ef4444">*</span></label>
+                <label class="ka-label">Plan Name <span class="ks-c9e348">*</span></label>
                 <input name="name" class="ka-input" value="{{ old('name', $plan->name) }}" required>
             </div>
             <div>
-                <label class="ka-label">Slug <span style="color:#ef4444">*</span></label>
+                <label class="ka-label">Slug <span class="ks-c9e348">*</span></label>
                 <input name="slug" class="ka-input" value="{{ old('slug', $plan->slug) }}" required>
-                <div class="ka-fs-11 ka-text-muted" style="margin-top:4px">Used in upgrade URL. Lowercase, no spaces.</div>
+                <div class="ka-fs-11 ka-text-muted ks-a18ac8">Used in upgrade URL. Lowercase, no spaces.</div>
             </div>
             <div>
-                <label class="ka-label">Price (LKR) <span style="color:#ef4444">*</span></label>
+                <label class="ka-label">Price (LKR) <span class="ks-c9e348">*</span></label>
                 <input name="price" type="number" step="0.01" class="ka-input" value="{{ old('price', $plan->price) }}" required>
             </div>
             <div>
-                <label class="ka-label">Duration (days) <span style="color:#ef4444">*</span></label>
+                <label class="ka-label">Duration (days) <span class="ks-c9e348">*</span></label>
                 <input name="duration_days" type="number" class="ka-input" value="{{ old('duration_days', $plan->duration_days) }}" required>
             </div>
             <div>
-                <label class="ka-label">Ad Limit <span style="color:#ef4444">*</span></label>
+                <label class="ka-label">Ad Limit <span class="ks-c9e348">*</span></label>
                 <input name="ad_limit" type="number" class="ka-input" value="{{ old('ad_limit', $plan->ad_limit) }}" required>
             </div>
             <div>
-                <label class="ka-label">Product Limit <span style="color:#ef4444">*</span></label>
+                <label class="ka-label">Product Limit <span class="ks-c9e348">*</span></label>
                 <input name="product_limit" type="number" class="ka-input" value="{{ old('product_limit', $plan->product_limit) }}" required>
             </div>
             <div>
@@ -88,11 +88,11 @@ $accent = match(strtolower($plan->slug ?? '')) {
       <div class="ka-plan-card-head" style="background:{{ $accent['bg'] }};border-bottom-color:{{ $accent['border'] }}">
         <div class="ka-plan-stat-label">Previewing</div>
         <div class="ka-plan-name" style="color:{{ $accent['color'] }}">{{ $plan->name }}</div>
-        <div class="ka-plan-price" style="margin-top:4px">LKR {{ number_format($plan->price,0) }}</div>
+        <div class="ka-plan-price ks-a18ac8">LKR {{ number_format($plan->price,0) }}</div>
         <div class="ka-fs-12 ka-text-muted">{{ $plan->duration_days }} days · {{ $plan->ad_limit }} ads</div>
       </div>
-      <div style="padding:18px 20px">
-        <div class="ka-plan-head-row" style="margin-bottom:12px">
+      <div class="ks-1349f2">
+        <div class="ka-plan-head-row ks-fa3e1c">
             <span class="ka-fw-600 ka-fs-13">Status</span>
             <span class="ka-plan-status-badge" style="background:{{ $plan->is_active ? '#dcfce7' : '#f1f5f9' }};color:{{ $plan->is_active ? '#15803d' : '#94a3b8' }}">
                 {{ $plan->is_active ? '● Active' : '○ Inactive' }}
@@ -104,10 +104,10 @@ $accent = match(strtolower($plan->slug ?? '')) {
                 {{ $plan->is_active ? 'Deactivate Plan' : 'Activate Plan' }}
             </button>
         </form>
-        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--ka-border,#e2e8f0)">
+        <div class="ks-e1bfb8">
             <form method="post" action="/admin/memberships/{{ $plan->id }}" data-confirm="Permanently delete this plan? This cannot be undone.">
                 @csrf @method('DELETE')
-                <button type="submit" class="ka-btn" style="width:100%;justify-content:center;background:#fef2f2;color:#b91c1c;border:1px solid #fca5a5">
+                <button type="submit" class="ka-btn ks-578f9f">
                     🗑 Delete Plan
                 </button>
             </form>

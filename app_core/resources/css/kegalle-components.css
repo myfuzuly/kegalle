@@ -1,0 +1,28 @@
+/* Shared public-site components (no inline styles — see CLAUDE.md). */
+
+/* Push-notification prompt (built in layouts/app.blade.php → showPushPrompt).
+   #id selector: old #kPushBar rules in kegalle-frontend.css (dark bg, inset:0, column) must lose. */
+#kPushBar.k-push-bar{position:fixed;inset:auto 12px calc(76px + env(safe-area-inset-bottom)) 12px;z-index:1200;display:flex;flex-direction:row;justify-content:flex-start;align-items:center;gap:12px;cursor:default;
+  max-width:560px;margin:0 auto;padding:12px 12px 12px 16px;border-radius:14px;background:#fff;color:#0f172a;
+  border:1px solid #e2e8f0;box-shadow:0 12px 32px rgba(15,23,42,.18);font-size:14px;line-height:1.4;animation:kPushIn .25s ease-out}
+.k-push-bar__icon{font-size:20px;flex:none}
+.k-push-bar__msg{flex:1}
+.k-push-bar__allow{flex:none;min-height:40px;padding:0 16px;border:0;border-radius:10px;background:var(--k-primary,#1b5e20);color:#fff;font-weight:700;cursor:pointer}
+.k-push-bar__dismiss{flex:none;width:40px;height:40px;border:0;border-radius:10px;background:transparent;color:#64748b;font-size:16px;cursor:pointer}
+.k-push-bar__allow:focus-visible,.k-push-bar__dismiss:focus-visible{outline:2px solid var(--k-primary,#1b5e20);outline-offset:2px}
+@media(min-width:900px){#kPushBar.k-push-bar{bottom:20px}}
+@keyframes kPushIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){#kPushBar.k-push-bar{animation:none}}
+:root[data-theme="dark"] #kPushBar.k-push-bar{background:#111827;color:#f1f5f9;border-color:#1f2937}
+:root[data-theme="dark"] .k-push-bar__dismiss{color:#94a3b8}
+
+/* Footer accordion on phones (panels built by the "Footer accordion" script in layouts/app) */
+@media(max-width:760px){
+  .k-footer-col .k-footer-heading{display:flex;align-items:center;justify-content:space-between;margin:0!important;padding:14px 0;min-height:48px;cursor:pointer}
+  .k-footer-col .k-footer-heading::after{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);opacity:.6;transition:transform .2s}
+  .k-footer-col.open .k-footer-heading::after{transform:rotate(-135deg)}
+  .k-footer-col .k-footer-panel{display:none;padding:0 0 12px}
+  .k-footer-col.open .k-footer-panel{display:block}
+  .k-footer-col .k-footer-panel a{display:flex!important;width:100%;min-height:44px;margin:0!important}
+}
+@media(max-width:760px) and (prefers-reduced-motion:reduce){.k-footer-col .k-footer-heading::after{transition:none}}

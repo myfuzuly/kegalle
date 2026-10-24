@@ -58,7 +58,7 @@
                     @if($featured->image)
                         <div class="bl-featured-img" style="background-image:url('{{ asset('storage/'.ltrim($featured->image,'/')) }}')"></div>
                     @else
-                        <div class="bl-featured-img bl-featured-img--fallback" style="background:linear-gradient(135deg,#1b5e20,#2e7d32)">
+                        <div class="bl-featured-img bl-featured-img--fallback ks-1fe847">
                             <span class="bl-featured-img-title">{{ Str::limit($featured->title, 60) }}</span>
                         </div>
                     @endif

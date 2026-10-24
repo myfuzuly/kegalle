@@ -37,7 +37,7 @@
         <div class="mb-24">
           <div class="sf-label">Store Logo</div>
           <div class="flex-ac-g16-fw">
-            <div class="upload-80" id="logoPreviewWrap" style="cursor:pointer">
+            <div class="upload-80 ks-b202c6" id="logoPreviewWrap">
               @if($mode === 'edit' && $store->logo)
                 <img id="logoPreviewImg" src="{{ asset('storage/'.$store->logo) }}" alt="" class="img-cover">
               @else

@@ -135,9 +135,9 @@
       @endif
     </a>
     @endforeach
-    <a href="/listings" class="lp-cat-card" style="border-style:dashed;border-color:var(--lp-green);background:#f0fdf4">
+    <a href="/listings" class="lp-cat-card ks-5b9ac0">
       <span class="lp-cat-emoji">🔍</span>
-      <div class="lp-cat-name" style="color:var(--lp-green)">All Categories</div>
+      <div class="lp-cat-name ks-fec0cd">All Categories</div>
     </a>
   </div>
 </div>
@@ -241,7 +241,7 @@
 @endif
 
 {{-- ══ STORE CTA ════════════════════════════════════════════════════ --}}
-<div style="padding:64px 0;background:#fff">
+<div class="ks-a08b90">
 <div class="lp-store-cta">
   <div class="lp-store-cta-text">
     <div class="lp-section-eyebrow">For Business Owners</div>
@@ -253,7 +253,7 @@
       <div class="lp-store-feature-item">Customer enquiries via WhatsApp</div>
       <div class="lp-store-feature-item">Reviews and ratings from buyers</div>
     </div>
-    <a href="/dashboard/stores/create" class="lp-btn-primary" style="display:inline-flex">
+    <a href="/dashboard/stores/create" class="lp-btn-primary ks-16cc48">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14m-7-7h14"/></svg>
       Create My Free Store
     </a>

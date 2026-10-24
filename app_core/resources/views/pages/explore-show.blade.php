@@ -18,7 +18,7 @@
     <div class="k-breadcrumb"><a href="/">Home</a><span class="sep">›</span><a href="/explore">Explore Kegalle</a><span class="sep">›</span><span class="current">{{ $explore->title }}</span></div>
 
     @if($explore->content)
-    <div class="k-policy-body" style="margin-bottom:32px">{!! \App\Helpers\HtmlSanitizer::clean($explore->content) !!}</div>
+    <div class="k-policy-body ks-4d06b8">{!! \App\Helpers\HtmlSanitizer::clean($explore->content) !!}</div>
     @endif
 
     @if($items->count())
@@ -52,9 +52,9 @@
                     @endif
                 </div>
                 @if($item->map_url)
-                <div style="margin-top:12px;border-radius:var(--k-radius);overflow:hidden">
+                <div class="ks-bd32cd">
                     @php $safeMap = \App\Helpers\HtmlSanitizer::safeMapUrl($item->map_url); @endphp
-                    @if($safeMap)<iframe src="{{ $safeMap }}" width="100%" height="150" style="border:0" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>@endif
+                    @if($safeMap)<iframe src="{{ $safeMap }}" width="100%" height="150" class="ks-012333" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>@endif
                 </div>
                 @endif
             </div>

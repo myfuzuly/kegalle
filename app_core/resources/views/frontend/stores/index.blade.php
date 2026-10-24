@@ -261,7 +261,7 @@
       </div>
 
       {{-- Pagination --}}
-      <div style="margin-top:20px">{{ $stores->links('vendor.pagination.k-theme') }}</div>
+      <div class="ks-3ae1f6">{{ $stores->links('vendor.pagination.k-theme') }}</div>
 
       {{-- Stats bar --}}
       @php

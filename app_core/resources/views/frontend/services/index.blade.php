@@ -46,9 +46,9 @@
       <p>List your service for free and reach thousands of local customers in Kegalle.</p>
     </div>
     @auth
-    <a href="{{ route('dashboard.services.create') }}" class="k-btn k-btn-primary" style="white-space:nowrap">+ Post a Service</a>
+    <a href="{{ route('dashboard.services.create') }}" class="k-btn k-btn-primary ks-4ddbe9">+ Post a Service</a>
     @else
-    <a href="{{ route('login') }}" class="k-btn k-btn-primary" style="white-space:nowrap">+ Post a Service</a>
+    <a href="{{ route('login') }}" class="k-btn k-btn-primary ks-4ddbe9">+ Post a Service</a>
     @endauth
   </div>
 
@@ -72,7 +72,7 @@
       @if(request('q') || request('type'))
         @if(request('q'))<span> for "<em>{{ request('q') }}</em>"</span>@endif
         @if(request('type'))<span> in <em>{{ ucfirst(request('type')) }}</em></span>@endif
-        &nbsp;<a href="{{ route('services.index') }}" style="font-size:12px;color:#1b5e20;font-weight:600">Clear filters ×</a>
+        &nbsp;<a href="{{ route('services.index') }}" class="ks-9e8a3a">Clear filters ×</a>
       @endif
     </div>
   </div>
@@ -82,7 +82,7 @@
       <div class="svc-empty-icon">🛠️</div>
       <h3>No services found</h3>
       <p>Try a different search or browse all service types.</p>
-      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <div class="ks-e43ae8">
         <a href="{{ route('services.index') }}" class="k-btn k-btn-outline">Clear Filters</a>
         @auth
         <a href="{{ route('dashboard.services.create') }}" class="k-btn k-btn-primary">+ Post a Service</a>
@@ -122,7 +122,7 @@
                 <div class="svc-price-free">Free Quote</div>
               @elseif($service->price)
                 <div class="svc-price">LKR {{ number_format($service->price) }}
-                  @if($service->pricing_model === 'hourly')<span style="font-size:11px;font-weight:400;color:var(--k-text-muted)">/hr</span>@endif
+                  @if($service->pricing_model === 'hourly')<span class="ks-186a74">/hr</span>@endif
                 </div>
               @else
                 <div class="svc-price-neg">Negotiable</div>
@@ -138,7 +138,7 @@
       @endforeach
     </div>
 
-    <div style="margin-top:36px">{{ $services->links() }}</div>
+    <div class="ks-d3a180">{{ $services->links() }}</div>
   @endif
 
 </div>

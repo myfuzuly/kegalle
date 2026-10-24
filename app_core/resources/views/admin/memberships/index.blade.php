@@ -14,14 +14,14 @@
 @endif
 
 {{-- Plans grid --}}
-<div class="sa-card" style="margin-bottom:22px">
+<div class="sa-card ks-9fc544">
     <div class="sa-card-head">
-        <h2 class="ka-flex-row-8"><span style="font-size:20px">💎</span> Active Plans</h2>
+        <h2 class="ka-flex-row-8"><span class="ks-e5e6f8">💎</span> Active Plans</h2>
         <span>{{ $plans->count() }} plan{{ $plans->count() !== 1 ? 's' : '' }}</span>
     </div>
 
     @if($plans->count())
-    <div class="ka-grid-auto-240" style="padding:20px">
+    <div class="ka-grid-auto-240 ks-7fa563">
         @foreach($plans as $plan)
         @php
           $accent = match(strtolower($plan->slug ?? $plan->name)) {
@@ -68,7 +68,7 @@
                         </button>
                     </form>
                     <form method="post" action="/admin/memberships/{{ $plan->id }}" class="ka-plan-actions-col" data-confirm="Delete this plan?">@csrf @method('DELETE')
-                        <button class="ka-btn" style="font-size:12px;padding:5px 10px;background:#fef2f2;color:#b91c1c;border:1px solid #fca5a5">🗑</button>
+                        <button class="ka-btn ks-d20b24">🗑</button>
                     </form>
                 </div>
             </div>
@@ -87,9 +87,9 @@
 {{-- Add Plan --}}
 <div class="sa-card" id="add-plan">
     <div class="sa-card-head">
-        <h2 class="ka-flex-row-8"><span style="font-size:18px">✚</span> Add New Plan</h2>
+        <h2 class="ka-flex-row-8"><span class="ks-bf83cf">✚</span> Add New Plan</h2>
     </div>
-    <form method="post" action="/admin/memberships" style="padding:20px">
+    <form method="post" action="/admin/memberships" class="ks-7fa563">
     @csrf
     @if($errors->any())
     <div class="ka-error-banner">
@@ -98,36 +98,36 @@
     @endif
     <div class="ka-grid-auto-200">
         <div class="ka-grid-col-full">
-            <label class="ka-label">Plan Name <span style="color:#ef4444">*</span></label>
+            <label class="ka-label">Plan Name <span class="ks-c9e348">*</span></label>
             <input name="name" class="ka-input" placeholder="e.g. Gold Plan" value="{{ old('name') }}" required>
         </div>
         <div>
-            <label class="ka-label">Slug <span style="color:#ef4444">*</span></label>
+            <label class="ka-label">Slug <span class="ks-c9e348">*</span></label>
             <input name="slug" class="ka-input" placeholder="gold" value="{{ old('slug') }}" required>
-            <div class="ka-fs-11 ka-text-muted" style="margin-top:4px">Lowercase, no spaces (e.g. gold, platinum)</div>
+            <div class="ka-fs-11 ka-text-muted ks-a18ac8">Lowercase, no spaces (e.g. gold, platinum)</div>
         </div>
         <div>
-            <label class="ka-label">Price (LKR) <span style="color:#ef4444">*</span></label>
+            <label class="ka-label">Price (LKR) <span class="ks-c9e348">*</span></label>
             <input name="price" type="number" step="0.01" class="ka-input" placeholder="0.00" value="{{ old('price') }}" required>
         </div>
         <div>
-            <label class="ka-label">Duration (days) <span style="color:#ef4444">*</span></label>
+            <label class="ka-label">Duration (days) <span class="ks-c9e348">*</span></label>
             <input name="duration_days" type="number" class="ka-input" placeholder="30" value="{{ old('duration_days') }}" required>
         </div>
         <div>
-            <label class="ka-label">Ad Limit <span style="color:#ef4444">*</span></label>
+            <label class="ka-label">Ad Limit <span class="ks-c9e348">*</span></label>
             <input name="ad_limit" type="number" class="ka-input" placeholder="10" value="{{ old('ad_limit') }}" required>
         </div>
         <div>
-            <label class="ka-label">Product Limit <span style="color:#ef4444">*</span></label>
+            <label class="ka-label">Product Limit <span class="ks-c9e348">*</span></label>
             <input name="product_limit" type="number" class="ka-input" placeholder="10" value="{{ old('product_limit') }}" required>
         </div>
         <div>
-            <label class="ka-label">Store Limit <span style="color:#64748b;font-weight:400"> (default 1)</span></label>
+            <label class="ka-label">Store Limit <span class="ks-67e580"> (default 1)</span></label>
             <input name="store_limit" type="number" class="ka-input" placeholder="1" value="{{ old('store_limit') }}">
         </div>
         <div>
-            <label class="ka-label">Featured Quota <span style="color:#64748b;font-weight:400"> (default 0)</span></label>
+            <label class="ka-label">Featured Quota <span class="ks-67e580"> (default 0)</span></label>
             <input name="featured_quota" type="number" class="ka-input" placeholder="0" value="{{ old('featured_quota') }}">
         </div>
     </div>

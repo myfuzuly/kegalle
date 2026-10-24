@@ -85,7 +85,7 @@
             <div class="ex-card-body">
                 <h3 class="ex-card-title">{{ $p['title'] }}</h3>
                 <ul class="ex-card-list">@foreach($p['items'] as $it)<li>{{ $it }}</li>@endforeach</ul>
-                <p class="ex-card-desc" style="margin-top:8px;font-size:13px">{{ $p['desc'] }}</p>
+                <p class="ex-card-desc ks-d892c0">{{ $p['desc'] }}</p>
             </div>
             <div class="ex-card-footer">
                 <span class="ex-card-coming">Coming soon</span>

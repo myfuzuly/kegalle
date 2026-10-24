@@ -21,14 +21,14 @@
 @endphp
 
 @if($errors->any())
-<div class="prf-alert prf-alert-error" style="margin-bottom:20px">
+<div class="prf-alert prf-alert-error ks-301969">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
   {{ $errors->first() }}
 </div>
 @endif
 
 @if($pending)
-<div class="prf-alert prf-alert-warning" style="margin-bottom:20px">
+<div class="prf-alert prf-alert-warning ks-301969">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
   You already have a pending upgrade request for the <strong>{{ $meta['name'] }}</strong> plan. We'll activate it within 24 hours.
 </div>
@@ -60,13 +60,13 @@
     {{-- Plan summary --}}
     <div class="upg-card upg-plan-hero" style="border-color:{{ $tierBorder }};background:{{ $tierBg }}">
       <div class="upg-plan-hero-top">
-        <div class="upg-plan-icon" style="background:rgba(255,255,255,.75)">{{ $tierIcon }}</div>
+        <div class="upg-plan-icon ks-af3e08">{{ $tierIcon }}</div>
         <div>
           <div class="upg-plan-name" style="color:{{ $tierColor }}">{{ $meta['name'] }} Plan</div>
           <div class="upg-plan-sub">30 days · bank transfer</div>
         </div>
         <div class="upg-plan-amount-pill" style="background:{{ $tierColor }};color:#fff">
-          LKR {{ number_format($meta['price']) }}<span style="font-size:11px;font-weight:500;opacity:.8">.00</span>
+          LKR {{ number_format($meta['price']) }}<span class="ks-7b5e36">.00</span>
         </div>
       </div>
 
@@ -164,7 +164,7 @@
   {{-- RIGHT COLUMN --}}
   <div class="upg-col">
     <div class="upg-card">
-      <div class="upg-section-label" style="margin-bottom:4px">Upload Payment Slip</div>
+      <div class="upg-section-label ks-a58b07">Upload Payment Slip</div>
       <p class="upg-upload-hint">After making the transfer, upload your bank receipt or a screenshot of the confirmation.</p>
 
       <form method="POST" action="/dashboard/membership/upgrade/{{ $plan }}" enctype="multipart/form-data">

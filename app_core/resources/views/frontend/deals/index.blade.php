@@ -175,10 +175,10 @@
             {{-- Main Grid --}}
             <div>
                 @if(!($useRealDeals ?? false))
-                <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #86efac;border-radius:12px;padding:20px 24px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+                <div class="ks-8a382c">
                     <div>
-                        <strong style="display:block;font-size:14px;color:#166534;margin-bottom:4px">🏷️ No active deals yet — be the first!</strong>
-                        <span style="font-size:13px;color:#15803d">Store owners can post discounted deals to attract more buyers.</span>
+                        <strong class="ks-d8cb2d">🏷️ No active deals yet — be the first!</strong>
+                        <span class="ks-a6537d">Store owners can post discounted deals to attract more buyers.</span>
                     </div>
                     <a href="{{ auth()->check() ? '/dashboard/deals/create' : '/register' }}" class="k-btn k-btn-primary k-btn-sm" style="white-space:nowrap">Post a Deal →</a>
                 </div>

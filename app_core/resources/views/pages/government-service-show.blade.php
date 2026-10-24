@@ -132,7 +132,7 @@ $defaultItemIcon = [$accent['from'], '<path stroke-linecap="round" stroke-linejo
     <div class="gss-items">
     @if($isBanks)
         @foreach($orderedItems as $townName => $townItems)
-        <div class="gss-town-header" style="grid-column:1/-1!important;display:flex!important;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6b7280;padding:20px 4px 8px;border-bottom:1.5px solid #e5e7eb;margin-bottom:4px;width:100%">
+        <div class="gss-town-header ks-c7fa4b">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
             {{ $townName }}
         </div>
@@ -148,18 +148,18 @@ $defaultItemIcon = [$accent['from'], '<path stroke-linecap="round" stroke-linejo
             $shortName = preg_replace('/\s*—\s*.+\s+Branch$/u', '', $item->title);
         @endphp
         <div class="gss-item" style="border-top:3px solid {{ $iColor }};padding-top:18px">
-            <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">
+            <div class="ks-2196b9">
                 <div style="width:42px;height:42px;border-radius:10px;background:{{ $iColor }};display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px {{ $iColor }}40">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" aria-hidden="true">{!! $iSvg !!}</svg>
                 </div>
-                <div style="flex:1;min-width:0">
-                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                        <h3 class="gss-item-title" style="margin:0">{{ $shortName }}</h3>
+                <div class="ks-89bd09">
+                    <div class="ks-747a39">
+                        <h3 class="gss-item-title ks-1386d5">{{ $shortName }}</h3>
                         @if($badge)<span style="font-size:10px;font-weight:800;color:{{ $iColor }};background:{{ $iColor }}12;border:1px solid {{ $iColor }}30;padding:2px 7px;border-radius:5px;letter-spacing:.04em;flex-shrink:0">{{ $badge }}</span>@endif
                     </div>
                 </div>
             </div>
-            @if($body)<p class="gss-item-desc" style="margin:0 0 10px">{{ $body }}</p>@endif
+            @if($body)<p class="gss-item-desc ks-0998cf">{{ $body }}</p>@endif
             @if($telRaw)
             <a href="tel:{{ preg_replace('/[^+0-9]/', '', $telRaw) }}" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:{{ $iColor }};text-decoration:none;background:{{ $iColor }}10;border:1px solid {{ $iColor }}28;padding:6px 14px;border-radius:8px;transition:background .15s">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.014 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>

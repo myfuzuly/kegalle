@@ -16,7 +16,7 @@
     <span>{{ $service->title }}</span>
   </div>
 
-  <div class="svc-detail-grid" style="margin-top:20px">
+  <div class="svc-detail-grid ks-3ae1f6">
 
     {{-- ── Left: Image + Tabs ─────────────────────────────── --}}
     <div>
@@ -50,7 +50,7 @@
           <div class="svc-about-text">{{ $service->description }}</div>
         @else
           <div class="svc-no-desc">
-            <div style="font-size:32px;margin-bottom:8px">📝</div>
+            <div class="ks-ab3728">📝</div>
             <div>No description provided for this service yet.</div>
           </div>
         @endif
@@ -58,7 +58,7 @@
         <div class="svc-areas-box">
           <div class="svc-areas-label">Areas Covered</div>
           <div class="svc-areas-val">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2" style="margin-top:2px;flex-shrink:0"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="2" class="ks-e18409"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             {{ $service->areas_covered }}
           </div>
         </div>
@@ -68,19 +68,19 @@
       <div class="svc-tab-panel" id="stab-more">
         @if($otherServices->isEmpty())
           <div class="svc-no-desc">
-            <div style="font-size:28px;margin-bottom:8px">🛠️</div>
+            <div class="ks-8733d1">🛠️</div>
             <div>No other services from this provider.</div>
           </div>
         @else
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px">
+          <div class="ks-514dc4">
             @foreach($otherServices as $other)
             <a href="{{ route('services.show', $other->slug) }}" style="text-decoration:none;color:inherit;display:block;border:1.5px solid var(--k-border);border-radius:12px;overflow:hidden;background:var(--k-surface);transition:box-shadow .15s" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,.08)'" onmouseout="this.style.boxShadow=''">
-              <div style="height:100px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);display:flex;align-items:center;justify-content:center;font-size:28px">
+              <div class="ks-7adb64">
                 @if($other->image)<img src="{{ asset('storage/'.$other->image) }}" alt="{{ $other->title }}" style="width:100%;height:100%;object-fit:cover">@else🛠️@endif
               </div>
-              <div style="padding:10px 12px">
-                <div style="font-size:13px;font-weight:600;color:var(--k-text);margin-bottom:4px">{{ Str::limit($other->title, 45) }}</div>
-                <div style="font-size:12px;color:#15803d;font-weight:700">
+              <div class="ks-f5c04a">
+                <div class="ks-748bd3">{{ Str::limit($other->title, 45) }}</div>
+                <div class="ks-30f75b">
                   @if($other->pricing_model==='free_quote') Free Quote
                   @elseif($other->price) LKR {{ number_format($other->price) }}
                   @else Negotiable @endif
@@ -246,7 +246,7 @@
             <span>Services</span>
           </div>
           <div class="svc-prov-stat">
-            <strong style="font-size:13px">{{ $service->location }}</strong>
+            <strong class="ks-3044b6">{{ $service->location }}</strong>
             <span>Location</span>
           </div>
         </div>
@@ -275,7 +275,7 @@
           Location
         </div>
         <div class="svc-loc-card-body">
-          <div style="font-size:36px;margin-bottom:10px">📍</div>
+          <div class="ks-d4e206">📍</div>
           <div class="svc-loc-city">{{ $service->location }}</div>
           <div class="svc-loc-district">Kegalle District, Sri Lanka</div>
         </div>

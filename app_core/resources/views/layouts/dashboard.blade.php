@@ -16,6 +16,7 @@
 <script nonce="{{ $cspNonce ?? '' }}">try{if(localStorage.getItem('kx_sidebar')==='collapsed')document.documentElement.classList.add('kx-collapsed')}catch(e){}</script>
 <link rel="stylesheet" href="/css/kegalle-dashboard.css?v=28">
 <link rel="stylesheet" href="/css/kegalle-admin-ds.css?v=5">
+<link rel="stylesheet" href="/css/kegalle-migrated.css?v=1">
 @stack('styles')
 </head>
 @php

@@ -207,7 +207,7 @@
         <span class="ka-danger-zone-title">Danger Zone</span>
     </div>
     <p class="ka-danger-zone-desc">Permanently delete this store and all its listings. This action cannot be undone.</p>
-    <button type="button" id="dzStoreDeleteBtn" style="background:#dc2626;color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;">
+    <button type="button" id="dzStoreDeleteBtn" class="ks-1d14bb">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
         Delete Store & All Listings
     </button>
@@ -229,7 +229,7 @@
             <button type="button" id="dzStoreCancelBtn" class="ka-modal-btn-cancel">Cancel</button>
             <form method="POST" action="/admin/stores/{{ $store->id }}" style="flex:1;">
                 @csrf @method('DELETE')
-                <button type="submit" id="dzStoreConfirmBtn" class="ka-modal-btn-danger" style="opacity:.4;pointer-events:none;">Delete Permanently</button>
+                <button type="submit" id="dzStoreConfirmBtn" class="ka-modal-btn-danger ks-ffa199">Delete Permanently</button>
             </form>
         </div>
     </div>
