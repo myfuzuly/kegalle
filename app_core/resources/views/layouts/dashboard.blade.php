@@ -15,7 +15,7 @@
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
 <script nonce="{{ $cspNonce ?? '' }}">try{if(localStorage.getItem('kx_sidebar')==='collapsed')document.documentElement.classList.add('kx-collapsed')}catch(e){}</script>
 <link rel="stylesheet" href="/css/kegalle-dashboard.css?v=28">
-<link rel="stylesheet" href="/css/kegalle-admin-ds.css?v=4">
+<link rel="stylesheet" href="/css/kegalle-admin-ds.css?v=5">
 @stack('styles')
 </head>
 @php
@@ -148,7 +148,7 @@
 </div>
 
 <script defer src="/js/kegalle-dashboard-panel.js?v=1"></script>
-<script defer src="/js/kegalle-admin-ui.js?v=2"></script>
+<script defer src="/js/kegalle-admin-ui.js?v=3"></script>
 @stack('scripts')
 </body>
 </html>

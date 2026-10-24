@@ -54,5 +54,5 @@
     </td>
 </tr>
 @empty
-<tr><td colspan="9" class="td-empty">No deals found.</td></tr>
+<x-admin.table-empty colspan="9" message="No deals found." hint="Try a different filter or clear the search." />
 @endforelse

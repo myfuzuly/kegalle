@@ -323,3 +323,84 @@
   }
   window.addEventListener('load', enhanceSelects);
 })();
+
+/* ── Bulk selection ([data-bulk-bar] form + .kx-row-check rows joined via form="…") ── */
+(function () {
+  var bar = document.querySelector('[data-bulk-bar]');
+  if (!bar) return;
+  var rows = function () { return document.querySelectorAll('input.kx-row-check[form="' + bar.id + '"]'); };
+  var all = document.querySelector('[data-bulk-all]');
+  var count = bar.querySelector('[data-bulk-count]');
+  function sync() {
+    var n = 0, total = 0;
+    rows().forEach(function (c) { total++; if (c.checked) n++; });
+    // Only write on change: the body MutationObserver below would otherwise re-trigger sync forever
+    var txt = n + ' selected';
+    if (count.textContent !== txt) count.textContent = txt;
+    if (bar.hidden !== (n === 0)) bar.hidden = n === 0;
+    if (all) { all.checked = total > 0 && n === total; all.indeterminate = n > 0 && n < total; }
+  }
+  // Delegated: the table body is replaced by AJAX when filters change.
+  document.addEventListener('change', function (e) {
+    if (e.target === all) rows().forEach(function (c) { c.checked = all.checked; });
+    if (e.target === all || (e.target.classList && e.target.classList.contains('kx-row-check'))) sync();
+  });
+  var clear = bar.querySelector('[data-bulk-clear]');
+  if (clear) clear.addEventListener('click', function () { rows().forEach(function (c) { c.checked = false; }); sync(); });
+  // Watch the table that holds the select-all box; AJAX filters swap its rows
+  var body = (all && all.closest('table') && all.closest('table').tBodies[0]) || document.body;
+  new MutationObserver(sync).observe(body, { childList: true, subtree: body === document.body });
+  sync();
+})();
+
+/* ── Click-to-sort table headers (sorts the rows on the current page) ── */
+(function () {
+  function cellValue(tr, i) {
+    var td = tr.children[i]; if (!td) return '';
+    var t = td.textContent.replace(/\s+/g, ' ').trim();
+    var num = t.replace(/^LKR\s*/i, '').replace(/,/g, '');
+    return /^-?\d+(\.\d+)?$/.test(num) ? parseFloat(num) : t.toLowerCase();
+  }
+  document.querySelectorAll('.kx-body table.sa-table').forEach(function (table) {
+    var tbody = table.tBodies[0]; if (!tbody) return;
+    Array.prototype.forEach.call(table.querySelectorAll('thead th'), function (th, i) {
+      var label = th.textContent.trim();
+      if (!label || /^(image|logo|icon|action|actions)$/i.test(label) || th.querySelector('input')) return;
+      var btn = document.createElement('button');
+      btn.type = 'button'; btn.className = 'kx-sort'; btn.textContent = label;
+      btn.setAttribute('aria-label', 'Sort by ' + label);
+      th.textContent = ''; th.appendChild(btn);
+      btn.addEventListener('click', function () {
+        var asc = th.getAttribute('aria-sort') !== 'ascending';
+        table.querySelectorAll('thead th[aria-sort]').forEach(function (o) { o.removeAttribute('aria-sort'); });
+        th.setAttribute('aria-sort', asc ? 'ascending' : 'descending');
+        var trs = Array.prototype.filter.call(tbody.rows, function (r) { return r.children.length > 1; });
+        trs.sort(function (a, b) {
+          var x = cellValue(a, i), y = cellValue(b, i);
+          var c = typeof x === 'number' && typeof y === 'number' ? x - y : String(x).localeCompare(String(y));
+          return asc ? c : -c;
+        });
+        trs.forEach(function (r) { tbody.appendChild(r); });
+      });
+    });
+  });
+})();
+
+/* ── Loading state: dim tables while an AJAX filter reloads this same page ── */
+(function () {
+  if (!window.fetch || !document.querySelector('.sa-table-wrap')) return;
+  var orig = window.fetch, inFlight = 0;
+  function setBusy(on) {
+    document.querySelectorAll('.sa-table-wrap').forEach(function (w) {
+      w.classList.toggle('kx-loading', on);
+      w.setAttribute('aria-busy', on ? 'true' : 'false');
+    });
+  }
+  window.fetch = function (input, init) {
+    var url = typeof input === 'string' ? input : (input && input.url) || '';
+    var path; try { path = new URL(url, location.href).pathname; } catch (e) { path = ''; }
+    if (path !== location.pathname) return orig.apply(this, arguments);
+    inFlight++; setBusy(true);
+    return orig.apply(this, arguments).finally(function () { if (--inFlight === 0) setBusy(false); });
+  };
+})();

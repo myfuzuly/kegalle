@@ -22,7 +22,7 @@
 @section('page','Users')
 @section('heading', $pageHeading)
 @section('subheading', $pageSub)
-@section('actions')<a class="ka-btn ka-btn-primary" href="/admin/users/create">+ Add User</a>@endsection
+@section('actions')<x-admin.export-button href="/admin/users/export-csv" /> <a class="ka-btn ka-btn-primary" href="/admin/users/create">+ Add User</a>@endsection
 
 @if(session('success'))
 <div class="um-flash-success">✓ {{ session('success') }}</div>

@@ -32,5 +32,5 @@
         </td>
     </tr>
 @empty
-    <tr><td colspan="11" class="td-empty">No stores found.</td></tr>
+    <x-admin.table-empty colspan="11" message="No stores found." hint="Try a different filter or clear the search." />
 @endforelse

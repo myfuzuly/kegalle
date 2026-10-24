@@ -37,5 +37,5 @@
     </td>
 </tr>
 @empty
-<tr><td colspan="10" class="td-empty">No events found.</td></tr>
+<x-admin.table-empty colspan="10" message="No events found." hint="Try a different filter or clear the search." />
 @endforelse

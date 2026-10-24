@@ -20,5 +20,5 @@
     </td>
 </tr>
 @empty
-<tr><td colspan="7" class="td-empty">No locations found.</td></tr>
+<x-admin.table-empty colspan="7" message="No locations found." hint="Try a different filter or clear the search." />
 @endforelse

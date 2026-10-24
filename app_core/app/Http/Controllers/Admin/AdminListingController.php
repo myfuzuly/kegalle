@@ -538,9 +538,25 @@ class AdminListingController extends Controller
 
     public function bulkApprove(Request $request)
     {
-        $ids = $request->validate(['ids' => 'required|array', 'ids.*' => 'integer'])['ids'];
-        $count = Listing::whereIn('id', $ids)->whereNotIn('status', ['approved'])->update(['status' => 'approved']);
-        return response()->json(['approved' => $count]);
+        $data = $request->validate([
+            'ids'    => 'required|array|max:100',
+            'ids.*'  => 'integer',
+            'action' => 'nullable|in:approve,reject',
+        ]);
+        $action = $data['action'] ?? 'approve';
+        $target = $action === 'approve' ? 'approved' : 'rejected';
+
+        // One by one through approve()/reject() so sellers still get their email, push and SMS
+        $count = 0;
+        foreach (Listing::whereIn('id', $data['ids'])->where('status', '!=', $target)->get() as $listing) {
+            $this->$action($listing);
+            $count++;
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([$target => $count]);
+        }
+        return back()->with('success', $count . ' listing' . ($count === 1 ? '' : 's') . ' ' . $target . '.');
     }
 
     public function exportCsv(Request $request)

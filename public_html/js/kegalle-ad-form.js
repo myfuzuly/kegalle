@@ -1,5 +1,5 @@
-/* Post-ad form helpers: sticky progress from the checklist, inline length feedback, local draft.
-   Drafts keep text only — photos can't be stored by the browser. */
+/* Post-ad form helpers. Markup lives in Blade components (x-form.progress, x-form.draft-banner,
+   x-form.field-hint); this file only fills them in. Drafts keep text only — browsers can't store photos. */
 (function () {
   var form = document.getElementById('alcForm');
   if (!form) return;
@@ -11,18 +11,15 @@
     set: function (v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) {} },
     clear: function () { try { localStorage.removeItem(KEY); } catch (e) {} }
   };
-  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; }
   function quill() { return window._quillDesc || null; }
   function descText() { var q = quill(); return q ? q.getText().trim() : ''; }
+  function hint(name) { return form.querySelector('[data-hint-for="' + name + '"]'); }
 
-  /* ── 1. Sticky progress bar driven by the sidebar checklist ── */
-  var items = document.querySelectorAll('#alcChecklist .alc-chk');
-  if (items.length) {
-    var bar = el('div', 'kaf-progress');
-    bar.setAttribute('role', 'status');
-    var track = el('div', 'kaf-progress-track'), fill = el('div', 'kaf-progress-fill'), label = el('span', 'kaf-progress-label');
-    track.appendChild(fill); bar.appendChild(track); bar.appendChild(label);
-    form.insertBefore(bar, form.firstChild);
+  /* ── 1. Progress bar (x-form.progress) driven by the sidebar checklist ── */
+  var bar = form.querySelector('[data-form-progress]');
+  var items = bar ? document.querySelectorAll(bar.getAttribute('data-form-progress') + ' .alc-chk') : [];
+  if (bar && items.length) {
+    var fill = bar.querySelector('[data-progress-fill]'), label = bar.querySelector('[data-progress-label]');
     var update = function () {
       var done = 0;
       items.forEach(function (i) { if (i.dataset.done === '1') done++; });
@@ -33,30 +30,22 @@
     var mo = new MutationObserver(update);
     items.forEach(function (i) { mo.observe(i, { attributes: true, attributeFilter: ['data-done'] }); });
     update();
+  } else if (bar) {
+    bar.hidden = true;
   }
 
-  /* ── 2. Inline feedback: counters + description minimum ── */
-  var title = document.getElementById('aiTitleField');
-  if (title) {
-    var tCount = el('div', 'kaf-hint');
-    title.insertAdjacentElement('afterend', tCount);
+  /* ── 2. Inline feedback (x-form.field-hint) ── */
+  var title = form.querySelector('[name="title"]'), tHint = hint('title');
+  if (title && tHint) {
     var tUpd = function () {
       var n = title.value.trim().length, max = title.maxLength > 0 ? title.maxLength : 180;
-      tCount.textContent = n < 10 ? n + '/' + max + ' · a clear title of 10+ characters gets more replies' : n + '/' + max;
-      tCount.classList.toggle('is-warn', n > 0 && n < 10);
+      tHint.textContent = n < 10 ? n + '/' + max + ' · a clear title of 10+ characters gets more replies' : n + '/' + max;
+      tHint.classList.toggle('is-warn', n > 0 && n < 10);
     };
     title.addEventListener('input', tUpd); tUpd();
   }
 
-  var editor = document.getElementById('descEditor');
-  var dHint = null;
-  if (editor) {
-    dHint = el('div', 'kaf-hint');
-    dHint.id = 'kafDescHint';
-    dHint.setAttribute('aria-live', 'polite');
-    editor.insertAdjacentElement('afterend', dHint);
-  }
-  var descErrorShown = false;
+  var dHint = hint('description'), descErrorShown = false;
   function dUpd(showError) {
     if (!dHint) return;
     var n = descText().length, short = n < DESC_MIN;
@@ -72,14 +61,14 @@
       // The server would reject it and the reload drops the chosen photos, so stop here instead.
       e.preventDefault(); e.stopImmediatePropagation();
       dUpd(true);
-      (editor || dHint).scrollIntoView({ behavior: 'smooth', block: 'center' });
-      var q = quill(); if (q) q.focus();
+      if (dHint) dHint.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      quill().focus();
       return;
     }
     store.clear();
   }, true);
 
-  /* ── 3. Local draft (title, description, price, contact) ── */
+  /* ── 3. Local draft (x-form.draft-banner) ── */
   var FIELDS = ['title', 'price', 'contact_phone', 'contact_email', 'contact_whatsapp'];
   function field(name) { return form.querySelector('[name="' + name + '"]'); }
   function snapshot() {
@@ -96,24 +85,20 @@
   form.addEventListener('input', scheduleSave);
 
   function offerRestore() {
-    var d = store.get();
+    var box = form.querySelector('[data-draft-banner]'), d = store.get();
     var titleEmpty = !field('title') || !field('title').value.trim();
-    if (!d || !titleEmpty || Date.now() - d.at > 14 * 864e5) return;
-    var box = el('div', 'kaf-draft');
-    box.setAttribute('role', 'region'); box.setAttribute('aria-label', 'Unsaved draft');
+    if (!box || !d || !titleEmpty || Date.now() - d.at > 14 * 864e5) return;
     var mins = Math.round((Date.now() - d.at) / 60000);
     var when = mins < 1 ? 'just now' : mins < 60 ? mins + ' min ago' : mins < 1440 ? Math.round(mins / 60) + ' h ago' : Math.round(mins / 1440) + ' days ago';
-    box.appendChild(el('span', 'kaf-draft-text', 'You have an unsaved ad (' + when + ')' + (d.f.title ? ': “' + d.f.title.slice(0, 40) + '”' : '') + '. Photos need to be added again.'));
-    var yes = el('button', 'kaf-draft-btn kaf-draft-btn--primary', 'Restore draft'); yes.type = 'button';
-    var no = el('button', 'kaf-draft-btn', 'Discard'); no.type = 'button';
-    box.appendChild(yes); box.appendChild(no);
-    form.insertBefore(box, form.firstChild);
-    yes.addEventListener('click', function () {
+    box.querySelector('[data-draft-text]').textContent =
+      'You have an unsaved ad (' + when + ')' + (d.f.title ? ': “' + d.f.title.slice(0, 40) + '”' : '') + '. Photos need to be added again.';
+    box.hidden = false;
+    box.querySelector('[data-draft-restore]').addEventListener('click', function () {
       Object.keys(d.f).forEach(function (n) { var i = field(n); if (i) { i.value = d.f[n]; i.dispatchEvent(new Event('input', { bubbles: true })); } });
       var q = quill(); if (q && d.desc) q.root.innerHTML = d.desc;
-      box.remove();
+      box.hidden = true;
     });
-    no.addEventListener('click', function () { store.clear(); box.remove(); });
+    box.querySelector('[data-draft-discard]').addEventListener('click', function () { store.clear(); box.hidden = true; });
   }
 
   // Quill is created on DOMContentLoaded by the page; wait for it before wiring description bits.

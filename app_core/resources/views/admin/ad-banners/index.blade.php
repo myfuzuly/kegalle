@@ -106,7 +106,7 @@
                 </td>
             </tr>
             @empty
-            <tr><td colspan="7" class="td-empty">No ad banners yet. <a href="/admin/ad-banners/create">Add your first banner →</a></td></tr>
+            <x-admin.table-empty colspan="7" message="No ad banners yet."><a href="/admin/ad-banners/create" class="ka-btn ka-btn-primary td-empty-action">Add your first banner</a></x-admin.table-empty>
             @endforelse
             </tbody>
         </table>

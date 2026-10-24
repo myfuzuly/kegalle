@@ -38,5 +38,5 @@
     </td>
 </tr>
 @empty
-<tr><td colspan="7" class="td-empty">No classified ads found.</td></tr>
+<x-admin.table-empty colspan="7" message="No classified ads found." hint="Try a different filter or clear the search." />
 @endforelse

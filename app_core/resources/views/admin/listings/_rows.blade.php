@@ -8,6 +8,7 @@
 @endphp
 <tr>
     <td class="w60-pr0">
+        <x-admin.row-check form="klBulkForm" :value="$listing->id" :label="'Select '.$listing->title" />
         @if($thumb)<img src="{{ asset('storage/'.ltrim($thumb,'/')) }}" alt="{{ $listing->title }}" class="thumb-sm">@else<span class="icon-box-44">🛍️</span>@endif
     </td>
     <td class="max-w-200">
@@ -28,5 +29,5 @@
     </td>
 </tr>
 @empty
-<tr><td colspan="8" class="td-empty">No listings found.</td></tr>
+<x-admin.table-empty colspan="8" message="No listings found." hint="Try another status or type filter, or clear the search." />
 @endforelse

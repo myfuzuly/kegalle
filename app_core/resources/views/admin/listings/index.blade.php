@@ -3,7 +3,7 @@
 @section('page','Products / Ads')
 @section('heading','Product / Ads Management')
 @section('subheading','Post, edit, approve and promote store products and other listings')
-@section('actions')<a href="/admin/listings/create" class="ka-btn ka-btn-primary">+ Post Ad</a>@endsection
+@section('actions')<x-admin.export-button href="/admin/listings/export-csv" /> <a href="/admin/listings/create" class="ka-btn ka-btn-primary">+ Post Ad</a>@endsection
 
 @push('styles')
 
@@ -51,11 +51,16 @@
         </div>
     </div>
 
+    <x-admin.bulk-bar id="klBulkForm" action="/admin/listings/bulk-approve" confirm="Apply this to the selected listings? Sellers are notified.">
+        <button type="submit" name="action" value="approve" class="ka-btn ka-btn-primary">Approve</button>
+        <button type="submit" name="action" value="reject" class="ka-btn">Reject</button>
+    </x-admin.bulk-bar>
+
     {{-- Table --}}
     <div class="sa-table-wrap">
         <table class="sa-table sa-table-with-thumb sa-table-listings">
             <thead><tr>
-                <th class="w-60">Image</th>
+                <th class="w-60"><x-admin.row-check form="klBulkForm" :all="true" label="Select all listings on this page" /> Image</th>
                 <th class="w-200">Name</th>
                 <th>Location</th>
                 <th>Seller</th>

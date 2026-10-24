@@ -47,6 +47,8 @@
 
 <form method="POST" action="/dashboard/listings" enctype="multipart/form-data" id="alcForm">
 @csrf
+<x-form.progress checklist="#alcChecklist" />
+<x-form.draft-banner />
 @if($hasStore)
   <input type="hidden" name="type" value="product">
 @else
@@ -209,12 +211,14 @@
         <div class="alc-field alc-field--mb">
             <label class="alc-label">Ad Title <span class="alc-req">*</span></label>
             <input name="title" required class="alc-input" value="{{ old('title') }}" id="aiTitleField" maxlength="180" placeholder="e.g. Honda CB125 2019 — Good Condition">
+            <x-form.field-hint for="title" />
         </div>
 
         {{-- English Description --}}
         <div class="alc-field alc-field--mb">
             <label class="alc-label">🇬🇧 Description <span class="alc-req">*</span></label>
             <div id="descEditor"></div>
+            <x-form.field-hint for="description" />
             <input type="hidden" name="description" id="descHidden" value="{{ old('description','') }}" class="k-hidden">
         </div>
 
@@ -730,7 +734,7 @@
 </script>
 <script src="/js/category-fields.js?v=18"></script>
 <script src="/js/quill.min.js"></script>
-<script src="/js/kegalle-ad-form.js?v=1" defer></script>
+<script src="/js/kegalle-ad-form.js?v=2" defer></script>
 <script nonce="{{ $cspNonce ?? '' }}">
 document.addEventListener('DOMContentLoaded',function(){
     if(typeof Quill==='undefined') return;

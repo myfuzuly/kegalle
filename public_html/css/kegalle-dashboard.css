@@ -1783,3 +1783,4 @@ tr{border-bottom:1px solid #f1f5f9}
 :root[data-theme="dark"] .kaf-draft{background:#052e16;border-color:#166534;color:#bbf7d0}
 :root[data-theme="dark"] .kaf-draft-btn{background:transparent;border-color:#166534;color:#bbf7d0}
 :root[data-theme="dark"] .kaf-draft-btn--primary{background:var(--kd-brand);color:#fff}
+.kaf-draft[hidden],.kaf-progress[hidden]{display:none}
