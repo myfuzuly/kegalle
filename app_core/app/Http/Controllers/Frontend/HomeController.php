@@ -90,9 +90,14 @@ class HomeController extends Controller
             return $stores;
         });
 
-        $govServices = Cache::remember('home_gov_services', 600, fn () =>
-            GovernmentService::active()->withCount('items')->orderBy('sort_order')->take(8)->get()
-        );
+        try {
+            $govServices = Cache::remember('home_gov_services', 600, fn () =>
+                GovernmentService::active()->withCount('items')->orderBy('sort_order')->take(8)->get()
+            );
+        } catch (\Throwable $e) {
+            $govServices = collect();
+            Cache::forget('home_gov_services');
+        }
 
         try {
             $blogs = Cache::remember('home_blogs', 300, fn () =>
@@ -181,15 +186,6 @@ class HomeController extends Controller
                     ->where('rating', '>=', 4)->latest()->take(3)->get()
             );
         } catch (\Throwable $e) { Log::error('HomeController siteReviews query failed: '.$e->getMessage()); }
-
-        $host = request()->getHost();
-        if ($host === 'kegalle.com' || $host === 'www.kegalle.com') {
-            return view('frontend.landing', compact(
-                'totalListings', 'totalStores', 'totalUsers',
-                'categories', 'siteReviews', 'featuredServices',
-                'featuredListings', 'featuredStores'
-            ));
-        }
 
         return view('frontend.home', compact(
             'totalListings',
