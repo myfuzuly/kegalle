@@ -96,4 +96,16 @@ class AuditFixesTest extends TestCase
 
         $this->assertSame(csrf_token(), $m[1] ?? null);
     }
+
+    public function test_cached_page_nonces_match_the_csp_header(): void
+    {
+        $this->get('/listings')->assertOk();
+
+        $res = $this->get('/listings');
+        preg_match("/'nonce-([^']+)'/", $res->headers->get('Content-Security-Policy'), $h);
+        preg_match_all('/nonce="([^"]+)"/', $res->getContent(), $tags);
+
+        $this->assertNotEmpty($tags[1]);
+        $this->assertSame([$h[1]], array_values(array_unique($tags[1])));
+    }
 }

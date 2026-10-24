@@ -73,7 +73,7 @@ class CachePublicResponse
     private function personalise(string $html): string
     {
         $nonce = SecurityHeaders::nonce();
-        $html  = preg_replace('/nonce="[^"]*"/', 'nonce="' . $nonce . '"', $html);
+        $html  = preg_replace('/\bnonce="[^"]*"/', 'nonce="' . $nonce . '"', $html);
 
         $token = csrf_token();
         $html  = preg_replace('/(<meta name="csrf-token" content=")[^"]*"/', '${1}' . $token . '"', $html);
