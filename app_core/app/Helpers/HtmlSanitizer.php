@@ -76,8 +76,9 @@ class HtmlSanitizer
                         $badAttrs[] = $name;
                         continue;
                     }
-                    // Block javascript: in href/src
-                    if (in_array($name, ['href','src']) && preg_match('/^\s*javascript:/i', $value)) {
+                    // Allowlist, not a javascript: blocklist — "jav&#x09;ascript:" slips past a regex because browsers drop tabs.
+                    $bare = preg_replace('/[\x00-\x20]+/', '', $value);
+                    if (in_array($name, ['href','src']) && !(self::safeUrl($bare) !== '' || preg_match('~^(/|#|mailto:|tel:)~i', $bare) || ($name === 'src' && preg_match('~^data:image/(png|jpe?g|gif|webp);~i', $bare)))) {
                         $badAttrs[] = $name;
                     }
                     // Force rel="noopener noreferrer" on external links

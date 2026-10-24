@@ -22,17 +22,7 @@ return new class extends Migration
             }
         });
 
-        DB::table('users')->updateOrInsert(
-            ['email' => 'superadmin@kurulla.com'],
-            [
-                'name' => 'Super Admin',
-                'password' => Hash::make('Super@Kegalle2026'),
-                'role' => 'super_admin',
-                'status' => 'active',
-                'updated_at' => now(),
-                'created_at' => now(),
-            ]
-        );
+        // Super admin is created by hand on each environment — never with a password committed to git.
     }
 
     public function down(): void

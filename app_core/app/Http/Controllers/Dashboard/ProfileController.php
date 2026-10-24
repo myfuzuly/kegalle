@@ -45,8 +45,13 @@ class ProfileController extends Controller
         }
 
         $emailChanged = $data['email'] !== $user->email;
+        $phoneChanged = $data['phone'] !== \App\Services\StoreService::normalizePhone((string) $user->phone);
 
         $user->update($data);
+
+        if ($phoneChanged) {
+            $user->forceFill(['phone_verified_at' => null])->save(); // a new number must be re-verified by SMS
+        }
 
         if ($emailChanged) {
             $user->forceFill(['email_verified_at' => null])->save();

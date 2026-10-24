@@ -117,10 +117,12 @@
     'books'=>'📚','education'=>'📚','health'=>'💊','beauty'=>'💄','toys'=>'🧸',
     'computers'=>'💻','appliances'=>'🔌','tools'=>'🔧','jewellery'=>'💍','music'=>'🎵',
   ];
+  if (! function_exists('getCatEmoji')) { // the view can render twice in one process (cache warmup, tests)
   function getCatEmoji($name, $emojis){
     $n = strtolower($name);
     foreach($emojis as $k=>$e){ if(str_contains($n,$k)) return $e; }
     return '🏷️';
+  }
   }
   @endphp
   <div class="lp-cat-grid">

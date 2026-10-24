@@ -20,7 +20,7 @@ class PaymentController extends Controller
     public function updateStatus(Request $request, Payment $payment)
     {
         $data = $request->validate([
-            'status' => 'required|in:pending,paid,failed,refunded',
+            'status' => 'required|in:pending,failed,refunded', // "paid" only via approve(), which also activates the plan
         ]);
 
         $payment->update($data);
@@ -38,17 +38,21 @@ class PaymentController extends Controller
         $plan = $payment->membershipPlan
             ?? MembershipPlan::where('slug', $payment->meta['plan_slug'] ?? '')->first();
 
-        if ($user && $plan) {
-            $store = $user->stores()->first();
+        \Illuminate\Support\Facades\DB::transaction(function () use ($user, $plan, $payment) {
+            $store = $user && $plan ? $user->stores()->first() : null;
             if ($store) {
-                $store->update([
-                    'membership_plan_id'   => $plan->id,
-                    'membership_expires_at' => now()->addDays($plan->duration_days ?? 30),
-                ]);
+                // Renewing early adds to the time already paid for instead of wiping it
+                $from = $store->membership_expires_at && $store->membership_expires_at->isFuture()
+                    ? $store->membership_expires_at->copy()
+                    : now();
+                // forceFill: these columns are deliberately not mass-assignable, so update() silently dropped them
+                $store->forceFill([
+                    'membership_plan_id'    => $plan->id,
+                    'membership_expires_at' => $from->addDays($plan->duration_days ?? 30),
+                ])->save();
             }
-        }
-
-        $payment->update(['status' => 'paid']);
+            $payment->update(['status' => 'paid']);
+        });
 
         return back()->with('success', 'Payment approved — ' . ($plan->name ?? 'plan') . ' activated for ' . ($user->name ?? 'user') . '.');
     }

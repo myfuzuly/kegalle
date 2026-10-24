@@ -36,7 +36,7 @@ class HeroSlideController extends Controller
             $file = $request->file('image');
             $dir  = rtrim($_SERVER['DOCUMENT_ROOT'] ?? public_path(), '/') . '/images/hero-slides';
             if (!is_dir($dir)) mkdir($dir, 0755, true);
-            $ext      = strtolower($file->getClientOriginalExtension()) ?: 'jpg';
+            $ext      = ($file->guessExtension() ?: 'jpg');
             $filename = 'slide-' . uniqid() . '.' . $ext;
             $absPath  = $dir . DIRECTORY_SEPARATOR . $filename;
             // Use file_put_contents to avoid move_uploaded_file restrictions
@@ -79,7 +79,7 @@ class HeroSlideController extends Controller
                 $file = $request->file('image');
                 $dir  = rtrim($_SERVER['DOCUMENT_ROOT'] ?? public_path(), '/') . '/images/hero-slides';
                 if (!is_dir($dir)) mkdir($dir, 0755, true);
-                $ext      = strtolower($file->getClientOriginalExtension()) ?: 'jpg';
+                $ext      = ($file->guessExtension() ?: 'jpg');
                 $filename = 'slide-' . uniqid() . '.' . $ext;
                 $absPath  = $dir . DIRECTORY_SEPARATOR . $filename;
                 if (file_put_contents($absPath, file_get_contents($file->getRealPath())) === false) {

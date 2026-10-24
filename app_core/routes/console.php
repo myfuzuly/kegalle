@@ -27,7 +27,14 @@ Schedule::call(function () {
     );
     exec($cmd, $output, $exitCode);
 
-    // Keep only the last 7 backups
+    // A failed mysqldump still leaves a ~20-byte .gz (gzip's exit code wins), so judge by size,
+    // and prune old copies only after a good one exists.
+    clearstatcache(true, $file);
+    if (!file_exists($file) || filesize($file) < 1024) {
+        Log::error("DB backup FAILED (exit {$exitCode}, size " . (file_exists($file) ? filesize($file) : 0) . "): {$file}");
+        return;
+    }
+
     $backups = glob($dir . '/kegalle-*.sql.gz');
     if (count($backups) > 7) {
         sort($backups);
@@ -35,14 +42,9 @@ Schedule::call(function () {
             @unlink($old);
         }
     }
-
-    if ($exitCode !== 0 || !file_exists($file)) {
-        Log::error("DB backup FAILED (exit {$exitCode}): {$file}");
-        return;
-    }
     $size = round(filesize($file) / 1048576, 2) . ' MB';
     Log::info("DB backup: {$file} ({$size})");
-})->dailyAt('02:00')->name('db-backup')->withoutOverlapping();
+})->dailyAt('02:00')->timezone('Asia/Colombo')->name('db-backup')->withoutOverlapping();
 
 /*
 |--------------------------------------------------------------------------
@@ -69,7 +71,7 @@ Schedule::call(function () {
         });
 
     Log::info('Renewal reminders sent: '.$count);
-})->dailyAt('09:00')->name('renewal-reminders')->withoutOverlapping();
+})->dailyAt('09:00')->timezone('Asia/Colombo')->name('renewal-reminders')->withoutOverlapping();
 
 /*
 |--------------------------------------------------------------------------
@@ -113,7 +115,7 @@ Schedule::call(function () {
             Log::error('Saved search alert failed for user '.$search->user_id.': '.$e->getMessage());
         }
     });
-})->dailyAt('08:00')->name('saved-search-alerts')->withoutOverlapping();
+})->dailyAt('08:00')->timezone('Asia/Colombo')->name('saved-search-alerts')->withoutOverlapping();
 
 /*
 |--------------------------------------------------------------------------
@@ -183,11 +185,11 @@ Schedule::call(function () {
     }
 
     Log::info('Price drop alerts sent to '.$userCount.' users.');
-})->dailyAt('10:00')->name('price-drop-alerts')->withoutOverlapping();
+})->dailyAt('10:00')->timezone('Asia/Colombo')->name('price-drop-alerts')->withoutOverlapping();
 
 /*
 |--------------------------------------------------------------------------
-| Deal Expiry Cleanup — runs daily at midnight
+| Deal Expiry Cleanup — runs hourly
 |--------------------------------------------------------------------------
 */
 Schedule::call(function () {
@@ -198,4 +200,13 @@ Schedule::call(function () {
     if ($expired > 0) {
         Log::info("Deal expiry: {$expired} deal(s) marked as expired.");
     }
-})->daily()->name('deal-expiry-cleanup')->withoutOverlapping();
+})->hourly()->name('deal-expiry-cleanup')->withoutOverlapping();
+
+/*
+|--------------------------------------------------------------------------
+| Queue worker — drains queued mail/push each minute from the existing cron.
+| Needs QUEUE_CONNECTION=database in .env; with "sync" there is nothing queued and this exits at once.
+|--------------------------------------------------------------------------
+*/
+Schedule::command('queue:work --stop-when-empty --max-time=50 --tries=3')
+    ->everyMinute()->name('queue-drain')->withoutOverlapping()->runInBackground();

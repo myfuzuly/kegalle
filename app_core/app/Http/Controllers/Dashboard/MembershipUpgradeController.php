@@ -57,7 +57,7 @@ class MembershipUpgradeController extends Controller
 
         $meta      = $this->plans[$plan];
         $planModel = MembershipPlan::where('slug', $plan)->first();
-        $reference = 'KRL-' . auth()->id() . '-' . strtoupper(substr($plan, 0, 3)) . '-' . now()->format('Ymd') . '-' . strtoupper(\Illuminate\Support\Str::random(4));
+        $reference = 'KGL-' . auth()->id() . '-' . strtoupper(substr($plan, 0, 3)) . '-' . now()->format('Ymd') . '-' . strtoupper(\Illuminate\Support\Str::random(4));
 
         // Block if already pending
         $pending = Payment::where('user_id', auth()->id())
@@ -83,7 +83,7 @@ class MembershipUpgradeController extends Controller
         ]);
 
         $meta      = $this->plans[$plan];
-        $reference = 'KRL-' . auth()->id() . '-' . strtoupper(substr($plan, 0, 3)) . '-' . now()->format('Ymd') . '-' . strtoupper(\Illuminate\Support\Str::random(4));
+        $reference = 'KGL-' . auth()->id() . '-' . strtoupper(substr($plan, 0, 3)) . '-' . now()->format('Ymd') . '-' . strtoupper(\Illuminate\Support\Str::random(4));
         $planModel = MembershipPlan::where('slug', $plan)->first();
         $slipPath  = $request->file('slip')->store('payment-slips', 'local');
 

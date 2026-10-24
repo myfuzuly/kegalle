@@ -65,12 +65,12 @@ class AdminStoreController extends Controller
 
         $storeSlug = Str::slug($data['name']);
         if ($request->hasFile('logo')) {
-            $ext = strtolower($request->file('logo')->getClientOriginalExtension()) ?: 'jpg';
+            $ext = ($request->file('logo')->guessExtension() ?: 'jpg');
             $data['logo'] = $request->file('logo')->storeAs('stores', $storeSlug . '-logo-' . time() . '.' . $ext, 'public');
             $data['logo'] = \App\Helpers\ImageHelper::finalize($data['logo'], false, 500);
         }
         if ($request->hasFile('banner')) {
-            $ext = strtolower($request->file('banner')->getClientOriginalExtension()) ?: 'jpg';
+            $ext = ($request->file('banner')->guessExtension() ?: 'jpg');
             $data['banner'] = $request->file('banner')->storeAs('stores', $storeSlug . '-banner-' . time() . '.' . $ext, 'public');
             $posY = (int) $request->input('banner_position_y', 50);
             \App\Helpers\ImageHelper::cropToAspect(\Illuminate\Support\Facades\Storage::disk('public')->path($data['banner']), 820, 312, $posY);
@@ -110,7 +110,7 @@ class AdminStoreController extends Controller
             if ($store->logo) {
                 Storage::disk('public')->delete($store->logo);
             }
-            $ext = strtolower($request->file('logo')->getClientOriginalExtension()) ?: 'jpg';
+            $ext = ($request->file('logo')->guessExtension() ?: 'jpg');
             $data['logo'] = $request->file('logo')->storeAs('stores', $storeSlug . '-logo-' . time() . '.' . $ext, 'public');
             $data['logo'] = \App\Helpers\ImageHelper::finalize($data['logo'], false, 500);
         } elseif ($request->boolean('remove_logo') && $store->logo) {
@@ -122,7 +122,7 @@ class AdminStoreController extends Controller
             if ($store->banner) {
                 Storage::disk('public')->delete($store->banner);
             }
-            $ext = strtolower($request->file('banner')->getClientOriginalExtension()) ?: 'jpg';
+            $ext = ($request->file('banner')->guessExtension() ?: 'jpg');
             $data['banner'] = $request->file('banner')->storeAs('stores', $storeSlug . '-banner-' . time() . '.' . $ext, 'public');
             $posY = (int) $request->input('banner_position_y', 50);
             \App\Helpers\ImageHelper::cropToAspect(\Illuminate\Support\Facades\Storage::disk('public')->path($data['banner']), 820, 312, $posY);

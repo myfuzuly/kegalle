@@ -72,12 +72,14 @@ class Listing extends Model
 
     public function scopePublished($query)
     {
-        return $query->whereIn('status', self::LIVE_STATUSES);
+        return $query->whereIn('status', self::LIVE_STATUSES)
+            ->where(fn ($q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()));
     }
 
     public function scopeApproved($query)
     {
-        return $query->whereIn('status', self::LIVE_STATUSES);
+        return $query->whereIn('status', self::LIVE_STATUSES)
+            ->where(fn ($q) => $q->whereNull('expires_at')->orWhere('expires_at', '>', now()));
     }
 
     public function scopePending($query)

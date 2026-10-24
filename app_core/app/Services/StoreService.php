@@ -127,7 +127,7 @@ class StoreService
             if ($existing?->logo) {
                 Storage::disk('public')->delete($existing->logo);
             }
-            $ext         = strtolower($request->file('logo')->getClientOriginalExtension()) ?: 'jpg';
+            $ext         = ($request->file('logo')->guessExtension() ?: 'jpg');
             $data['logo'] = $request->file('logo')->storeAs('stores', "{$slug}-logo-" . time() . ".{$ext}", 'public');
             $data['logo'] = ImageHelper::finalize($data['logo'], false, 500);
         } elseif ($request->boolean('remove_logo') && $existing?->logo) {
@@ -140,7 +140,7 @@ class StoreService
             if ($existing?->banner) {
                 Storage::disk('public')->delete($existing->banner);
             }
-            $ext            = strtolower($request->file('banner')->getClientOriginalExtension()) ?: 'jpg';
+            $ext            = ($request->file('banner')->guessExtension() ?: 'jpg');
             $uniqueName     = "{$slug}-banner-" . time() . ".{$ext}";
             $data['banner'] = $request->file('banner')->storeAs('stores', $uniqueName, 'public');
             $posY           = (int) $request->input('banner_position_y', 50);

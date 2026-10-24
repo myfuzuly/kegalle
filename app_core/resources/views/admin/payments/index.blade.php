@@ -77,7 +77,7 @@
                 @csrf
                 <select class="select-32h" name="status" data-autosubmit>
                     <option value="pending"  @selected($payment->status==='pending')>Pending</option>
-                    <option value="paid"     @selected($payment->status==='paid')>Paid</option>
+                    <option value="paid" disabled @selected($payment->status==='paid')>Paid (use Approve)</option>
                     <option value="failed"   @selected($payment->status==='failed')>Failed</option>
                     <option value="refunded" @selected($payment->status==='refunded')>Refunded</option>
                 </select>

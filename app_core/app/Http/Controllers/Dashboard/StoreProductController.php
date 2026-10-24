@@ -143,7 +143,7 @@ class StoreProductController extends Controller
             : 0;
 
         foreach ($request->file('images') as $index => $file) {
-            $ext     = strtolower($file->getClientOriginalExtension()) ?: 'jpg';
+            $ext     = ($file->guessExtension() ?: 'jpg');
             $seoName = ImageHelper::seoFilename($listing->slug, $nextSort + $index, $ext);
             $path    = $file->storeAs('listings', $seoName, 'public');
             $path    = ImageHelper::finalize($path);

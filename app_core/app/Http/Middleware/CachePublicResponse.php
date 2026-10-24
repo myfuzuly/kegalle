@@ -16,7 +16,8 @@ class CachePublicResponse
         }
 
         // Skip if there's flash data (form errors, success messages shown after redirect)
-        if ($request->hasSession() && $request->session()->has('_flash')) {
+        // Laravel always stores an empty _flash bag, so has('_flash') was true for every returning visitor
+        if ($request->hasSession() && ($request->session()->get('_flash.old') || $request->session()->get('_flash.new'))) {
             return $next($request);
         }
 
@@ -34,7 +35,7 @@ class CachePublicResponse
         if (file_exists($file)) {
             $age = time() - filemtime($file);
             if ($age < $ttl) {
-                return response(file_get_contents($file), 200, [
+                return response($this->personalise(file_get_contents($file)), 200, [
                     'Content-Type' => 'text/html; charset=UTF-8',
                     'X-Cache'      => 'HIT',
                 ]);
@@ -50,7 +51,7 @@ class CachePublicResponse
                 @unlink($lock);
                 return $response;
             }
-            return response(file_get_contents($file), 200, [
+            return response($this->personalise(file_get_contents($file)), 200, [
                 'Content-Type' => 'text/html; charset=UTF-8',
                 'X-Cache'      => 'STALE',
             ]);
@@ -63,5 +64,19 @@ class CachePublicResponse
         }
 
         return $response;
+    }
+
+    /**
+     * A cached page carries the first visitor's CSP nonce and CSRF token. Swap in this request's,
+     * otherwise every inline script is blocked by CSP and forms fail with 419.
+     */
+    private function personalise(string $html): string
+    {
+        $nonce = SecurityHeaders::nonce();
+        $html  = preg_replace('/nonce="[^"]*"/', 'nonce="' . $nonce . '"', $html);
+
+        $token = csrf_token();
+        $html  = preg_replace('/(<meta name="csrf-token" content=")[^"]*"/', '${1}' . $token . '"', $html);
+        return preg_replace('/(name="_token" value=")[^"]*"/', '${1}' . $token . '"', $html);
     }
 }

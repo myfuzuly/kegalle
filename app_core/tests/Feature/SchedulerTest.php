@@ -82,7 +82,7 @@ class SchedulerTest extends TestCase
 
         // Run schedule:run (only tasks that are due fire)
         // Instead, invoke the callback directly via the artisan kernel
-        $this->travelTo(now()->addDay()->startOfDay()); // daily() task is due at 00:00
+        $this->travelTo(now()->addDay()->startOfDay()); // hourly task is due on the hour
         Artisan::call('schedule:run');
 
         $this->assertEquals('expired', DB::table('deals')->find($expiredId)->status);

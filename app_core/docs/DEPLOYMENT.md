@@ -79,7 +79,7 @@ php /home/kegalle/app_core/artisan view:clear
 
 ### 5. Verify
 
-Check the site at https://kurulla.com. For page-source check:
+Check the site at https://kegalle.com. For page-source check:
 - `@vite()` tags should resolve to `/build/css/app-[hash].css` and `/build/js/app-[hash].js`
 - No 500 errors in `/home/kegalle/app_core/storage/logs/laravel.log`
 
@@ -123,7 +123,7 @@ Never committed to any repo or doc. Key variables:
 | `SESSION_DRIVER` | `database` |
 | `CACHE_STORE` | `database` |
 | `MAIL_MAILER` | `smtp` |
-| `MAIL_HOST` | `mail.kurulla.com` |
+| `MAIL_HOST` | `mail.kegalle.com` |
 | `MAIL_PORT` | `587` |
 | `PAYHERE_SANDBOX` | `false` (production) |
 

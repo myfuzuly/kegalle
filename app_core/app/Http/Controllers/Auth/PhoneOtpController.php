@@ -77,7 +77,7 @@ class PhoneOtpController extends Controller
             ->latest('created_at')
             ->first();
 
-        if (!$record || !Hash::check($request->input('code'), $record->code)) {
+        if (!$record || !$this->codeMatches($record, $request->input('code'))) {
             return back()
                 ->withErrors(['code' => !$record
                     ? 'Code expired. Please request a new one.'
@@ -166,7 +166,7 @@ class PhoneOtpController extends Controller
             ->latest('created_at')
             ->first();
 
-        if (!$record || !Hash::check($request->input('code'), $record->code)) {
+        if (!$record || !$this->codeMatches($record, $request->input('code'))) {
             return back()->withErrors(['code' => 'Invalid or expired code.']);
         }
 
@@ -179,5 +179,18 @@ class PhoneOtpController extends Controller
         $request->session()->regenerate();
 
         return redirect('/dashboard')->with('success', 'Logged in via SMS OTP.');
+    }
+
+    /** Checks a code; after 5 wrong guesses the code is burned so it can't be brute-forced across IPs. */
+    private function codeMatches(object $record, string $code): bool
+    {
+        if (Hash::check($code, $record->code)) {
+            return true;
+        }
+        $attempts = ($record->attempts ?? 0) + 1;
+        // rescue(): the attempts column arrives with a migration; a wrong guess must never 500 before it runs
+        rescue(fn () => DB::table('phone_otps')->where('id', $record->id)
+            ->update(['attempts' => $attempts, 'used' => $attempts >= 5, 'updated_at' => now()]), null, false);
+        return false;
     }
 }

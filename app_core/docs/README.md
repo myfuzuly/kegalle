@@ -1,6 +1,6 @@
-# Kurulla.com — Kegalle Marketplace
+# Kegalle.com — Kegalle Marketplace
 
-**Live site:** https://kurulla.com  
+**Live site:** https://kegalle.com  
 **Server:** InMotion VPS · 213.165.241.225  
 **Stack:** Laravel 11 · PHP 8.2 · MariaDB 10.6 · Nginx 1.14 · Vite 6
 
@@ -8,7 +8,7 @@
 
 ## What is this?
 
-Kurulla.com is a local online marketplace for the Kegalle district of Sri Lanka. It lets residents buy, sell, and discover products, services, stores, deals, and events within the district.
+Kegalle.com is a local online marketplace for the Kegalle district of Sri Lanka. It lets residents buy, sell, and discover products, services, stores, deals, and events within the district.
 
 ---
 

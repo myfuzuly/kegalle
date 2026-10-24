@@ -28,11 +28,11 @@ class FavoriteController extends Controller
             $favorite->delete();
             $favorited = false;
         } else {
-            Favorite::create([
-                'user_id'      => Auth::id(),
-                'listing_id'   => $listing->id,
-                'price_at_save'=> $listing->price,
-            ]);
+            // createOrFirst: a double-click races past the check above and would hit the unique index
+            Favorite::createOrFirst(
+                ['user_id' => Auth::id(), 'listing_id' => $listing->id],
+                ['price_at_save' => $listing->price]
+            );
             $favorited = true;
         }
 

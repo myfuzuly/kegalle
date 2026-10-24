@@ -357,7 +357,7 @@ class AdminListingController extends Controller
                 continue;
             }
 
-            $ext = strtolower($image->getClientOriginalExtension()) ?: 'jpg';
+            $ext = ($image->guessExtension() ?: 'jpg');
             $seoName = \App\Helpers\ImageHelper::seoFilename($listing->slug, $nextSort + $index, $ext);
             $path = $image->storeAs('listings', $seoName, 'public');
             $path = \App\Helpers\ImageHelper::finalize($path);

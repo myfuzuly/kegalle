@@ -21,16 +21,23 @@ class ListingService
 {
     public function generateSlug(string $title): string
     {
-        $base = Str::slug($title);
+        // Sinhala/Tamil-only titles slug to '' — fall back so URLs and image names stay readable
+        $base = Str::slug($title) ?: 'ad';
         $slug = $base;
-        $i = 2;
+        // Random suffix instead of -2, -3…: one lookup, and two same-title posts rarely collide
         while (Listing::where('slug', $slug)->exists()) {
-            $slug = $base . '-' . $i++;
+            $slug = $base . '-' . Str::lower(Str::random(5));
         }
         return $slug;
     }
 
     public function create(Request $request, array $validated, User $user): Listing
+    {
+        // All-or-nothing: a crash mid-way (e.g. a huge photo) must not leave a listing without images
+        return \Illuminate\Support\Facades\DB::transaction(fn () => $this->createListing($request, $validated, $user));
+    }
+
+    private function createListing(Request $request, array $validated, User $user): Listing
     {
         $store = $this->resolveStore($validated, $user);
 
@@ -57,6 +64,8 @@ class ListingService
             'is_featured'     => false,
             'is_top'          => false,
             'payment_methods' => $request->input('payment_methods') ?: ['cash_on_pickup'],
+            // Classified ads run 30 days (renewable from the dashboard); store products stay up
+            'expires_at'      => $type === 'classified' ? now()->addDays(30) : null,
         ]);
 
         $this->handleImages($request, $listing, $slug);
@@ -139,7 +148,7 @@ class ListingService
             : 0;
 
         foreach ($request->file('images') as $index => $image) {
-            $ext     = strtolower($image->getClientOriginalExtension()) ?: 'jpg';
+            $ext     = ($image->guessExtension() ?: 'jpg');
             $seoName = ImageHelper::seoFilename($slug, $nextSort + $index, $ext);
             $path    = $image->storeAs('listings', $seoName, 'public');
             $path    = ImageHelper::finalize($path);
