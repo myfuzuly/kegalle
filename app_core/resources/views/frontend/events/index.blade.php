@@ -106,7 +106,7 @@
                 <h2>Upcoming Events</h2>
                 <div class="ke-grid-sort">
                     <label>Sort by:</label>
-                    <select onchange="window.location.href='/events?sort='+this.value+'&{{ http_build_query(request()->except('sort','page')) }}'">
+                    <select data-sort-param="sort" aria-label="Sort events">
                         <option value="date" {{ request('sort','date') === 'date' ? 'selected' : '' }}>Date: Soonest</option>
                         <option value="popular" {{ request('sort') === 'popular' ? 'selected' : '' }}>Most Popular</option>
                         <option value="price_low" {{ request('sort') === 'price_low' ? 'selected' : '' }}>Price: Low to High</option>
@@ -263,8 +263,9 @@
                 <div class="ke-newsletter-sub">Get the latest events, offers and updates delivered to your inbox.</div>
             </div>
         </div>
-        <form class="ke-newsletter-form" onsubmit="event.preventDefault()">
-            <input type="email" placeholder="Enter your email" class="ke-newsletter-email">
+        <form class="ke-newsletter-form" method="post" action="/newsletter/subscribe">
+            @csrf
+            <input type="email" name="email" required placeholder="Enter your email" aria-label="Email address" class="ke-newsletter-email">
             <button type="submit" class="k-btn ke-newsletter-btn">Subscribe</button>
         </form>
     </div>

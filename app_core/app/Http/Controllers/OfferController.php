@@ -22,6 +22,8 @@ class OfferController extends Controller
         ]);
 
         $buyer = Auth::user();
+        abort_unless(in_array($listing->status, \App\Models\Listing::LIVE_STATUSES, true), 404); // no offers on pending/rejected/sold ads
+        abort_if(\App\Models\UserBlock::between($buyer->id, (int) $listing->user_id), 403, 'You can no longer contact this seller.');
 
         // Prevent seller offering on own listing
         if ($listing->user_id === $buyer->id) {

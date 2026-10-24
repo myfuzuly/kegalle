@@ -3,50 +3,50 @@
 @section('title', 'Verify Your Phone — kegalle')
 
 @section('content')
-<div style="min-height:70vh;display:flex;align-items:center;justify-content:center;padding:40px 16px">
-<div style="width:100%;max-width:420px">
+<div class="ks-040a28">
+<div class="ks-f0da59">
 
-    <div style="text-align:center;margin-bottom:32px">
-        <div style="font-size:48px;margin-bottom:12px">📱</div>
-        <h1 style="font-size:24px;font-weight:800;margin-bottom:6px">Verify Your Phone</h1>
+    <div class="ks-1a49a5">
+        <div class="ks-199bf1">📱</div>
+        <h1 class="ks-cb7633">Verify Your Phone</h1>
         @if(auth()->user()->phone)
-        <p style="color:var(--k-text-secondary);font-size:15px">
+        <p class="ks-e340e6">
             We'll send a 6-digit code to <strong>{{ auth()->user()->phone }}</strong>
         </p>
         @else
-        <p style="color:#dc2626;font-size:14px;font-weight:600">
+        <p class="ks-d37fee">
             No phone number on your account.<br>
-            <a href="/dashboard/profile" style="color:#2563eb;text-decoration:underline">Add your phone in Profile Settings →</a>
+            <a href="/dashboard/profile" class="ks-2f7daa">Add your phone in Profile Settings →</a>
         </p>
         @endif
     </div>
 
     @if(session('warning'))
-        <div style="background:#fff3e0;color:#e65100;padding:14px 18px;border-radius:10px;margin-bottom:16px;font-weight:600;font-size:14px">
+        <div class="ks-3c2b9f">
             ⚠ {{ session('warning') }}
         </div>
     @endif
     @if($errors->any())
-        <div class="k-alert k-alert-error" style="margin-bottom:20px">
+        <div class="k-alert k-alert-error ks-301969">
             {{ $errors->first() }}
         </div>
     @endif
 
     @if(session('otp_sent') && !$errors->has('code'))
-        <div class="k-alert k-alert-success" style="margin-bottom:20px">
+        <div class="k-alert k-alert-success ks-301969">
             ✓ Code sent to {{ auth()->user()->phone }}. Check your messages.
         </div>
     @endif
 
     {{-- Step 1: Send OTP --}}
     @if(!session('otp_sent') && !$errors->has('code'))
-    <div class="k-card" style="padding:28px">
+    <div class="k-card ks-b3b25b">
         <form method="POST" action="/phone/send-otp">
             @csrf
-            <p style="font-size:14px;color:var(--k-text-secondary);margin-bottom:20px">
+            <p class="ks-cfe6e3">
                 Click below to receive a verification code via SMS. Standard SMS rates may apply.
             </p>
-            <button type="submit" class="k-btn k-btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:13px">
+            <button type="submit" class="k-btn k-btn-primary ks-f8c54c">
                 Send Verification Code
             </button>
         </form>
@@ -55,11 +55,11 @@
 
     {{-- Step 2: Enter OTP --}}
     @if(session('otp_sent') || $errors->has('code'))
-    <div class="k-card" style="padding:28px">
+    <div class="k-card ks-b3b25b">
         <form method="POST" action="/phone/verify-otp" id="otpForm">
             @csrf
-            <div style="margin-bottom:20px">
-                <label for="otpInput" style="display:block;font-weight:600;margin-bottom:8px;font-size:14px">Enter 6-digit code</label>
+            <div class="ks-301969">
+                <label for="otpInput" class="ks-96c847">Enter 6-digit code</label>
                 <input
                     type="text"
                     name="code"
@@ -69,22 +69,22 @@
                     inputmode="numeric"
                     autocomplete="one-time-code"
                     placeholder="• • • • • •"
-                    style="width:100%;text-align:center;font-size:28px;font-weight:700;letter-spacing:10px;padding:16px;border:2px solid var(--k-border);border-radius:var(--k-radius);background:var(--k-surface);color:var(--k-text);box-sizing:border-box"
+                    class="ks-43eb4f"
                     autofocus
                     required>
-                <div style="font-size:12px;color:var(--k-text-muted);margin-top:8px;text-align:center">
+                <div class="ks-f9ee92">
                     Code expires in <span id="otpCountdown">10:00</span>
                 </div>
             </div>
-            <button type="submit" class="k-btn k-btn-primary" style="width:100%;justify-content:center;font-size:15px;padding:13px">
+            <button type="submit" class="k-btn k-btn-primary ks-f8c54c">
                 Verify Phone Number
             </button>
         </form>
 
-        <div style="text-align:center;margin-top:16px">
-            <form method="POST" action="/phone/send-otp" style="display:inline">
+        <div class="ks-87cd1c">
+            <form method="POST" action="/phone/send-otp" class="ks-5677b9">
                 @csrf
-                <button type="submit" style="background:none;border:none;color:var(--k-primary);font-size:13px;cursor:pointer;text-decoration:underline;padding:0">
+                <button type="submit" class="ks-246eb5">
                     Resend code
                 </button>
             </form>
@@ -92,8 +92,8 @@
     </div>
     @endif
 
-    <div style="text-align:center;margin-top:20px">
-        <a href="/dashboard" style="font-size:13px;color:var(--k-text-muted)">Skip for now →</a>
+    <div class="ks-80237d">
+        <a href="/dashboard" class="ks-e478a8">Skip for now →</a>
     </div>
 
 </div>

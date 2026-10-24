@@ -13,6 +13,8 @@ class UserBlockController extends Controller
             return response()->json(['message' => 'You cannot block yourself.'], 422);
         }
 
+        abort_unless(\App\Models\User::whereKey($userId)->exists(), 404);
+
         UserBlock::firstOrCreate([
             'blocker_id' => auth()->id(),
             'blocked_id' => $userId,

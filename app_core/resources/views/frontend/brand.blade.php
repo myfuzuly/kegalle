@@ -40,7 +40,7 @@
                 <form method="GET" class="k-sort-row">
                     @if(request('category'))<input type="hidden" name="category" value="{{ request('category') }}">@endif
                     <span class="k-sort-label">Sort:</span>
-                    <select name="sort" class="k-form-select k-sort-select-sm" onchange="this.form.submit()">
+                    <select name="sort" class="k-form-select k-sort-select-sm" data-autosubmit>
                         <option value="">Newest First</option>
                         <option value="price_low" @selected(request('sort')=='price_low')>Price: Low → High</option>
                         <option value="price_high" @selected(request('sort')=='price_high')>Price: High → Low</option>

@@ -85,6 +85,7 @@ class ChatController extends Controller
         $sellerId = (int) $request->seller_id;
 
         abort_if($sellerId === $userId, 403, 'You cannot message yourself.');
+        abort_if(\App\Models\UserBlock::between($userId, $sellerId), 403, 'You can no longer message this user.');
 
         $listing = Listing::findOrFail($request->listing_id);
         abort_if((int) $listing->user_id !== $sellerId, 422, 'Listing does not belong to that seller.');
@@ -128,6 +129,7 @@ class ChatController extends Controller
     {
         $userId = Auth::id();
         abort_if($thread->buyer_id !== $userId && $thread->seller_id !== $userId, 403);
+        abort_if(\App\Models\UserBlock::between($thread->buyer_id, $thread->seller_id), 403, 'You can no longer message this user.');
 
         $request->validate([
             'message' => 'required|string|max:2000',

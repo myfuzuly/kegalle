@@ -188,7 +188,7 @@
                         {{ ($useRealDeals ?? false) ? 'Featured Deals' : 'Browse Listings' }}
                     </h2>
                     @if($useRealDeals ?? false)
-                    <select class="k-filter-select k-filter-select--auto" onchange="document.querySelector('[name=sort]').value=this.value;document.getElementById('dealsFilterForm').submit()">
+                    <select class="k-filter-select k-filter-select--auto" data-set-field="dealsFilterForm" data-name="sort" aria-label="Sort deals">
                         <option value="newest"    {{ request('sort','newest') === 'newest'    ? 'selected' : '' }}>Newest</option>
                         <option value="popular"   {{ request('sort') === 'popular'   ? 'selected' : '' }}>Most Popular</option>
                         <option value="discount"  {{ request('sort') === 'discount'  ? 'selected' : '' }}>Highest Discount</option>
@@ -320,7 +320,7 @@
                 <div class="k-newsletter-sub">Get the latest deals, offers and updates delivered to your inbox.</div>
             </div>
         </div>
-        <form class="k-newsletter-form" id="dealsNewsletterForm" onsubmit="dealsNewsletterSubmit(event)">
+        <form class="k-newsletter-form" id="dealsNewsletterForm" data-onsubmit="dealsNewsletterSubmit">
             @csrf
             <input type="email" name="email" placeholder="Enter your email" class="k-newsletter-input" required>
             <button type="submit" class="k-btn k-btn-accent" id="dealsNewsletterBtn">Subscribe</button>

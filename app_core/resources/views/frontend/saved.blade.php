@@ -78,7 +78,7 @@
     function buildCard(l) {
         var imgHtml;
         if (l.image) {
-            imgHtml = '<img loading="lazy" src="' + l.image + '" alt="' + esc(l.title) + '" class="k-cover-img" onerror="this.closest(\'.k-listing-img\').classList.add(\'k-img-failed\');this.remove()">';
+            imgHtml = '<img loading="lazy" src="' + l.image + '" alt="' + esc(l.title) + '" class="k-cover-img" data-fallback="fail:.k-listing-img">';
         } else {
             var icon = l.category_icon || '📦';
             imgHtml = '<div class="k-placeholder-icon"><span>' + icon + '</span><span class="k-ph-label">No Photo</span></div>';

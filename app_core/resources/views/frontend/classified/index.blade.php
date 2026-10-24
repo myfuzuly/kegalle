@@ -83,7 +83,7 @@
                 <span class="k-filter-title"><svg class="k-filter-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>Filter</span>
                 <a href="/classified" class="k-filter-clear" id="kClearFilters">Clear Filters</a>
             </div>
-            <form method="GET" action="/classified" onsubmit="var btn=this.querySelector('.k-filter-submit');if(btn){btn.classList.add('k-loading');btn.disabled=true;}">
+            <form method="GET" action="/classified" data-loading-submit>
 
                 @php
                     $selectedCats = request('categories', []);

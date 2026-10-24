@@ -385,7 +385,7 @@ $hClassified=($featuredClassified ?? collect())->merge($latestClassified ?? coll
                                 <a class="k-deal-card-home" href="/listings/{{ $dListing->slug ?? '#' }}">
                                     <div class="k-deal-card-img">
                                         @if($dHasImg)
-                                            <img loading="lazy" decoding="async" src="{{ $dImgUrl }}" alt="{{ $dListing->title }}" onerror="this.closest('.k-deal-card-img').classList.add('k-img-failed');this.remove()">
+                                            <img loading="lazy" decoding="async" src="{{ $dImgUrl }}" alt="{{ $dListing->title }}" data-fallback="fail:.k-deal-card-img">
                                         @else
                                             <div class="k-deal-card-ph">🛍️</div>
                                         @endif

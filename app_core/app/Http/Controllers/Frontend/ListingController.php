@@ -406,6 +406,11 @@ class ListingController extends Controller
             'comment' => 'required|string|min:5|max:1000',
         ]);
 
+        // Same rule as store reviews: owners can't rate themselves (it feeds the store rating and rank)
+        if ((int) $listing->user_id === (int) auth()->id()) {
+            return back()->with('error', 'You cannot review your own listing.');
+        }
+
         $existing = Review::where('user_id', auth()->id())
             ->where('listing_id', $listing->id)
             ->first();

@@ -55,6 +55,7 @@ class ChatPollController extends Controller
     {
         $userId = Auth::id();
         abort_if($thread->buyer_id !== $userId && $thread->seller_id !== $userId, 403);
+        abort_if(\App\Models\UserBlock::between($thread->buyer_id, $thread->seller_id), 403, 'You can no longer message this user.');
 
         $request->validate(['message' => 'required|string|max:2000']);
 

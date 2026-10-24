@@ -69,11 +69,13 @@
 @endif
 @if(config('services.analytics.pixel_id'))
 <!-- Meta Pixel -->
-<script nonce="{{ $cspNonce ?? '' }}">!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','{{ config('services.analytics.pixel_id') }}');fbq('track','PageView');</script>
+<script nonce="{{ $cspNonce ?? '' }}">/* Pixel loads after the page so its ~90 KB script never competes with first paint */window.addEventListener('load',function(){setTimeout(function(){!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','{{ config('services.analytics.pixel_id') }}');fbq('track','PageView');},1500);});</script>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id={{ config('services.analytics.pixel_id') }}&ev=PageView&noscript=1"/></noscript>
 @endif
 {{-- Keep the first-visit splash out of the page flow before the main stylesheet arrives (prevents layout shift) --}}
 <style nonce="{{ $cspNonce ?? '' }}">#k-preloader{position:fixed;inset:0;z-index:99999;background:#0f1a12;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}#k-preloader .k-preloader-logo-img{width:160px;height:auto}</style>
+{{-- Not deferred: its image-error listener must exist before the first <img> can fail. ~2 KB. --}}
+<script src="/js/kegalle-actions.js?v=1"></script>
 </head>
 <body>
 @include('partials.csp-hidden')
@@ -118,7 +120,7 @@
             {{-- No-JS fallback --}}
             <noscript>
                 <form action="/listings" method="GET" class="ksa-form">
-                    <input class="k-search-input" type="text" name="q" value="{{ request('q') }}" placeholder="Search for anything in Kegalle...">
+                    <input class="k-search-input" type="text" name="q" aria-label="Search ads in Kegalle" value="{{ request('q') }}" placeholder="Search for anything in Kegalle...">
                     <button class="k-search-btn" type="submit">Search</button>
                 </form>
             </noscript>

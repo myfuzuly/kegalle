@@ -79,7 +79,7 @@
                         <button class="blog-share-btn" title="Share on Facebook" aria-label="Share on Facebook">f</button>
                         <button class="blog-share-btn" title="Share on Twitter/X" aria-label="Share on Twitter/X">𝕏</button>
                         <button class="blog-share-btn" title="Share on WhatsApp" aria-label="Share on WhatsApp">💬</button>
-                        <button class="blog-share-btn" title="Copy link" aria-label="Copy link" onclick="navigator.clipboard.writeText(window.location.href)">🔗</button>
+                        <button class="blog-share-btn" title="Copy link" aria-label="Copy link" data-copy-url>🔗</button>
                     </div>
                 </div>
 

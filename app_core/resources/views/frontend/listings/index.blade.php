@@ -269,8 +269,8 @@
                 </form>
                 @endauth
                 <div class="k-view-toggle" role="group" aria-label="View mode">
-                    <button id="btnListView" class="active" onclick="setView('list')" title="List view">☰</button>
-                    {{-- <button id="btnMapView" onclick="setView('map')" title="Map view">🗺</button> --}}
+                    <button id="btnListView" class="active" data-call="setView" data-arg="list" title="List view">☰</button>
+                    {{-- <button id="btnMapView" data-call="setView" data-arg="map" title="Map view">🗺</button> --}}
                 </div>
                 <div class="k-sort-row">
                     <span class="k-sort-label">Sort By:</span>
@@ -576,7 +576,7 @@
             if(e.name !== 'AbortError'){
                 results.classList.remove('k-ajax-loading');
                 var retryUrl = url;
-                results.innerHTML = '<div class="k-empty-state" style="padding:48px 0;text-align:center"><p style="color:var(--k-text-muted);margin-bottom:12px">Something went wrong loading results.</p><button onclick="fetchListings(\''+retryUrl.replace(/'/g,"\\'")+'\')" style="background:var(--k-primary);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-size:14px;cursor:pointer;font-weight:600">Try Again</button></div>';
+                results.innerHTML = '<div class="k-empty-state k-load-error"><p>Something went wrong loading results.</p><button type="button" class="k-btn k-btn-primary" data-call="fetchListings" data-arg="'+retryUrl.replace(/"/g,'&quot;')+'">Try again</button></div>';
             }
         });
     }
@@ -888,7 +888,7 @@ function setView(mode){
     if(!items.length){ wrap.style.display='none'; return; }
     var html = items.slice(0,6).map(function(item){
         if(!item||!item.url||typeof item.url!=='string'||item.url==='undefined'||!item.title||item.title==='undefined') return '';
-        return '<a class="k-rv-chip" href="'+item.url+'"><img src="'+(item.img&&item.img!=='undefined'?item.img:'')+'" onerror="this.style.display=\'none\'"><span>'+item.title+'</span></a>';
+        return '<a class="k-rv-chip" href="'+item.url+'"><img src="'+(item.img&&item.img!=='undefined'?item.img:'')+'" data-fallback="hide"><span>'+item.title+'</span></a>';
     }).filter(Boolean).join('');
     wrap.querySelector('.k-rv-list').innerHTML = html;
     if (html) wrap.classList.add('is-shown');

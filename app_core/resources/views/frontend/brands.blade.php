@@ -11,7 +11,7 @@
     <div class="k-breadcrumb"><a href="/">Home</a><span class="sep">›</span><span class="current">Brands</span></div>
 
     <div class="k-brand-search-wrap">
-        <input type="text" id="brandSearch" class="k-brand-search" placeholder="Search brands..." oninput="filterBrands(this.value)">
+        <input type="text" id="brandSearch" class="k-brand-search" placeholder="Search brands..." data-oninput="filterBrands">
     </div>
 
     @php

@@ -78,6 +78,8 @@ class UserActionController extends Controller
         } catch (\Throwable $e) {
             // Table may not exist yet — silently succeed to avoid breaking the footer
         }
-        return response()->json(['message' => 'Subscribed successfully.']);
+        return $request->expectsJson()
+            ? response()->json(['message' => 'Subscribed successfully.'])
+            : back()->with('success', 'Subscribed — thanks!');
     }
 }

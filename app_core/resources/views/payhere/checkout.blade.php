@@ -2,27 +2,27 @@
 @section('title', 'Complete Payment · Kegalle Marketplace')
 
 @section('content')
-<section style="min-height:55vh;display:flex;align-items:center;justify-content:center;padding:40px 20px">
-<div style="width:100%;max-width:420px">
+<section class="ks-72a4ea">
+<div class="ks-f0da59">
 
-<div style="text-align:center;margin-bottom:28px">
-    <div style="font-size:48px;margin-bottom:10px">💳</div>
-    <h1 style="font-size:22px;font-weight:800;margin-bottom:6px">{{ $label }}</h1>
-    <div style="font-size:28px;font-weight:800;color:var(--k-primary,#1b5e20)">LKR {{ number_format($amount, 2) }}</div>
+<div class="ks-d592e9">
+    <div class="ks-078ee5">💳</div>
+    <h1 class="ks-158a20">{{ $label }}</h1>
+    <div class="ks-d42a1c">LKR {{ number_format($amount, 2) }}</div>
 </div>
 
-<div style="background:var(--k-surface);border:1px solid var(--k-border);border-radius:16px;padding:24px;margin-bottom:20px">
-    <div style="display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--k-border)">
-        <span style="color:var(--k-text-secondary)">Plan</span><strong>{{ $label }}</strong>
+<div class="ks-e95d0e">
+    <div class="ks-de4fa9">
+        <span class="ks-eafb47">Plan</span><strong>{{ $label }}</strong>
     </div>
-    <div style="display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--k-border)">
-        <span style="color:var(--k-text-secondary)">Billing</span><strong>Monthly</strong>
+    <div class="ks-de4fa9">
+        <span class="ks-eafb47">Billing</span><strong>Monthly</strong>
     </div>
-    <div style="display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--k-border)">
-        <span style="color:var(--k-text-secondary)">Order ID</span><strong style="font-family:monospace;font-size:12px">{{ $orderId }}</strong>
+    <div class="ks-de4fa9">
+        <span class="ks-eafb47">Order ID</span><strong class="ks-293313">{{ $orderId }}</strong>
     </div>
-    <div style="display:flex;justify-content:space-between;font-size:16px;padding:12px 0;font-weight:700">
-        <span>Total</span><span style="color:var(--k-primary,#1b5e20)">LKR {{ number_format($amount, 2) }}</span>
+    <div class="ks-c51ddd">
+        <span>Total</span><span class="ks-7ad905">LKR {{ number_format($amount, 2) }}</span>
     </div>
 </div>
 
@@ -44,14 +44,14 @@
     <input type="hidden" name="city"         value="Kegalle">
     <input type="hidden" name="country"      value="Sri Lanka">
 
-    <button type="submit" class="k-btn k-btn-primary" style="width:100%;padding:16px;font-size:16px;font-weight:700;border-radius:12px">
+    <button type="submit" class="k-btn k-btn-primary ks-c34069">
         Pay LKR {{ number_format($amount, 2) }} with PayHere →
     </button>
 </form>
 
-<p style="text-align:center;font-size:12px;color:var(--k-text-tertiary);margin-top:14px">
+<p class="ks-3a1b86">
     Secured by <strong>PayHere</strong> — Sri Lanka's trusted payment gateway.<br>
-    <a href="/dashboard/membership" style="color:var(--k-text-secondary)">← Back to plans</a>
+    <a href="/dashboard/membership" class="ks-eafb47">← Back to plans</a>
 </p>
 
 </div>

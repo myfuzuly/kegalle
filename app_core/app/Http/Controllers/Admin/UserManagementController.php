@@ -87,7 +87,7 @@ class UserManagementController extends Controller
                 ->orderByDesc('id')
                 ->chunk(500, function ($users) use ($handle) {
                     foreach ($users as $u) {
-                        fputcsv($handle, [
+                        \App\Helpers\Csv::put($handle, [
                             $u->id,
                             $u->name,
                             $u->email,
@@ -126,6 +126,7 @@ class UserManagementController extends Controller
             'avatar'      => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'password'    => 'nullable|string|min:8|confirmed',
         ]);
+        $this->guardAdminChange($user, $data['role']);
 
         unset($data['avatar']);
         if ($request->hasFile('avatar')) {
@@ -141,7 +142,9 @@ class UserManagementController extends Controller
             unset($data['password']);
         }
 
-        $user->update($data);
+        // role/status are deliberately not mass-assignable, so update() alone silently dropped them
+        $user->forceFill(\Illuminate\Support\Arr::only($data, ['role', 'status']));
+        $user->update(\Illuminate\Support\Arr::except($data, ['role', 'status']));
 
         return back()->with('success', 'User updated successfully.');
     }
@@ -162,7 +165,7 @@ class UserManagementController extends Controller
             'role'     => ['required', \Illuminate\Validation\Rule::in(
                 auth()->user()->role === 'super_admin'
                     ? ['user', 'seller', 'admin', 'super_admin']
-                    : ['user', 'seller', 'admin']
+                    : ['user', 'seller'] // only a super admin creates admins
             )],
             'status'   => 'required|in:active,pending,suspended,inactive',
             'location_id' => 'nullable|exists:locations,id',
@@ -170,7 +173,8 @@ class UserManagementController extends Controller
 
         $data['password'] = Hash::make($data['password']);
 
-        User::create($data);
+        $user = User::create(\Illuminate\Support\Arr::except($data, ['role', 'status']));
+        $user->forceFill(\Illuminate\Support\Arr::only($data, ['role', 'status']))->save();
 
         return redirect('/admin/users')->with('success', 'User created successfully.');
     }
@@ -212,6 +216,7 @@ class UserManagementController extends Controller
     public function updateRole(Request $request, User $user)
     {
         $data = $request->validate(['role' => 'required|in:user,seller,admin,super_admin']);
+        $this->guardAdminChange($user, $data['role']);
         if ($user->role === 'super_admin' && auth()->id() !== $user->id) {
             return back()->with('error', 'Cannot change super admin role.');
         }
@@ -222,6 +227,7 @@ class UserManagementController extends Controller
 
     public function suspend(User $user)
     {
+        $this->guardAdminChange($user);
         $user->status = 'suspended';
         $user->save();
 
@@ -230,6 +236,7 @@ class UserManagementController extends Controller
 
     public function activate(User $user)
     {
+        $this->guardAdminChange($user);
         $user->status = 'active';
         $user->save();
 
@@ -281,5 +288,18 @@ class UserManagementController extends Controller
         $user->delete();
 
         return redirect('/admin/users')->with('success', "User \"{$name}\" and all their data deleted permanently.");
+    }
+
+    /**
+     * Only a super admin may touch admin-level accounts or hand out admin roles —
+     * otherwise any staff member with the "users" section could promote or take over themselves.
+     */
+    private function guardAdminChange(User $target, ?string $newRole = null): void
+    {
+        if (auth()->user()->role === 'super_admin') {
+            return;
+        }
+        abort_if($target->isAdminLevel() && $target->id !== auth()->id(), 403, 'Only a super admin can change admin accounts.');
+        abort_if(in_array($newRole, ['admin', 'super_admin'], true) && $newRole !== $target->role, 403, 'Only a super admin can grant admin roles.');
     }
 }

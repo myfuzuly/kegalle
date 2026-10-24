@@ -150,12 +150,12 @@
     <div class="k-product-page-grid">
         <!-- Gallery -->
         <div class="k-product-gallery">
-            <div class="k-product-main-img k-gallery-zoomable" id="kMainImgWrap" title="Click to view full size" role="button" tabindex="0" aria-label="View full-size image" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click()}">
+            <div class="k-product-main-img k-gallery-zoomable" id="kMainImgWrap" title="Click to view full size" role="button" tabindex="0" aria-label="View full-size image" data-enter-click>
                 @if($mainImageUrl)
                     <picture>
                         <source type="image/webp" srcset="{{ $mainWebpUrl }}">
                         <img id="kMainImg" src="{{ $mainImageUrl }}" alt="{{ $listing->title }}" class="k-main-img"
-                             onerror="this.style.display='none';document.getElementById('kImgPlaceholder').style.display='flex'">
+                             data-fallback="show:kImgPlaceholder">
                     </picture>
                     <div id="kImgPlaceholder" class="k-img-placeholder-large" style="display:none">
                         <span class="k-img-ph-icon">🛍</span>
@@ -322,7 +322,7 @@
                     @if(!$reviews->where('user_id', auth()->id())->count())
                     <div class="k-review-form-wrap">
                         <h4>Write a review</h4>
-                        <form method="POST" action="/listings/{{ $listing->id }}/review" class="k-review-form" onsubmit="if(parseInt(document.getElementById('ratingInput').value)<1){var e=document.getElementById('star-err');if(!e){e=document.createElement('p');e.id='star-err';e.style.cssText='color:#ef4444;font-size:12px;margin:4px 0 0';e.textContent='Please select a star rating.';document.getElementById('starInput').after(e);}return false;}var r=document.getElementById('star-err');if(r)r.remove();">
+                        <form method="POST" action="/listings/{{ $listing->id }}/review" class="k-review-form" data-require="#ratingInput" data-require-msg="Please select a star rating.">
                             @csrf
                             <div class="k-star-input" id="starInput">
                                 <span class="k-star-pick" data-val="1">★</span>
@@ -663,7 +663,7 @@
                     <button id="kReportCloseBtn" class="k-modal-close" aria-label="Close">×</button>
                     <h2 id="kReportModalTitle" class="k-modal-title">⚑ Report This Ad</h2>
                     <p class="k-modal-sub">Help us keep Kegalle Marketplace safe. Our team will review your report within 24 hours.</p>
-                    <form id="kReportForm" onsubmit="submitReport(event)">
+                    <form id="kReportForm" data-onsubmit="submitReport">
                         @csrf
                         <label class="k-mf-label">
                             <span class="k-mf-caption-md">Reason for reporting</span>
@@ -878,7 +878,7 @@
                                 @endphp
                                 <div class="k-deal-card-img">
                                     @if($sdHas)
-                                        <img loading="lazy" decoding="async" src="{{ $sdUrl }}" alt="{{ $sListing->title }}" onerror="this.closest('.k-deal-card-img').classList.add('k-img-failed');this.remove()">
+                                        <img loading="lazy" decoding="async" src="{{ $sdUrl }}" alt="{{ $sListing->title }}" data-fallback="fail:.k-deal-card-img">
                                     @else
                                         <div class="k-deal-card-ph">🛍</div>
                                     @endif
@@ -1371,7 +1371,7 @@ function togglePriceAlert(btn) {
         <button type="button" id="kGuestEnquiryCloseBtn" class="k-modal-close" aria-label="Close enquiry form">×</button>
         <h2 id="kGeqTitle" class="k-modal-title">💬 Send Enquiry</h2>
         <p class="k-modal-sub" style="margin-bottom:16px">{{ Str::limit($listing->title, 60) }}</p>
-        <form id="kGeqForm" onsubmit="kGeqSubmit(event)">
+        <form id="kGeqForm" data-onsubmit="kGeqSubmit">
             @csrf
             <label class="k-mf-label" style="display:block;margin-bottom:12px">
                 <span class="k-mf-caption">Your Name *</span>

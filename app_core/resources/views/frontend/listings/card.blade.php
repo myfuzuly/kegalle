@@ -50,7 +50,7 @@ $_rankDot = match($storeRank){ 'platinum'=>'<span class="kpc-rank-dot kpc-rank-p
         @if($hasImage)
             <picture>
                 <source type="image/webp" srcset="{{ $webpUrl }}">
-                <img loading="{{ ($cardIndex ?? 99) < 4 ? 'eager' : 'lazy' }}" fetchpriority="{{ ($cardIndex ?? 99) === 0 ? 'high' : 'auto' }}" decoding="{{ ($cardIndex ?? 99) < 2 ? 'sync' : 'async' }}" src="{{ $imgUrl }}" alt="{{ $listing->title ?? 'Listing' }}" class="kpc-photo" onerror="var w=this.closest('.kpc-img');w.classList.add('kpc-no-photo');var p=w.querySelector('.kpc-ph-fb');if(p)p.style.display='flex';this.remove()">
+                <img loading="{{ ($cardIndex ?? 99) < 4 ? 'eager' : 'lazy' }}" fetchpriority="{{ ($cardIndex ?? 99) === 0 ? 'high' : 'auto' }}" decoding="{{ ($cardIndex ?? 99) < 2 ? 'sync' : 'async' }}" src="{{ $imgUrl }}" alt="{{ $listing->title ?? 'Listing' }}" class="kpc-photo" data-fallback="nophoto:.kpc-img">
             </picture>
             <div class="kpc-ph-fb kpc-placeholder" style="display:none">{!! $_svgImg !!}</div>
         @else

@@ -123,4 +123,64 @@ class AuditFixesTest extends TestCase
         // 20 cards across 5 stores used to cost ~3 store-stat queries per card
         $this->assertLessThan(40, $queries, "listings page ran {$queries} queries");
     }
+
+    private function moderator(): User
+    {
+        DB::table('roles')->insert(['key' => 'moderator', 'name' => 'Moderator', 'is_admin_level' => true, 'is_super' => false,
+            'permissions' => json_encode(['dashboard', 'users']), 'created_at' => now(), 'updated_at' => now()]);
+        return User::factory()->create(['status' => 'active', 'role' => 'moderator']);
+    }
+
+    public function test_moderator_cannot_promote_self_or_take_over_super_admin(): void
+    {
+        $mod   = $this->moderator();
+        $super = User::factory()->create(['status' => 'active', 'role' => 'super_admin', 'email' => 'boss@kegalle.com']);
+
+        $this->actingAs($mod)->patch("/admin/users/{$mod->id}/role", ['role' => 'super_admin'])->assertForbidden();
+        $this->actingAs($mod)->put("/admin/users/{$super->id}", [
+            'name' => 'x', 'email' => 'mine@evil.com', 'role' => 'super_admin', 'status' => 'active',
+            'password' => 'newpassword1', 'password_confirmation' => 'newpassword1',
+        ])->assertForbidden();
+        $this->actingAs($mod)->post("/admin/users/{$super->id}/suspend")->assertForbidden();
+
+        $this->assertSame('moderator', $mod->fresh()->role);
+        $this->assertSame('boss@kegalle.com', $super->fresh()->email);
+        $this->assertSame('active', $super->fresh()->status);
+    }
+
+    public function test_admin_edit_saves_role_and_status(): void
+    {
+        $super = User::factory()->create(['status' => 'active', 'role' => 'super_admin']);
+        $user  = User::factory()->create(['status' => 'active', 'role' => 'user']);
+
+        $this->actingAs($super)->put("/admin/users/{$user->id}", [
+            'name' => $user->name, 'email' => $user->email, 'role' => 'seller', 'status' => 'suspended',
+        ]);
+
+        $this->assertSame('seller', $user->fresh()->role);
+        $this->assertSame('suspended', $user->fresh()->status);
+    }
+
+    public function test_csv_cells_cannot_start_formulas(): void
+    {
+        $h = fopen('php://memory', 'w+');
+        \App\Helpers\Csv::put($h, ['=HYPERLINK("x")', 'plain', '@SUM(1)']);
+        rewind($h);
+        $this->assertSame("\"'=HYPERLINK(\"\"x\"\")\",plain,'@SUM(1)\n", stream_get_contents($h));
+    }
+
+    public function test_blocked_user_cannot_send_offer_and_offers_need_a_live_ad(): void
+    {
+        $seller = User::factory()->create(['status' => 'active']);
+        $buyer  = User::factory()->create(['status' => 'active']);
+        $store  = Store::factory()->create(['user_id' => $seller->id, 'status' => 'approved']);
+        $live   = Listing::factory()->create(['user_id' => $seller->id, 'store_id' => $store->id, 'status' => 'approved']);
+        $sold   = Listing::factory()->create(['user_id' => $seller->id, 'store_id' => $store->id, 'status' => 'sold']);
+        $offer  = ['payment_method' => 'cod', 'offered_price' => 100];
+
+        $this->actingAs($buyer)->post("/listings/{$sold->id}/offer", $offer)->assertNotFound();
+
+        \App\Models\UserBlock::create(['blocker_id' => $seller->id, 'blocked_id' => $buyer->id]);
+        $this->actingAs($buyer)->post("/listings/{$live->id}/offer", $offer)->assertForbidden();
+    }
 }

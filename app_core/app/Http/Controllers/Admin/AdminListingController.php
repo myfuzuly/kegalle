@@ -539,7 +539,7 @@ class AdminListingController extends Controller
     public function bulkApprove(Request $request)
     {
         $data = $request->validate([
-            'ids'    => 'required|array|max:100',
+            'ids'    => 'required|array|max:25', // each approval sends email + SMS inline; keep a batch well inside the request time limit
             'ids.*'  => 'integer',
             'action' => 'nullable|in:approve,reject',
         ]);
@@ -577,7 +577,7 @@ class AdminListingController extends Controller
                 ->orderByDesc('id')
                 ->chunk(500, function ($listings) use ($handle) {
                     foreach ($listings as $l) {
-                        fputcsv($handle, [
+                        \App\Helpers\Csv::put($handle, [
                             $l->id,
                             $l->title,
                             $l->type,
