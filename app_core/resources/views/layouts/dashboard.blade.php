@@ -14,7 +14,7 @@
 <meta name="theme-color" content="#ffffff">
 <link rel="icon" href="/favicon.ico" type="image/x-icon">
 <script nonce="{{ $cspNonce ?? '' }}">try{if(localStorage.getItem('kx_sidebar')==='collapsed')document.documentElement.classList.add('kx-collapsed')}catch(e){}</script>
-<link rel="stylesheet" href="/css/kegalle-dashboard.css?v=27">
+<link rel="stylesheet" href="/css/kegalle-dashboard.css?v=28">
 <link rel="stylesheet" href="/css/kegalle-admin-ds.css?v=4">
 @stack('styles')
 </head>

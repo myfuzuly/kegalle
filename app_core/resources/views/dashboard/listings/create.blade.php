@@ -730,6 +730,7 @@
 </script>
 <script src="/js/category-fields.js?v=18"></script>
 <script src="/js/quill.min.js"></script>
+<script src="/js/kegalle-ad-form.js?v=1" defer></script>
 <script nonce="{{ $cspNonce ?? '' }}">
 document.addEventListener('DOMContentLoaded',function(){
     if(typeof Quill==='undefined') return;

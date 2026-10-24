@@ -1763,3 +1763,23 @@ tr{border-bottom:1px solid #f1f5f9}
 .dbi-plan-link:hover{text-decoration:underline}
 .dbi-empty-icon{margin-bottom:10px}
 .dbi-qa-icon svg{display:block}
+
+/* ── Post-ad form helpers (js/kegalle-ad-form.js) ── */
+.kaf-progress{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:12px;padding:10px 14px;margin:0 0 16px;background:var(--kd-card);border:1px solid var(--kd-line);border-radius:12px;box-shadow:var(--ka-shadow-xs)}
+.kaf-progress-track{flex:1;height:8px;border-radius:99px;background:var(--kd-line);overflow:hidden}
+.kaf-progress-fill{height:100%;width:0;border-radius:inherit;background:var(--kd-brand);transition:width .3s ease}
+.kaf-progress-label{font-size:13px;font-weight:600;color:var(--kd-muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.kaf-progress.is-complete .kaf-progress-label{color:var(--kd-brand)}
+.kaf-hint{margin-top:6px;font-size:12.5px;color:var(--kd-muted);font-variant-numeric:tabular-nums}
+.kaf-hint.is-warn{color:#b45309}
+.kaf-hint.is-error{color:var(--kd-danger);font-weight:600}
+.kaf-draft{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 14px;margin:0 0 16px;border:1px solid #bbf7d0;background:#f0fdf4;border-radius:12px;color:#14532d;font-size:14px}
+.kaf-draft-text{flex:1 1 260px}
+.kaf-draft-btn{min-height:40px;padding:0 14px;border-radius:10px;border:1px solid #bbf7d0;background:#fff;color:#14532d;font-weight:600;cursor:pointer}
+.kaf-draft-btn--primary{background:var(--kd-brand);border-color:var(--kd-brand);color:#fff}
+.kaf-draft-btn:focus-visible{outline:2px solid var(--kd-brand);outline-offset:2px}
+@media(max-width:760px){.kaf-progress{top:var(--kd-topbar-h,56px);border-radius:0;margin-left:-16px;margin-right:-16px;border-left:0;border-right:0}}
+@media(prefers-reduced-motion:reduce){.kaf-progress-fill{transition:none}}
+:root[data-theme="dark"] .kaf-draft{background:#052e16;border-color:#166534;color:#bbf7d0}
+:root[data-theme="dark"] .kaf-draft-btn{background:transparent;border-color:#166534;color:#bbf7d0}
+:root[data-theme="dark"] .kaf-draft-btn--primary{background:var(--kd-brand);color:#fff}
