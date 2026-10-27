@@ -43,7 +43,7 @@ class SecurityHeaders
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com https://unpkg.com https://cdn.jsdelivr.net",
             "font-src 'self' https://fonts.gstatic.com data:",
             "img-src 'self' data: blob: https: {$img}",
-            "connect-src 'self' https://accounts.google.com https://www.google-analytics.com https://sessions.bugsnag.com https://notify.bugsnag.com https://cloudflareinsights.com https://graph.facebook.com https://www.facebook.com",
+            "connect-src 'self' https://accounts.google.com https://www.google-analytics.com https://sessions.bugsnag.com https://notify.bugsnag.com https://cloudflareinsights.com https://graph.facebook.com https://www.facebook.com https://connect.facebook.net",
             "frame-src 'self' https://accounts.google.com https://www.google.com https://www.facebook.com https://web.facebook.com",
             "frame-ancestors 'self'",
             "base-uri 'self'",
