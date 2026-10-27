@@ -40,7 +40,7 @@ class SecurityHeaders
         $csp = implode('; ', array_filter([
             "default-src 'self'",
             "script-src 'self' 'nonce-{$nonce}' https://cdn.jsdelivr.net https://code.jquery.com https://accounts.google.com https://unpkg.com https://www.google.com https://www.gstatic.com {$ga} {$px} {$cf}",
-            "style-src 'self' 'nonce-{$nonce}' https://fonts.googleapis.com https://accounts.google.com https://unpkg.com https://cdn.jsdelivr.net",
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com https://unpkg.com https://cdn.jsdelivr.net",
             "font-src 'self' https://fonts.gstatic.com data:",
             "img-src 'self' data: blob: https: {$img}",
             "connect-src 'self' https://accounts.google.com https://www.google-analytics.com https://sessions.bugsnag.com https://notify.bugsnag.com https://cloudflareinsights.com https://graph.facebook.com https://www.facebook.com",
