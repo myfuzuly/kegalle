@@ -19,7 +19,7 @@ Bump the `?v=N` on the `<link>`/`<script>` tag in the layout whenever a static f
 
 ## Rules
 
-1. **No inline code in Blade.** The CSP blocks `style="…"` attributes and `onclick`/`onsubmit` handlers.
+1. **No inline code in Blade.** The CSP blocks `onclick`/`onsubmit` handlers (scripts need the nonce). Inline `style="…"` is allowed (`style-src 'unsafe-inline'`, set on the live server) but still avoid it — keep styles in CSS so pages stay consistent.
    - Styles → a class in the CSS files. Dynamic values (widths, colours from data) → set via JS (`el.style.x = …`) or a data attribute.
    - Behaviour → `data-*` attributes handled in a JS file with `addEventListener` (e.g. `data-confirm`, `data-autosubmit`, `data-bulk-bar`).
    - A page-specific `<script>` must carry `nonce="{{ $cspNonce ?? '' }}"`; prefer a file in `public_html/js/`.
