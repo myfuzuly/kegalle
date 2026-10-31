@@ -73,38 +73,11 @@
 <script nonce="{{ $cspNonce ?? '' }}">/* Pixel loads after the page so its ~90 KB script never competes with first paint */window.addEventListener('load',function(){setTimeout(function(){!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','{{ config('services.analytics.pixel_id') }}');fbq('track','PageView');},1500);});</script>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id={{ config('services.analytics.pixel_id') }}&ev=PageView&noscript=1"/></noscript>
 @endif
-{{-- Keep the first-visit splash out of the page flow before the main stylesheet arrives (prevents layout shift) --}}
-<style nonce="{{ $cspNonce ?? '' }}">#k-preloader{position:fixed;inset:0;z-index:99999;background:#0f1a12;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}#k-preloader .k-preloader-logo-img{width:160px;height:auto}</style>
 {{-- Not deferred: its image-error listener must exist before the first <img> can fail. ~2 KB. --}}
 <script src="/js/kegalle-actions.js?v=1"></script>
 </head>
 <body>
 @include('partials.csp-hidden')
-<div id="k-preloader" aria-hidden="true">
-  <div class="k-preloader-logo">
-    <img src="/images/kegalle-logo.png" alt="Kegalle.com" class="k-preloader-logo-img" loading="eager" fetchpriority="high" decoding="sync">
-  </div>
-  <div class="k-preloader-bar"><div class="k-preloader-fill"></div></div>
-</div>
-<script nonce="{{ $cspNonce ?? '' }}">
-(function(){
-  if(sessionStorage.getItem('k_visited')){
-    document.getElementById('k-preloader').style.display='none';
-    return;
-  }
-  sessionStorage.setItem('k_visited','1');
-  var gone=false;
-  function hide(){
-    if(gone)return; gone=true;
-    var el=document.getElementById('k-preloader');
-    if(el){el.classList.add('k-preloader-hide');setTimeout(function(){el.style.display='none'},200);}
-  }
-  // Dismiss as soon as main CSS is applied — not waiting for images
-  window.__kCssLoaded=hide;
-  // Hard cap: dismiss after 400ms no matter what (CSS already cached, etc.)
-  setTimeout(hide,400);
-})();
-</script>
 
 {{-- Skip navigation for keyboard users --}}
 <a href="#main-content" class="k-skip-link">Skip to main content</a>

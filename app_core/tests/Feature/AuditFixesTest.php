@@ -124,6 +124,20 @@ class AuditFixesTest extends TestCase
         $this->assertLessThan(40, $queries, "listings page ran {$queries} queries");
     }
 
+    public function test_home_has_no_splash_and_pins_featured_ads_first(): void
+    {
+        $owner = User::factory()->create(['status' => 'active']);
+        $store = Store::factory()->create(['user_id' => $owner->id, 'status' => 'approved']);
+        $featured = Listing::factory()->create(['user_id' => $owner->id, 'store_id' => $store->id, 'status' => 'approved', 'is_featured' => 1, 'created_at' => now()->subDays(5)]);
+        Listing::factory()->count(3)->create(['user_id' => $owner->id, 'store_id' => $store->id, 'status' => 'approved']);
+
+        $html = $this->get('/')->assertOk()->getContent();
+
+        $this->assertStringNotContainsString('id="k-preloader"', $html);
+        $grid = substr($html, strpos($html, 'id="k-latest-grid"'));
+        $this->assertStringStartsWith('/listings/' . $featured->slug, substr($grid, strpos($grid, '/listings/')));
+    }
+
     private function moderator(): User
     {
         DB::table('roles')->insert(['key' => 'moderator', 'name' => 'Moderator', 'is_admin_level' => true, 'is_super' => false,

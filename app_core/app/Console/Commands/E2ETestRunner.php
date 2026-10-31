@@ -463,17 +463,10 @@ class E2ETestRunner extends Command
         $this->clearPagecache();
         $r = $this->req('GET', '/');
 
-        $this->assertSee('Preloader HTML present (k-preloader)', $r, 'k-preloader');
-        $this->assertSee('CSS-load trigger (kCssLoaded)', $r, 'kCssLoaded');
-        $this->assertSee("sessionStorage first-visit guard", $r, "sessionStorage.getItem('k_visited')");
-        $this->assertSee('1s hard cap timeout', $r, '1000');
-        // Note: Google Fonts still uses onload/addEventListener — we only check our preloader doesn't use it
-        $preloaderScript = preg_match('/sessionStorage[\s\S]{0,2000}__kCssLoaded/', $r->getContent(), $m) ? ($m[0] ?? '') : '';
-        !str_contains($preloaderScript, "addEventListener('load'")
-            ? $this->ok("Preloader script doesn't depend on window.load")
-            : $this->ko("Preloader script still uses window.load (slower)");
-        $this->assertSee('Preloader dismiss animation class', $r, 'k-preloader-hide');
-        $this->assertSee('Progress bar animation (kFill)', $r, 'kFill');
+        // The splash screen was removed: the first paint must be real content
+        !str_contains($r->getContent(), 'id="k-preloader"')
+            ? $this->ok('No full-screen preloader')
+            : $this->ko('Preloader is back: it hides the first paint');
     }
 
     // ── 10. SEO & sitemap ─────────────────────────────────────────────────────

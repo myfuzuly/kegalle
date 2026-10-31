@@ -4,18 +4,14 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\ExploreItem;
 use App\Models\Setting;
 use App\Models\Listing;
-use App\Models\Post;
 use App\Models\Deal;
 use App\Models\Review;
 use App\Models\Store;
 use App\Models\User;
-use App\Models\GovernmentService;
 use App\Models\Service;
 use App\Models\HeroSlide;
-use App\Models\Event;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -90,50 +86,17 @@ class HomeController extends Controller
             return $stores;
         });
 
-        try {
-            $govServices = Cache::remember('home_gov_services', 600, fn () =>
-                GovernmentService::active()->withCount('items')->orderBy('sort_order')->take(8)->get()
-            );
-        } catch (\Throwable $e) {
-            $govServices = collect();
-            Cache::forget('home_gov_services');
-        }
-
-        try {
-            $blogs = Cache::remember('home_blogs', 300, fn () =>
-                Post::published()->latest('published_at')->take(5)->get()
-            );
-        } catch (\Throwable $e) {
-            $blogs = collect();
-        }
-
         // Time-sensitive — shorter TTL or uncached
         $featuredListings = Cache::remember('home_featured_listings', 120, fn () =>
             Listing::published()->with(['images', 'store.user', 'category', 'locationModel'])->where('is_featured', 1)->latest()->take(10)->get()
         );
 
-        $latestListings = Cache::remember('home_latest_listings_8', 60, fn () =>
-            Listing::published()->with(['images', 'store.user', 'category', 'locationModel'])->latest()->take(8)->get()
+        // "Fresh in Kegalle": up to 4 featured ads pinned first, then the newest
+        $latestListings = Cache::remember('home_fresh_listings_12', 60, fn () =>
+            $featuredListings->take(4)->concat(
+                Listing::published()->with(['images', 'store.user', 'category', 'locationModel'])->latest()->take(12)->get()
+            )->unique('id')->take(12)->values()
         );
-
-        $randomAds = collect();
-        try {
-            $excludeIds = $latestListings->pluck('id')->all();
-            $bucket    = (int) floor(time() / 1800);
-            $offset    = ($bucket * 13) % 40;
-            $cacheDir  = storage_path('framework/searchcache');
-            $cacheFile = $cacheDir . '/home_random_ads_' . $bucket . '.json';
-            if (file_exists($cacheFile) && (time() - filemtime($cacheFile)) < 1800) {
-                $ids = json_decode(file_get_contents($cacheFile), true) ?: [];
-            } else {
-                $ids = Listing::published()->latest()->skip($offset)->take(40)->pluck('id')->all();
-                @file_put_contents($cacheFile, json_encode($ids), LOCK_EX);
-            }
-            $ids = array_values(array_diff($ids, $excludeIds));
-            if ($ids) {
-                $randomAds = Listing::published()->with(['images', 'store.user', 'category', 'locationModel'])->whereIn('id', $ids)->get()->sortBy(fn($l) => array_search($l->id, $ids))->values();
-            }
-        } catch (\Throwable $e) { Log::error('HomeController randomAds failed: ' . $e->getMessage()); }
 
         $featuredClassified = Cache::remember('home_featured_classified', 120, fn () =>
             Listing::published()->with(['images', 'category', 'locationModel'])->where('type', 'classified')->where('is_featured', 1)->latest()->take(5)->get()
@@ -157,20 +120,6 @@ class HomeController extends Controller
             $hasRealDeals = $homeDeals->isNotEmpty();
         } catch (\Throwable $e) { Log::error('HomeController deals query failed: '.$e->getMessage()); }
 
-        $upcomingEvents = collect();
-        try {
-            $upcomingEvents = Cache::remember('home_events', 300, fn () =>
-                Event::upcoming()->where('is_active', 1)->orderBy('event_date')->take(6)->get()
-            );
-        } catch (\Throwable $e) { Log::error('HomeController events query failed: '.$e->getMessage()); }
-
-        $exploreItems = collect();
-        try {
-            $exploreItems = Cache::remember('home_explore_items', 600, fn () =>
-                ExploreItem::where('is_active', 1)->orderBy('sort_order')->get()
-            );
-        } catch (\Throwable $e) { Log::error('HomeController exploreItems query failed: '.$e->getMessage()); }
-
         $featuredServices = collect();
         try {
             $featuredServices = Cache::remember('home_featured_services', 300, fn () =>
@@ -192,20 +141,14 @@ class HomeController extends Controller
             'totalStores',
             'totalUsers',
             'heroSlides',
-            'randomAds',
-            'featuredListings',
             'latestListings',
             'featuredClassified',
             'latestClassified',
             'featuredStores',
             'categories',
             'totalCatCount',
-            'blogs',
             'homeDeals',
             'hasRealDeals',
-            'govServices',
-            'upcomingEvents',
-            'exploreItems',
             'siteReviews',
             'featuredServices'
         ));

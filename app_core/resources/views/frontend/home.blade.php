@@ -100,15 +100,6 @@ $hClassified=($featuredClassified ?? collect())->merge($latestClassified ?? coll
 @foreach($hClassified as $hItem)
 .k-cf-bg-{{ $hItem->id }}{background:{{ $hPalette[($hItem->id ?? 0) % count($hPalette)] }}}
 @endforeach
-{{-- Dynamic gov service gradients --}}
-@foreach($govServices ?? collect() as $hGov)
-.k-gov-bg-{{ $hGov->id }}{background:linear-gradient(135deg,{{ preg_match('/^#[0-9a-fA-F]{3,8}$/', $hGov->icon_bg_start ?? '') ? $hGov->icon_bg_start : '#1B6B3A' }},{{ preg_match('/^#[0-9a-fA-F]{3,8}$/', $hGov->icon_bg_end ?? '') ? $hGov->icon_bg_end : '#145A2E' }})}
-@endforeach
-{{-- Dynamic explore item backgrounds --}}
-@foreach($exploreItems ?? collect() as $hExp)
-@php $expGs = preg_match('/^#[0-9a-fA-F]{3,8}$/',$hExp->gradient_start??'') ? $hExp->gradient_start : '#1B6B3A'; $expGe = preg_match('/^#[0-9a-fA-F]{3,8}$/',$hExp->gradient_end??'') ? $hExp->gradient_end : '#145A2E'; @endphp
-.k-exp-bg-{{ $hExp->id }}{background:{!! $hExp->image ? 'center/cover no-repeat url('.json_encode(asset('storage/'.$hExp->image), JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT).')' : 'linear-gradient(135deg,'.$expGs.','.$expGe.')' !!}}
-@endforeach
 </style>
 @endpush
 
@@ -116,7 +107,6 @@ $hClassified=($featuredClassified ?? collect())->merge($latestClassified ?? coll
 @php
     $featuredClassifiedItems = ($featuredClassified ?? collect())->take(5);
     $latestClassifiedItems = ($latestClassified ?? collect())->take(5);
-    $blogItems = ($blogs ?? collect())->take(5);
     $palette = ['#E8F5E9','#E3F2FD','#FCE4EC','#FFF8E1','#F3E8FD','#E0F2F1'];
 @endphp
 
@@ -208,31 +198,6 @@ $hClassified=($featuredClassified ?? collect())->merge($latestClassified ?? coll
     <div class="k-layout">
         <!-- Main Content -->
         <div>
-            <!-- Featured Ads — curated, highest buyer intent -->
-            @if($featuredListings->count())
-            <div class="k-section">
-                <div class="k-section-header">
-                    <h2 class="k-section-title">Featured Ads</h2>
-                    <a href="/listings?featured=1" class="k-section-link">View all →</a>
-                </div>
-                    <div class="k-carousel-wrap">
-                        @if($featuredListings->count() > 4)
-                        <button type="button" class="k-carousel-side-btn k-carousel-side-prev" data-carousel-prev="featured-carousel" aria-label="Previous">‹</button>
-                        @endif
-                        <div class="k-carousel" id="featured-carousel">
-                            @foreach($featuredListings as $listing)
-                                <div class="k-carousel-item">
-                                    @include('frontend.listings.card',['listing'=>$listing,'cardIndex'=>$loop->index])
-                                </div>
-                            @endforeach
-                        </div>
-                        @if($featuredListings->count() > 4)
-                        <button type="button" class="k-carousel-side-btn k-carousel-side-next" data-carousel-next="featured-carousel" aria-label="Next">›</button>
-                        @endif
-                    </div>
-            </div>
-            @endif
-
             <!-- Ad Banner -->
             @include('frontend.partials.ad-banner', ['location' => 'home_top', 'style' => 'top', 'hidePlaceholder' => true])
 
@@ -427,11 +392,11 @@ $hClassified=($featuredClassified ?? collect())->merge($latestClassified ?? coll
                 </div>
             </div>
 
-            <!-- Latest Ads -->
+            <!-- Fresh in Kegalle: featured ads pinned first, then the newest -->
             @if($latestListings->count())
             <div class="k-section" id="k-latest-ads-section">
                 <div class="k-section-header">
-                    <h2 class="k-section-title">Latest Ads</h2>
+                    <h2 class="k-section-title">Fresh in <span>Kegalle</span></h2>
                     <a href="/listings" class="k-section-link">View all →</a>
                 </div>
                 <div class="k-grid-4" id="k-latest-grid">
@@ -603,105 +568,11 @@ $hClassified=($featuredClassified ?? collect())->merge($latestClassified ?? coll
                 @endforelse
             </div>
         </div>
-
-        <!-- Latest Blog -->
-        <div class="k-home-blog">
-            <div class="k-section-header">
-                <h3 class="k-sidebar-title">Latest Blog</h3>
-                <a href="/blog" class="k-section-link k-link-sm">View all →</a>
-            </div>
-            <div class="k-blog-list">
-                @forelse($blogItems as $post)
-                    <a href="/blog/{{ $post->slug }}" class="k-blog-card">
-                        @if($post->image)
-                            <div class="k-blog-thumb k-overflow-hidden"><img loading="lazy" src="{{ asset('storage/'.ltrim($post->image,'/')) }}" alt="{{ $post->title }}" class="k-cover-img"></div>
-                        @else
-                            <div class="k-blog-thumb"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 002-2V4a2 2 0 00-2-2H8a2 2 0 00-2 2v16a2 2 0 01-2 2zm0 0a2 2 0 01-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8z"/></svg></div>
-                        @endif
-                        <div>
-                            <div class="k-blog-title">{{ $post->title }}</div>
-                            <div class="k-blog-date">{{ optional($post->published_at ?? $post->created_at)->format('M d, Y') }}</div>
-                        </div>
-                    </a>
-                @empty
-                    <a href="/blog" class="k-blog-card k-blog-empty-card">
-                        <div class="k-blog-empty-text">Check back soon for local news &amp; guides.</div>
-                    </a>
-                @endforelse
-            </div>
-        </div>
         </div><!-- end k-home-right -->
 
+
     </div>
 
-    <!-- Community Sections — separated visually from marketplace content -->
-    <div class="k-community-band">
-        <div class="k-community-band-header">
-            <div class="k-community-band-label">🏘️ Kegalle Community</div>
-            <p class="k-community-band-sub">Local services, events and places to explore in the Kegalle district</p>
-        </div>
-    </div>
-
-    <!-- Public Services Section -->
-    @if(($govServices ?? collect())->count())
-    <div class="k-section k-home-gov">
-        <div class="k-section-header">
-            <div>
-                <h2 class="k-section-title">Public Services in <span>Kegalle</span></h2>
-                <p class="text-secondary text-sm mt-8">Access essential public services, offices and departments in the Kegalle district.</p>
-            </div>
-            <a href="/public-services" class="k-section-link">View all →</a>
-        </div>
-        <div class="k-home-gov-grid">
-            @foreach($govServices as $gov)
-                <a href="/public-services/{{ $gov->slug }}" class="k-home-gov-card">
-                    <div class="k-home-gov-icon k-gov-bg-{{ $gov->id }}">
-                        <span>{{ $gov->icon ?: '🏛️' }}</span>
-                    </div>
-                    <div class="k-home-gov-info">
-                        <h3>{{ $gov->title }}</h3>
-                        @if($gov->items_count)<span class="k-home-gov-count">{{ $gov->items_count }} {{ Str::plural('service', $gov->items_count) }}</span>@endif
-                    </div>
-                </a>
-            @endforeach
-        </div>
-    </div>
-    @endif
-
-    <!-- Upcoming Events Section -->
-    @if(($upcomingEvents ?? collect())->count())
-    <div class="k-section k-home-events">
-        <div class="k-section-header">
-            <div>
-                <h2 class="k-section-title">Upcoming Events in <span>Kegalle</span></h2>
-                <p class="text-secondary text-sm mt-8">Stay updated with the latest events, festivals and happenings in the Kegalle district.</p>
-            </div>
-            <a href="/events" class="k-section-link">View all →</a>
-        </div>
-        <div class="k-home-events-grid">
-            @foreach($upcomingEvents as $event)
-                <a href="/events/{{ $event->slug }}" class="k-home-event-card">
-                    <div class="k-home-event-date-badge">
-                        <span class="k-home-event-month">{{ $event->event_date->format('M') }}</span>
-                        <span class="k-home-event-day">{{ $event->event_date->format('d') }}</span>
-                    </div>
-                    <div class="k-home-event-info">
-                        <h4>{{ $event->title }}</h4>
-                        <div class="k-home-event-meta">
-                            @if($event->venue)<span>📍 {{ $event->venue }}</span>@endif
-                            @if($event->starts_at)<span>🕐 {{ $event->starts_at->format('g:i A') }}</span>@endif
-                        </div>
-                        @if($event->is_free)
-                            <span class="k-home-event-tag k-home-event-free">Free</span>
-                        @elseif($event->price)
-                            <span class="k-home-event-tag">LKR {{ number_format($event->price) }}</span>
-                        @endif
-                    </div>
-                </a>
-            @endforeach
-        </div>
-    </div>
-    @endif
 
     <!-- Stats strip -->
     <div class="k-stats-strip">
@@ -737,146 +608,6 @@ $hClassified=($featuredClassified ?? collect())->merge($latestClassified ?? coll
         </div>
     </div>
 
-    <!-- Explore Section -->
-    <div class="k-section k-home-explore kex-section">
-        <div class="kex-header">
-            <div class="kex-header-left">
-                <div class="kex-eyebrow">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                    Discover Kegalle
-                </div>
-                <h2 class="kex-title">Explore in <span>Kegalle</span></h2>
-                <p class="kex-sub">Culture, nature, history and hidden gems of the district</p>
-            </div>
-            <a href="/explore" class="kex-view-all">View all <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-        </div>
-        <div class="kex-grid">
-            @if($exploreItems->count())
-                @foreach($exploreItems as $ei => $explore)
-                    <a href="{{ $explore->link_url ?: '#' }}" class="kex-card k-no-underline{{ $ei === 0 ? ' kex-card--hero' : '' }}">
-                        <div class="kex-card-bg k-exp-bg-{{ $explore->id }}">
-                            @unless($explore->image)<div class="kex-card-icon">{{ $explore->icon }}</div>@endunless
-                        </div>
-                        <div class="kex-card-overlay">
-                            <div class="kex-card-body">
-                                <div class="kex-card-pill">{{ $explore->icon ?? '📍' }} {{ $explore->title }}</div>
-                                <h4 class="kex-card-title">{{ $explore->title }}</h4>
-                                @if($explore->item_list)
-                                    <ul class="kex-card-list">@foreach($explore->item_list as $point)<li>{{ $point }}</li>@endforeach</ul>
-                                @endif
-                                <span class="kex-card-cta">{{ $explore->link_label ?: 'Explore →' }}</span>
-                            </div>
-                        </div>
-                    </a>
-                @endforeach
-            @else
-                <a href="/listings?category=activities" class="kex-card kex-card--hero k-no-underline">
-                    <div class="kex-card-bg kex-ph-activities ks-9be523"></div>
-                    <div class="kex-card-overlay"><div class="kex-card-body">
-                        <div class="kex-card-pill">🚶 Activities</div>
-                        <h4 class="kex-card-title">Activities</h4>
-                        <ul class="kex-card-list"><li>Hiking &amp; Trekking</li><li>Water Activities</li><li>Camping &amp; Outdoor</li></ul>
-                        <span class="kex-card-cta">Explore Activities →</span>
-                    </div></div>
-                </a>
-                <a href="/listings?category=tourist" class="kex-card k-no-underline">
-                    <div class="kex-card-bg kex-ph-tourist"><div class="kex-card-icon">🐘</div></div>
-                    <div class="kex-card-overlay"><div class="kex-card-body">
-                        <div class="kex-card-pill">🐘 Places</div>
-                        <h4 class="kex-card-title">Tourist Places</h4>
-                        <ul class="kex-card-list"><li>Pinnawala</li><li>Bopath Ella</li><li>Bellena Cave</li></ul>
-                        <span class="kex-card-cta">Explore Places →</span>
-                    </div></div>
-                </a>
-                <a href="/listings?category=nature" class="kex-card k-no-underline">
-                    <div class="kex-card-bg kex-ph-nature"><div class="kex-card-icon">🌊</div></div>
-                    <div class="kex-card-overlay"><div class="kex-card-body">
-                        <div class="kex-card-pill">🌊 Nature</div>
-                        <h4 class="kex-card-title">Natural Resources</h4>
-                        <ul class="kex-card-list"><li>Samanala Reserve</li><li>Kegalle Reservoir</li><li>Rivers &amp; Waterfalls</li></ul>
-                        <span class="kex-card-cta">Explore Nature →</span>
-                    </div></div>
-                </a>
-                <a href="/listings?category=history" class="kex-card k-no-underline">
-                    <div class="kex-card-bg ks-bb3e79"></div>
-                    <div class="kex-card-overlay"><div class="kex-card-body">
-                        <div class="kex-card-pill">🏛️ History</div>
-                        <h4 class="kex-card-title">Historic Places</h4>
-                        <ul class="kex-card-list"><li>Dutch Fort</li><li>Warakapola</li><li>Archaeological Sites</li></ul>
-                        <span class="kex-card-cta">Explore History →</span>
-                    </div></div>
-                </a>
-            @endif
-            {{-- Premium upgrade CTA card --}}
-            <div class="kex-card kex-card--premium">
-                <div class="kex-premium-bg"></div>
-                <div class="kex-premium-body">
-                    <div class="kex-premium-badge">⭐ Premium</div>
-                    <h4 class="kex-premium-title">Feature Your Place</h4>
-                    <p class="kex-premium-desc">Get your business, hotel, restaurant or attraction listed prominently across Kegalle Marketplace.</p>
-                    <ul class="kex-premium-perks">
-                        <li>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                            Top placement in searches
-                        </li>
-                        <li>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                            Featured on homepage
-                        </li>
-                        <li>
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                            Verified badge &amp; analytics
-                        </li>
-                    </ul>
-                    <a href="/dashboard/membership" class="kex-premium-btn">See Premium Plans →</a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Random Ads — mobile only, only shown when distinct content is available -->
-    @if($randomAds->count())
-    <div class="k-section k-home-random-ads">
-        <div class="k-section-header">
-            <div>
-                <h2 class="k-section-title">More Ads in <span>Kegalle</span></h2>
-            </div>
-            <a href="/listings" class="k-section-link">View all →</a>
-        </div>
-        <div class="k-grid-4" id="k-random-grid">
-            @foreach($randomAds as $listing)
-                <div class="k-lazy-item{{ $loop->index >= 8 ? ' k-lazy-hidden' : '' }}" data-lazy-index="{{ $loop->index }}">
-                    @include('frontend.listings.card', ['listing' => $listing, 'cardIndex' => $loop->index])
-                </div>
-            @endforeach
-        </div>
-        <div id="k-random-sentinel"></div>
-        <div id="k-random-loader"><span>Loading more ads…</span></div>
-    </div>
-    <script nonce="{{ $cspNonce ?? '' }}">
-    (function(){
-        if(window.innerWidth > 760) return;
-        var grid=document.getElementById('k-random-grid');
-        var sentinel=document.getElementById('k-random-sentinel');
-        var loader=document.getElementById('k-random-loader');
-        if(!grid||!sentinel) return;
-        var items=grid.querySelectorAll('.k-lazy-item');
-        var total=items.length, loaded=8;
-        var obs=new IntersectionObserver(function(entries){
-            if(!entries[0].isIntersecting) return;
-            loader.style.display='block';
-            setTimeout(function(){
-                var end=Math.min(loaded+8,total);
-                for(var i=loaded;i<end;i++) items[i].classList.remove('k-lazy-hidden');
-                loaded=end;
-                loader.style.display='none';
-                if(loaded>=total){obs.disconnect();sentinel.remove();loader.remove();}
-            },300);
-        },{rootMargin:'200px'});
-        obs.observe(sentinel);
-    })();
-    </script>
-    @endif{{-- /randomAds --}}
 
     <!-- Testimonials — real approved reviews only -->
     @if($siteReviews->count())
@@ -1164,16 +895,7 @@ document.addEventListener('DOMContentLoaded', function(){
                 progBar.style.width = '0%';
             }
             clearTimeout(timer);
-            if (slides.length <= 1) return;
-            requestAnimationFrame(function() {
-                requestAnimationFrame(function() {
-                    if (progBar) {
-                        progBar.style.transition = 'width ' + INTERVAL + 'ms linear';
-                        progBar.style.width = '100%';
-                    }
-                    timer = setTimeout(goNext, INTERVAL);
-                });
-            });
+            // no autoplay: slides change only when the visitor asks (arrows, dots, swipe)
         }
 
         function resetTimer() { clearTimeout(timer); restartProgress(); }
