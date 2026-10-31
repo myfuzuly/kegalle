@@ -129,7 +129,6 @@ $hClassified=($featuredClassified ?? collect())->merge($latestClassified ?? coll
         </button>
         <div class="hs-bottom-bar" aria-hidden="true">
             <div class="hs-dots"></div>
-            <div class="hs-progress-track"><div class="hs-progress-bar"></div></div>
         </div>
     </div>
     <div class="home-hero-inner">
@@ -833,7 +832,6 @@ document.addEventListener('DOMContentLoaded', function(){
         var dotsWrap = document.querySelector('.hs-dots');
         var btnPrev  = document.querySelector('.hs-arrow-prev');
         var btnNext  = document.querySelector('.hs-arrow-next');
-        var progBar  = document.querySelector('.hs-progress-bar');
         var photo    = document.querySelector('.home-hero-photo');
 
         // ── Init: activate first slide ──
@@ -890,15 +888,8 @@ document.addEventListener('DOMContentLoaded', function(){
         function goNext() { goTo((cur + 1) % slides.length); }
         function goPrev() { goTo((cur - 1 + slides.length) % slides.length); }
 
-        // ── Progress bar (width driven by JS; only dynamic part) ──
-        function restartProgress() {
-            if (progBar) {
-                progBar.style.transition = 'none';
-                progBar.style.width = '0%';
-            }
-            clearTimeout(timer);
-            // no autoplay: slides change only when the visitor asks (arrows, dots, swipe)
-        }
+        // No autoplay: slides change only when the visitor asks (arrows, dots, swipe)
+        function restartProgress() { clearTimeout(timer); }
 
         function resetTimer() { clearTimeout(timer); restartProgress(); }
 
