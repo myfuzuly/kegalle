@@ -138,6 +138,28 @@ class AuditFixesTest extends TestCase
         $this->assertStringStartsWith('/listings/' . $featured->slug, substr($grid, strpos($grid, '/listings/')));
     }
 
+    public function test_home_shows_sell_band_and_ad_page_has_phone_contact_bar(): void
+    {
+        $this->get('/')->assertOk()->assertSee('Got something to sell?')->assertSee('Search ads in Kegalle');
+
+        $owner = User::factory()->create(['status' => 'active', 'phone' => '0771234567']);
+        $store = Store::factory()->create(['user_id' => $owner->id, 'status' => 'approved', 'phone' => '0771234567']);
+        $ad = Listing::factory()->create(['user_id' => $owner->id, 'store_id' => $store->id, 'status' => 'approved']);
+
+        $this->get('/listings/' . $ad->slug)->assertOk()->assertSee('class="k-contact-bar"', false);
+        $this->actingAs($owner)->get('/listings/' . $ad->slug)->assertOk()->assertDontSee('class="k-contact-bar"', false);
+    }
+
+    public function test_dashboard_offers_store_after_three_approved_ads(): void
+    {
+        $user = User::factory()->create(['status' => 'active']);
+        $this->actingAs($user)->get('/dashboard')->assertOk()->assertDontSee('dbiStoreNudge');
+
+        Listing::factory()->count(3)->create(['user_id' => $user->id, 'store_id' => null, 'status' => 'approved']);
+        \Illuminate\Support\Facades\Cache::flush();
+        $this->actingAs($user)->get('/dashboard')->assertOk()->assertSee('dbiStoreNudge');
+    }
+
     private function moderator(): User
     {
         DB::table('roles')->insert(['key' => 'moderator', 'name' => 'Moderator', 'is_admin_level' => true, 'is_super' => false,

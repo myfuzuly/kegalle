@@ -33,6 +33,17 @@
 </div>
 @endif
 
+{{-- Store upgrade: offered once a seller keeps posting; "Not now" hides it for a week --}}
+@if(($stats['approved'] ?? 0) >= 3 && $plan === 'free')
+<div class="kx-sysbar" id="dbiStoreNudge" data-snooze="7" hidden>
+    <span><strong>You've posted {{ $stats['approved'] }} ads. Get a store page for your business:</strong> your own page, a verified badge and room for more products.</span>
+    <span class="kx-row-side">
+        <a href="{{ route('dashboard.membership') }}" class="ka-btn ka-btn-light kx-btn-sm">See plans</a>
+        <button type="button" class="ka-btn kx-btn-sm" data-snooze-close>Not now</button>
+    </span>
+</div>
+@endif
+
 @if($profileIncomplete ?? false)
 <div class="kx-sysbar" id="dbiProfileRemind">
     <span>

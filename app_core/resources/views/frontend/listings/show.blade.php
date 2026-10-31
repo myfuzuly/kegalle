@@ -1027,6 +1027,13 @@ function kRevealWaScb(btn) {
     document.querySelectorAll('.k-reveal-call').forEach(function(btn){
         btn.addEventListener('click', function(){ kRevealCall(this); }, {once:true});
     });
+    // Sticky phone contact bar
+    document.querySelectorAll('.k-scb-wa').forEach(function(btn){
+        btn.addEventListener('click', function(){ kRevealWaScb(this); }, {once:true});
+    });
+    document.querySelectorAll('.k-scb-call').forEach(function(btn){
+        btn.addEventListener('click', function(){ kRevealCallScb(this); }, {once:true});
+    });
     // Make Offer modal open/close
     var offerModal = document.getElementById('kOfferModal');
     var offerOpenBtn = document.getElementById('kOfferOpenBtn');
@@ -1422,5 +1429,10 @@ function kGeqSubmit(e){
 </script>
 @endpush
 @endguest
+
+{{-- Phones: WhatsApp + Call always in reach (same people who see the contact buttons above) --}}
+@if($listing->status !== 'sold' && (auth()->check() ? auth()->id() !== $listing->user_id : ($store && $store->id)) && ($waNumberB64 || $callNumberB64))
+<x-listing.contact-bar :wa="$waNumberB64" :msg="$waMsgB64" :tel="$callNumberB64" :fmt="$callNumberFormatted" />
+@endif
 
 @endsection

@@ -149,7 +149,7 @@
 </div>
 
 <script defer src="/js/kegalle-dashboard-panel.js?v=1"></script>
-<script defer src="/js/kegalle-admin-ui.js?v=3"></script>
+<script defer src="/js/kegalle-admin-ui.js?v=4"></script>
 @stack('scripts')
 </body>
 </html>

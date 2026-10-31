@@ -173,7 +173,7 @@
 
 <script defer src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script defer src="/js/select2.min.js"></script>
-<script defer src="/js/kegalle-admin-ui.js?v=3"></script>
+<script defer src="/js/kegalle-admin-ui.js?v=4"></script>
 @stack('scripts')
 </body>
 </html>

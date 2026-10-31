@@ -4,6 +4,19 @@
   var doc = document, root = doc.documentElement;
   var $ = function (s, c) { return (c || doc).querySelector(s); };
   var $$ = function (s, c) { return Array.prototype.slice.call((c || doc).querySelectorAll(s)); };
+
+  /* ── Snoozable notices: <div id="x" data-snooze="7" hidden> … <button data-snooze-close> ── */
+  $$('[data-snooze]').forEach(function (el) {
+    var key = 'k_snooze_' + el.id, until = 0;
+    try { until = +localStorage.getItem(key) || 0; } catch (e) {}
+    if (Date.now() < until) return;
+    el.hidden = false;
+    var x = $('[data-snooze-close]', el);
+    if (x) x.addEventListener('click', function () {
+      el.hidden = true;
+      try { localStorage.setItem(key, Date.now() + el.getAttribute('data-snooze') * 864e5); } catch (e) {}
+    });
+  });
   var mq = window.matchMedia('(max-width: 1023px)');
 
   /* ── Sidebar: mobile drawer + desktop collapse ─────────────────────────── */

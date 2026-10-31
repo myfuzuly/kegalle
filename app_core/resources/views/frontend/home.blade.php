@@ -134,12 +134,12 @@ $hClassified=($featuredClassified ?? collect())->merge($latestClassified ?? coll
     </div>
     <div class="home-hero-inner">
         <div class="hero-text-card">
-            <h1>Buy, Sell & Discover <br>the best in <span>Kegalle</span></h1>
-            <p>Find great deals on products, vehicles, properties and more from trusted sellers and local stores.</p>
+            <h1>Buy and sell in <span>Kegalle</span>, from people near you</h1>
+            <p>Cars, phones, land, jobs and services from Kegalle Town to Warakapola. Free to post. Meet in person.</p>
             <form action="/listings" method="GET" class="hero-search-form" role="search">
                 <div class="hero-search-wrap">
-                    <label for="hero-search-input" class="sr-only">Search listings</label>
-                    <input id="hero-search-input" type="search" name="q" placeholder="Search listings, stores, products…" value="{{ request('q') }}" class="hero-search-input" autocomplete="off">
+                    <label for="hero-search-input" class="sr-only">Search ads in Kegalle</label>
+                    <input id="hero-search-input" type="search" name="q" placeholder="What are you looking for?" value="{{ request('q') }}" class="hero-search-input" autocomplete="off">
                     <button type="submit" class="hero-search-btn" aria-label="Search">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                         Search
@@ -184,11 +184,11 @@ $hClassified=($featuredClassified ?? collect())->merge($latestClassified ?? coll
                 @endauth
             </div>
             <div class="hero-trending">
-                <span class="hero-trending-label">Trending:</span>
+                <span class="hero-trending-label">Popular:</span>
                 <a href="/listings?q=mobile+phones" class="hero-trend-tag">Phones</a>
-                <a href="/listings?q=furniture" class="hero-trend-tag">Furniture</a>
-                <a href="/listings?q=vehicles" class="hero-trend-tag">Vehicles</a>
-                <a href="/listings?q=electronics" class="hero-trend-tag">Electronics</a>
+                <a href="/listings?q=land" class="hero-trend-tag">Land for sale</a>
+                <a href="/listings?q=three+wheel" class="hero-trend-tag">Three-wheelers</a>
+                <a href="/listings?q=tuition" class="hero-trend-tag">Tuition</a>
             </div>
         </div>
     </div>
@@ -608,6 +608,8 @@ $hClassified=($featuredClassified ?? collect())->merge($latestClassified ?? coll
         </div>
     </div>
 
+
+    <x-home.sell-prompt />
 
     <!-- Testimonials — real approved reviews only -->
     @if($siteReviews->count())
